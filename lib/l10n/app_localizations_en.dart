@@ -24,6 +24,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String automatic_write_success(Object steps) {
+    return 'Automatic write success: $steps steps';
+  }
+
+  @override
   String get steps_gt_zero => 'Steps must be greater than 0.';
 
   @override
@@ -236,4 +241,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get log_type_automatic => 'Automatic';
+
+  @override
+  String get status_initializing => 'Initializing...';
 }

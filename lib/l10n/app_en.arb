@@ -4,6 +4,7 @@
   "status_running": "Background service is running, automatically writing steps...",
   "status_ready_to_start": "Ready to start automatic step writing.",
   "manual_write_success": "Manual write success: {steps} steps",
+  "automatic_write_success": "Automatic write success: {steps} steps",
   "steps_gt_zero": "Steps must be greater than 0.",
   "write_fail_check_log": "Write failed. Check the logs for more details.",
   "write_error": "An error occurred while writing: {error}",
@@ -69,5 +70,6 @@
   "manage_permissions_desc": "Opens system settings to manually grant or revoke all app permissions.",
   "language_settings": "Language Settings",
   "log_type_manual": "Manual",
-  "log_type_automatic": "Automatic"
+  "log_type_automatic": "Automatic",
+  "status_initializing": "Initializing..."
 }

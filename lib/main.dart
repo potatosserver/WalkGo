@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:health/health.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:walkgo/language_service.dart';
 import 'package:walkgo/log_service.dart';
 import 'package:walkgo/permission_handler_page.dart';
 import 'package:walkgo/settings_page.dart';
@@ -24,9 +26,11 @@ const String prefOffset = "offset_steps";
 const String prefInterval = "interval_minutes";
 const String prefPermissionsGranted = "permissions_granted";
 const String prefIsFirstLaunch = "is_first_launch";
+const String prefLanguageCode = "languageCode";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await LanguageService.loadLanguage(); // Load language for the main UI isolate
   await initializeService();
   runApp(
     ChangeNotifierProvider(
@@ -40,12 +44,12 @@ void main() async {
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
+  final l10n = LanguageService.l10n;
 
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'my_foreground', // id
-    'WalkGo Background Service', // title
-    description:
-        'WalkGo is simulating steps in the background...', // description
+    'my_foreground',
+    'WalkGo Background Service',
+    description: 'WalkGo is simulating steps in the background...',
     importance: Importance.low,
   );
 
@@ -65,8 +69,8 @@ Future<void> initializeService() async {
       autoStart: false,
       isForegroundMode: true,
       notificationChannelId: 'my_foreground',
-      initialNotificationTitle: 'WalkGo',
-      initialNotificationContent: 'Background service is running',
+      initialNotificationTitle: l10n.walkgo,
+      initialNotificationContent: l10n.status_initializing,
       foregroundServiceNotificationId: 888,
     ),
     iosConfiguration: IosConfiguration(autoStart: false, onForeground: onStart),
@@ -77,84 +81,114 @@ Future<void> initializeService() async {
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
+  await LanguageService.loadLanguage(); // Load language for the background isolate
+  final l10n = LanguageService.l10n;
 
   final Health health = Health();
   final LogService logService = LogService();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   await health.configure();
-
-  if (service is AndroidServiceInstance) {
-    service.on('setAsForeground').listen((event) {
-      service.setAsForegroundService();
-    });
-
-    service.on('setAsBackground').listen((event) {
-      service.setAsBackgroundService();
-    });
-  }
 
   service.on('stopService').listen((event) {
     service.stopSelf();
   });
 
-  Timer.periodic(const Duration(seconds: 60), (timer) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  // Immediately update notification to "running" state
+  if (service is AndroidServiceInstance) {
+    if (await service.isForegroundService()) {
+      service.setForegroundNotificationInfo(
+        title: l10n.walkgo,
+        content: l10n.status_running,
+      );
+    }
+  }
 
-    if (!(prefs.getBool(prefIsAuto) ?? false)) return;
+  Timer? timer;
+
+  Future<void> scheduleNextRun() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!(prefs.getBool(prefIsAuto) ?? false)) {
+      timer?.cancel();
+      return;
+    }
 
     int intervalMins = prefs.getInt(prefInterval) ?? 15;
-    int baseSteps = prefs.getInt(prefBaseSteps) ?? 500;
-    int offset = prefs.getInt(prefOffset) ?? 50;
-
     int lastRun = prefs.getInt("last_run_timestamp") ?? 0;
     int nowMillis = DateTime.now().millisecondsSinceEpoch;
 
-    if (nowMillis - lastRun < intervalMins * 60 * 1000) return;
+    int nextRunMillis = lastRun + intervalMins * 60 * 1000;
 
-    int randomJitter = Random().nextInt(offset * 2 + 1) - offset;
-    int finalSteps = baseSteps + randomJitter;
-    if (finalSteps < 0) finalSteps = 10;
-
-    DateTime endTime = DateTime.now();
-    DateTime startTime = endTime.subtract(Duration(minutes: intervalMins));
-
-    try {
-      bool success = await health.writeHealthData(
-        value: finalSteps.toDouble(),
-        type: HealthDataType.STEPS,
-        startTime: startTime,
-        endTime: endTime,
-      );
-
-      if (success) {
-        await logService.addLog({
-          'steps': finalSteps,
-          'type': 'automatic', // 'automatic' or 'manual'
-        });
-
-        final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-            FlutterLocalNotificationsPlugin();
-        flutterLocalNotificationsPlugin.show(
-          123,
-          'WalkGo Steps Update',
-          'Wrote $finalSteps steps',
-          const NotificationDetails(
-            android: AndroidNotificationDetails(
-              'my_foreground',
-              'WalkGo Background Service',
-              icon: 'ic_bg_service_small',
-              ongoing: false,
-            ),
-          ),
-        );
-
-        await prefs.setInt("last_run_timestamp", nowMillis);
-      }
-    } catch (e) {
-      debugPrint("[Background Error] Error writing steps: $e");
+    Duration nextDelay;
+    if (nextRunMillis <= nowMillis) {
+      // If the scheduled time is in the past, run immediately.
+      nextDelay = Duration.zero;
+    } else {
+      nextDelay = Duration(milliseconds: nextRunMillis - nowMillis);
     }
-  });
+
+    timer = Timer(nextDelay, () async {
+      await executeStepWrite(
+        prefs,
+        health,
+        logService,
+        flutterLocalNotificationsPlugin,
+        service,
+      );
+      scheduleNextRun(); // Schedule the next run after this one completes
+    });
+  }
+
+  // Initial scheduling
+  scheduleNextRun();
 }
 
+Future<void> executeStepWrite(
+  SharedPreferences prefs,
+  Health health,
+  LogService logService,
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin,
+  ServiceInstance service,
+) async {
+  final l10n = LanguageService.l10n;
+
+  int baseSteps = prefs.getInt(prefBaseSteps) ?? 500;
+  int offset = prefs.getInt(prefOffset) ?? 50;
+
+  int randomJitter = Random().nextInt(offset * 2 + 1) - offset;
+  int finalSteps = baseSteps + randomJitter;
+  if (finalSteps < 1) finalSteps = 1;
+
+  DateTime endTime = DateTime.now();
+  DateTime startTime = endTime.subtract(const Duration(minutes: 1));
+
+  try {
+    bool success = await health.writeHealthData(
+      value: finalSteps.toDouble(),
+      type: HealthDataType.STEPS,
+      startTime: startTime,
+      endTime: endTime,
+    );
+
+    if (success) {
+      await logService.addLog({'steps': finalSteps, 'type': 'automatic'});
+      await prefs.setInt("last_run_timestamp", endTime.millisecondsSinceEpoch);
+
+      // Update the existing foreground notification instead of creating a new one.
+      if (service is AndroidServiceInstance) {
+        if (await service.isForegroundService()) {
+          service.setForegroundNotificationInfo(
+            title: l10n.notification_update_title,
+            content: l10n.automatic_write_success(finalSteps),
+          );
+        }
+      }
+    }
+  } catch (e) {
+    debugPrint("[Background Error] Error writing steps: $e");
+  }
+}
 
 // --- UI Interface ---
 
@@ -179,7 +213,7 @@ class MyAppState extends State<MyApp> {
 
   Future<void> _loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
-    final languageCode = prefs.getString('languageCode');
+    final languageCode = prefs.getString(prefLanguageCode);
     if (languageCode != null && languageCode.isNotEmpty) {
       setState(() {
         _locale = Locale(languageCode);
@@ -267,7 +301,6 @@ class _InitialPageState extends State<InitialPage> {
             Navigator.of(context).pushReplacementNamed(snapshot.data!);
           });
         } else {
-          // Handle error case, maybe navigate to a default error page
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Navigator.of(context).pushReplacementNamed('/welcome');
           });
@@ -304,7 +337,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // We need to update the status log here because the locale might have changed.
     _updateStatusLogText();
   }
 
@@ -345,53 +377,68 @@ class _HomePageState extends State<HomePage> {
 
   void _updateStatus(String message, {bool isError = false}) {
     if (!mounted) return;
-    setState(() {
-      _statusLog = message;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: isError
-            ? Theme.of(context).colorScheme.error
-            : Theme.of(context).snackBarTheme.backgroundColor,
-      ),
+
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: isError ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
     );
   }
 
-  Future<void> _manualAdd() async {
+  Future<void> _writeSteps({bool isManual = false}) async {
     final l10n = AppLocalizations.of(context)!;
     await _saveSettings();
+
     int steps = int.tryParse(_stepsController.text) ?? 0;
     if (steps <= 0) {
-      _updateStatus(l10n.steps_gt_zero, isError: true);
+      if (isManual) {
+        _updateStatus(l10n.steps_gt_zero, isError: true);
+      }
       return;
     }
 
-    DateTime now = DateTime.now();
+    int offset = int.tryParse(_offsetController.text) ?? 0;
+    int randomJitter = Random().nextInt(offset * 2 + 1) - offset;
+    int finalSteps = steps + randomJitter;
+    if (finalSteps < 1) finalSteps = 1;
+
+    DateTime endTime = DateTime.now();
+    DateTime startTime = endTime.subtract(const Duration(minutes: 1));
+
     try {
       bool success = await health.writeHealthData(
-        value: steps.toDouble(),
+        value: finalSteps.toDouble(),
         type: HealthDataType.STEPS,
-        startTime: now.subtract(const Duration(minutes: 5)),
-        endTime: now,
+        startTime: startTime,
+        endTime: endTime,
       );
 
       if (success) {
-        final successMessage = l10n.manual_write_success(steps);
-        _updateStatus(successMessage);
         await _logService.addLog({
-          'steps': steps,
-          'type': 'manual',
+          'steps': finalSteps,
+          'type': isManual ? 'manual' : 'automatic',
         });
+
+        if (isManual) {
+          final successMessage = l10n.manual_write_success(finalSteps);
+          _updateStatus(successMessage);
+        } else {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setInt(
+            "last_run_timestamp",
+            endTime.millisecondsSinceEpoch,
+          );
+        }
       } else {
-        _updateStatus(l10n.write_fail_check_log);
+        _updateStatus(l10n.write_fail_check_log, isError: true);
       }
     } catch (e) {
-      _updateStatus(
-        l10n.write_error(e.toString()),
-        isError: true,
-      );
+      _updateStatus(l10n.write_error(e.toString()), isError: true);
     }
+  }
+
+  Future<void> _manualAdd() async {
+    await _writeSteps(isManual: true);
   }
 
   Future<void> _toggleAutoMode(bool enable) async {
@@ -405,6 +452,8 @@ class _HomePageState extends State<HomePage> {
     if (enable) {
       await service.startService();
       _updateStatus(l10n.background_service_start);
+      // Immediately write a step entry upon starting
+      await _writeSteps(isManual: false);
     } else {
       service.invoke("stopService");
       _updateStatus(l10n.background_service_stop);
@@ -416,7 +465,7 @@ class _HomePageState extends State<HomePage> {
     _updateStatusLogText();
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
@@ -425,7 +474,7 @@ class _HomePageState extends State<HomePage> {
     final systemUiOverlayStyle = SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
-      systemNavigationBarColor: theme.colorScheme.surface, // Changed from black
+      systemNavigationBarColor: theme.colorScheme.surface,
       systemNavigationBarIconBrightness:
           isLightMode ? Brightness.dark : Brightness.light,
     );
@@ -558,9 +607,8 @@ class _HomePageState extends State<HomePage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            backgroundColor: _isAutoRunning
-                ? Colors.red.shade700
-                : Colors.green.shade600,
+            backgroundColor:
+                _isAutoRunning ? Colors.red.shade700 : Colors.green.shade600,
             foregroundColor: Colors.white,
           ),
           onPressed: () => _toggleAutoMode(!_isAutoRunning),

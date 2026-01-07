@@ -23,6 +23,11 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String automatic_write_success(Object steps) {
+    return '自動寫入成功：$steps 步';
+  }
+
+  @override
   String get steps_gt_zero => '步數必須大於 0。';
 
   @override
@@ -225,4 +230,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get log_type_automatic => '自動';
+
+  @override
+  String get status_initializing => '初始化中...';
 }

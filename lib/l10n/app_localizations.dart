@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'Manual write success: {steps} steps'**
   String manual_write_success(Object steps);
 
+  /// No description provided for @automatic_write_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic write success: {steps} steps'**
+  String automatic_write_success(Object steps);
+
   /// No description provided for @steps_gt_zero.
   ///
   /// In en, this message translates to:
@@ -517,6 +523,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Automatic'**
   String get log_type_automatic;
+
+  /// No description provided for @status_initializing.
+  ///
+  /// In en, this message translates to:
+  /// **'Initializing...'**
+  String get status_initializing;
 }
 
 class _AppLocalizationsDelegate

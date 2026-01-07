@@ -216,13 +216,13 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                 child: ElevatedButton(
                   onPressed: isGranted ? _goToNextPage : null,
                   style: ButtonStyle(
-                      padding: MaterialStateProperty.all(
+                      padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      shape: MaterialStateProperty.all(const StadiumBorder()),
+                      shape: WidgetStateProperty.all(const StadiumBorder()),
                       backgroundColor:
-                          MaterialStateProperty.resolveWith<Color?>((states) {
-                        if (states.contains(MaterialState.disabled)) {
+                          WidgetStateProperty.resolveWith<Color?>((states) {
+                        if (states.contains(WidgetState.disabled)) {
                           return colorScheme.onSurface.withOpacity(0.12);
                         }
                         // Use green for the final step button, otherwise primary color
@@ -232,8 +232,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                         return colorScheme.primary;
                       }),
                       foregroundColor:
-                          MaterialStateProperty.resolveWith<Color?>((states) {
-                        if (states.contains(MaterialState.disabled)) {
+                          WidgetStateProperty.resolveWith<Color?>((states) {
+                        if (states.contains(WidgetState.disabled)) {
                           return colorScheme.onSurface.withOpacity(0.38);
                         }
                         return colorScheme.onPrimary;
