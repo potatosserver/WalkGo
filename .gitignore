@@ -11,21 +11,29 @@
 
 # Flutter/Dart
 .dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
 .packages
-build/
-ios/Pods/
-ios/DerivedData/
-pubspec.lock
+.pub-cache/
+.pub/
+/build/
+devtools_options.yaml
 
-# IDE settings
+# IDEs
 .idea/
 .vscode/
 *.iml
+*.ipr
+*.iws
+.idea
 
-# Firebase/IDX specific
-.idx/
+# Debugging
+debug-info/
+*.snapshot
 
-# Generated localization files
-lib/l10n/app_localizations.dart
-lib/l10n/app_localizations_en.dart
-lib/l10n/app_localizations_zh.dart
+# Gradle
+.gradle/
+/android/local.properties
+/android/.gradle/
+/android/app/build/
+/android/gradle/wrapper/gradle-wrapper.jar
