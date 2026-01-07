@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:health/health.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -75,62 +76,79 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: _pageCount,
-        physics: const NeverScrollableScrollPhysics(),
-        onPageChanged: (page) {
-          if (mounted) {
-            setState(() {
-              _currentPage = page;
-            });
-          }
-        },
-        itemBuilder: (context, index) {
-          switch (index) {
-            case 0:
-              return _buildPermissionPage(
-                icon: Icons.favorite,
-                title: l10n.permission_health_title,
-                description: l10n.permission_health_desc,
-                requestPermission: _requestHealthPermission,
-                checkPermission: _checkHealthPermission,
-              );
-            case 1:
-              return _buildPermissionPage(
-                icon: Icons.directions_run,
-                title: l10n.permission_activity_title,
-                description: l10n.permission_activity_desc,
-                requestPermission: () =>
-                    _requestSimplePermission(Permission.activityRecognition),
-                checkPermission: () =>
-                    _checkSimplePermission(Permission.activityRecognition),
-              );
-            case 2:
-              return _buildPermissionPage(
-                icon: Icons.notifications,
-                title: l10n.permission_notification_title,
-                description: l10n.permission_notification_desc,
-                requestPermission: () =>
-                    _requestSimplePermission(Permission.notification),
-                checkPermission: () =>
-                    _checkSimplePermission(Permission.notification),
-              );
-            case 3:
-              return _buildPermissionPage(
-                icon: Icons.battery_charging_full,
-                title: l10n.permission_battery_title,
-                description: l10n.permission_battery_desc,
-                requestPermission: () => _requestSimplePermission(
-                    Permission.ignoreBatteryOptimizations),
-                checkPermission: () => _checkSimplePermission(
-                    Permission.ignoreBatteryOptimizations),
-              );
-            default:
-              return const SizedBox.shrink();
-          }
-        },
+    final theme = Theme.of(context);
+    final isLightMode = theme.brightness == Brightness.light;
+
+    final systemUiOverlayStyle = SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
+      systemNavigationBarColor: theme.colorScheme.surface,
+      systemNavigationBarIconBrightness:
+          isLightMode ? Brightness.dark : Brightness.light,
+    );
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: systemUiOverlayStyle,
+      child: Scaffold(
+        extendBody: true,
+        body: SafeArea(
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: _pageCount,
+            physics: const NeverScrollableScrollPhysics(),
+            onPageChanged: (page) {
+              if (mounted) {
+                setState(() {
+                  _currentPage = page;
+                });
+              }
+            },
+            itemBuilder: (context, index) {
+              switch (index) {
+                case 0:
+                  return _buildPermissionPage(
+                    icon: Icons.favorite,
+                    title: l10n.permission_health_title,
+                    description: l10n.permission_health_desc,
+                    requestPermission: _requestHealthPermission,
+                    checkPermission: _checkHealthPermission,
+                  );
+                case 1:
+                  return _buildPermissionPage(
+                    icon: Icons.directions_run,
+                    title: l10n.permission_activity_title,
+                    description: l10n.permission_activity_desc,
+                    requestPermission: () =>
+                        _requestSimplePermission(Permission.activityRecognition),
+                    checkPermission: () =>
+                        _checkSimplePermission(Permission.activityRecognition),
+                  );
+                case 2:
+                  return _buildPermissionPage(
+                    icon: Icons.notifications,
+                    title: l10n.permission_notification_title,
+                    description: l10n.permission_notification_desc,
+                    requestPermission: () =>
+                        _requestSimplePermission(Permission.notification),
+                    checkPermission: () =>
+                        _checkSimplePermission(Permission.notification),
+                  );
+                case 3:
+                  return _buildPermissionPage(
+                    icon: Icons.battery_charging_full,
+                    title: l10n.permission_battery_title,
+                    description: l10n.permission_battery_desc,
+                    requestPermission: () => _requestSimplePermission(
+                        Permission.ignoreBatteryOptimizations),
+                    checkPermission: () => _checkSimplePermission(
+                        Permission.ignoreBatteryOptimizations),
+                  );
+                default:
+                  return const SizedBox.shrink();
+              }
+            },
+          ),
+        ),
       ),
     );
   }

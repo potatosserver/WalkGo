@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/appearance_settings_page.dart';
@@ -90,69 +91,86 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isLightMode = theme.brightness == Brightness.light;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.settings),
-        elevation: 0,
-        backgroundColor: Theme.of(context).canvasColor,
-        foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        children: [
-          _buildNavigationCard(
-            context,
-            icon: Icons.language,
-            title: l10n.language,
-            page: const LanguageSettingsPage(),
+    final systemUiOverlayStyle = SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
+      systemNavigationBarColor: theme.colorScheme.surface, // Changed from black
+      systemNavigationBarIconBrightness:
+          isLightMode ? Brightness.dark : Brightness.light,
+    );
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: systemUiOverlayStyle,
+      child: Scaffold(
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          title: Text(l10n.settings),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            children: [
+              SizedBox(height: kToolbarHeight), // Add space for AppBar
+              _buildNavigationCard(
+                context,
+                icon: Icons.language,
+                title: l10n.language,
+                page: const LanguageSettingsPage(),
+              ),
+              const SizedBox(height: 16),
+              _buildNavigationCard(
+                context,
+                icon: Icons.palette_outlined,
+                title: l10n.theme,
+                page: const AppearanceSettingsPage(),
+              ),
+              const SizedBox(height: 16),
+              _buildNavigationCard(
+                context,
+                icon: Icons.history,
+                title: l10n.write_logs,
+                page: const LogsPage(),
+              ),
+              const SizedBox(height: 16),
+              _buildActionCard(
+                context,
+                icon: Icons.shield_outlined,
+                title: l10n.manage_permissions,
+                onTap: openAppSettings,
+              ),
+              const SizedBox(height: 16),
+              _buildActionCard(
+                context,
+                icon: Icons.info_outline,
+                title: l10n.about,
+                onTap: _showAboutDialog,
+              ),
+              const SizedBox(height: 16),
+              _buildActionCard(
+                context,
+                icon: Icons.replay_outlined,
+                title: l10n.rerun_setup,
+                onTap: _reviewSetup,
+                iconColor: Colors.orangeAccent,
+              ),
+              const SizedBox(height: 16),
+              _buildActionCard(
+                context,
+                icon: Icons.delete_forever,
+                title: l10n.clear_data_button,
+                onTap: _clearAllData,
+                iconColor: Theme.of(context).colorScheme.error,
+                textColor: Theme.of(context).colorScheme.error,
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          _buildNavigationCard(
-            context,
-            icon: Icons.palette_outlined,
-            title: l10n.theme,
-            page: const AppearanceSettingsPage(),
-          ),
-          const SizedBox(height: 16),
-          _buildNavigationCard(
-            context,
-            icon: Icons.history,
-            title: l10n.write_logs,
-            page: const LogsPage(),
-          ),
-          const SizedBox(height: 16),
-          _buildActionCard(
-            context,
-            icon: Icons.shield_outlined,
-            title: l10n.manage_permissions,
-            onTap: openAppSettings,
-          ),
-          const SizedBox(height: 16),
-          _buildActionCard(
-            context,
-            icon: Icons.info_outline,
-            title: l10n.about,
-            onTap: _showAboutDialog,
-          ),
-          const SizedBox(height: 16),
-          _buildActionCard(
-            context,
-            icon: Icons.replay_outlined,
-            title: l10n.rerun_setup,
-            onTap: _reviewSetup,
-            iconColor: Colors.orangeAccent,
-          ),
-          const SizedBox(height: 16),
-          _buildActionCard(
-            context,
-            icon: Icons.delete_forever,
-            title: l10n.clear_data_button,
-            onTap: _clearAllData,
-            iconColor: Theme.of(context).colorScheme.error,
-            textColor: Theme.of(context).colorScheme.error,
-          ),
-        ],
+        ),
       ),
     );
   }

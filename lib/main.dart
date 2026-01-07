@@ -4,6 +4,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:health/health.dart';
@@ -415,36 +416,56 @@ class _HomePageState extends State<HomePage> {
     _updateStatusLogText();
   }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.walkgo),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              );
-            },
-            tooltip: l10n.settings_tooltip,
-          ),
-        ],
-      ),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildStatusCard(),
-              const SizedBox(height: 24),
-              _buildControlPanel(l10n),
-            ],
+    final theme = Theme.of(context);
+    final isLightMode = theme.brightness == Brightness.light;
+
+    final systemUiOverlayStyle = SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
+      systemNavigationBarColor: theme.colorScheme.surface, // Changed from black
+      systemNavigationBarIconBrightness:
+          isLightMode ? Brightness.dark : Brightness.light,
+    );
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: systemUiOverlayStyle,
+      child: Scaffold(
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          title: Text(l10n.walkgo),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings_outlined),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                );
+              },
+              tooltip: l10n.settings_tooltip,
+            ),
+          ],
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
+        body: SafeArea(
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildStatusCard(),
+                  const SizedBox(height: 24),
+                  _buildControlPanel(l10n),
+                ],
+              ),
+            ),
           ),
         ),
       ),

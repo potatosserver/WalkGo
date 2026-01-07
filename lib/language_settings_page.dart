@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/main.dart';
 import 'l10n/app_localizations.dart';
@@ -49,23 +50,43 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isLightMode = theme.brightness == Brightness.light;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.language_settings),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          _buildSectionCard(
-            context,
+    final systemUiOverlayStyle = SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
+      systemNavigationBarColor: theme.colorScheme.surface, // Changed from black
+      systemNavigationBarIconBrightness:
+          isLightMode ? Brightness.dark : Brightness.light,
+    );
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: systemUiOverlayStyle,
+      child: Scaffold(
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          title: Text(l10n.language_settings),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(16.0),
             children: [
-              _buildLanguageOption(l10n.systemDefault, null),
-              _buildLanguageOption(l10n.chinese, 'zh'),
-              _buildLanguageOption(l10n.english, 'en'),
+              SizedBox(height: kToolbarHeight), // Add space for AppBar
+              _buildSectionCard(
+                context,
+                children: [
+                  _buildLanguageOption(l10n.systemDefault, null),
+                  _buildLanguageOption(l10n.chinese, 'zh'),
+                  _buildLanguageOption(l10n.english, 'en'),
+                ],
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
