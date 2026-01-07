@@ -24,7 +24,7 @@ class WelcomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const FlutterLogo(size: 100),
+              Image.asset('assets/images/icon.png', height: 300),
               const SizedBox(height: 24),
               Text(
                 l10n.welcome_to_walkgo,
