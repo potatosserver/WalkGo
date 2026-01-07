@@ -1,16 +1,43 @@
-# myapp
+# WalkGo - 您的自動計步夥伴
 
-A new Flutter project.
+WalkGo 是一款專為 Android 設計的健康工具應用程式，旨在幫助使用者輕鬆達成每日的步數目標。它能以自動化的方式，將您設定的步數目標寫入健康數據中，省去手動記錄的麻煩。
 
-## Getting Started
+## 核心功能
 
-This project is a starting point for a Flutter application.
+- **🚀 自動化步數寫入**：應用程式的核心功能。設定好您想要的步數範圍後，WalkGo 會在背景自動將步數寫入，幫助您輕鬆達標。
+- **📊 步數日誌**：每一次的步數寫入操作（無論是自動還是手動），都會被詳細記錄下來。您可以隨時查看歷史紀錄，了解應用的運行狀況。
+- **🎨 個人化設定**：
+  - **主題模式**：提供淺色、深色以及跟隨系統三種主題模式，保護您的眼睛。
+  - **多語言支援**：內建中文與英文，並可設定為跟隨系統語言。
+- **⚙️ 完整的設定流程**：首次啟動應用程式時，會有一個清晰的引導流程，幫助您授予所有必要的權限，確保應用程式能順利在背景運行。
+- **🔒 權限管理與重設**：
+  - 您可以隨時在設定頁面中跳轉至系統設定，管理應用程式的權限。
+  - 提供「重新運行設定流程」和「清除所有資料」的選項，讓您隨時可以將 App 恢復到初始狀態。
 
-A few resources to get you started if this is your first Flutter project:
+## 所需權限說明
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+為了確保核心功能能夠正常運作，WalkGo 需要以下幾項關鍵權限：
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1.  **健康數據存取權限**：這是最核心的權限，用於讀取和寫入步數資料到您的健康平台。
+2.  **體能活動權限**：允許應用程式偵測您的活動狀態，以更智能地觸發背景服務。
+3.  **通知權限**：用於顯示一個持續的通知，這是維持背景服務穩定運行的必要條件。同時，也會在成功寫入步數時通知您。
+4.  **停用電池優化**：為了防止 Android 系統為了省電而終止背景服務，需要將 WalkGo 加入電池優化的白名單。
+
+## 如何開始
+
+1.  **克隆 (Clone) 儲存庫**：
+    ```bash
+    git clone https://github.com/potatosserver/WalkGo.git
+    ```
+2.  **進入專案目錄**：
+    ```bash
+    cd WalkGo
+    ```
+3.  **獲取 Flutter 依賴套件**：
+    ```bash
+    flutter pub get
+    ```
+4.  **運行應用程式**：
+    ```bash
+    flutter run
+    ```
