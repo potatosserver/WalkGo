@@ -63,7 +63,7 @@ import 'app_localizations_zh.dart';
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -86,16 +86,16 @@ abstract class AppLocalizations {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('zh'),
+    Locale('zh')
   ];
 
   /// No description provided for @walkgo.
@@ -104,160 +104,22 @@ abstract class AppLocalizations {
   /// **'WalkGo'**
   String get walkgo;
 
-  /// No description provided for @status_running.
+  /// No description provided for @settings.
   ///
   /// In en, this message translates to:
-  /// **'Background service is running, automatically writing steps...'**
-  String get status_running;
-
-  /// No description provided for @status_ready_to_start.
-  ///
-  /// In en, this message translates to:
-  /// **'Ready to start automatic step writing.'**
-  String get status_ready_to_start;
-
-  /// No description provided for @manual_write_success.
-  ///
-  /// In en, this message translates to:
-  /// **'Manual write success: {steps} steps'**
-  String manual_write_success(Object steps);
-
-  /// No description provided for @automatic_write_success.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatic write success: {steps} steps'**
-  String automatic_write_success(Object steps);
-
-  /// No description provided for @steps_gt_zero.
-  ///
-  /// In en, this message translates to:
-  /// **'Steps must be greater than 0.'**
-  String get steps_gt_zero;
-
-  /// No description provided for @write_fail_check_log.
-  ///
-  /// In en, this message translates to:
-  /// **'Write failed. Check the logs for more details.'**
-  String get write_fail_check_log;
-
-  /// No description provided for @write_error.
-  ///
-  /// In en, this message translates to:
-  /// **'An error occurred while writing: {error}'**
-  String write_error(Object error);
-
-  /// No description provided for @background_service_start.
-  ///
-  /// In en, this message translates to:
-  /// **'Background service started.'**
-  String get background_service_start;
-
-  /// No description provided for @background_service_stop.
-  ///
-  /// In en, this message translates to:
-  /// **'Background service stopped.'**
-  String get background_service_stop;
-
-  /// No description provided for @param_settings.
-  ///
-  /// In en, this message translates to:
-  /// **'Parameter Settings'**
-  String get param_settings;
-
-  /// No description provided for @base_steps.
-  ///
-  /// In en, this message translates to:
-  /// **'Base Steps'**
-  String get base_steps;
-
-  /// No description provided for @base_steps_hint.
-  ///
-  /// In en, this message translates to:
-  /// **'The base number of steps for each automatic write.'**
-  String get base_steps_hint;
-
-  /// No description provided for @offset_steps.
-  ///
-  /// In en, this message translates to:
-  /// **'Offset Steps'**
-  String get offset_steps;
-
-  /// No description provided for @offset_steps_hint.
-  ///
-  /// In en, this message translates to:
-  /// **'A random value between -offset and +offset will be added.'**
-  String get offset_steps_hint;
-
-  /// No description provided for @interval.
-  ///
-  /// In en, this message translates to:
-  /// **'Interval (minutes)'**
-  String get interval;
-
-  /// No description provided for @interval_hint.
-  ///
-  /// In en, this message translates to:
-  /// **'The interval for automatic step writing.'**
-  String get interval_hint;
-
-  /// No description provided for @manual_write_once.
-  ///
-  /// In en, this message translates to:
-  /// **'Manual Write Once (Test)'**
-  String get manual_write_once;
-
-  /// No description provided for @stop_auto_steps.
-  ///
-  /// In en, this message translates to:
-  /// **'Stop Auto Steps'**
-  String get stop_auto_steps;
-
-  /// No description provided for @start_auto_steps.
-  ///
-  /// In en, this message translates to:
-  /// **'Start Background Auto Steps'**
-  String get start_auto_steps;
-
-  /// No description provided for @notification_channel_name.
-  ///
-  /// In en, this message translates to:
-  /// **'WalkGo Background Service'**
-  String get notification_channel_name;
-
-  /// No description provided for @notification_channel_description.
-  ///
-  /// In en, this message translates to:
-  /// **'WalkGo is simulating steps in the background...'**
-  String get notification_channel_description;
-
-  /// No description provided for @notification_title.
-  ///
-  /// In en, this message translates to:
-  /// **'WalkGo'**
-  String get notification_title;
-
-  /// No description provided for @notification_content.
-  ///
-  /// In en, this message translates to:
-  /// **'Background service is running'**
-  String get notification_content;
-
-  /// No description provided for @notification_update_title.
-  ///
-  /// In en, this message translates to:
-  /// **'WalkGo Steps Update'**
-  String get notification_update_title;
+  /// **'Settings'**
+  String get settings;
 
   /// No description provided for @theme.
   ///
   /// In en, this message translates to:
-  /// **'Appearance'**
+  /// **'Theme'**
   String get theme;
 
   /// No description provided for @system_theme.
   ///
   /// In en, this message translates to:
-  /// **'System Default'**
+  /// **'Follow System'**
   String get system_theme;
 
   /// No description provided for @light_theme.
@@ -271,6 +133,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark Mode'**
   String get dark_theme;
+
+  /// No description provided for @language_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language_settings;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @simplified_chinese.
+  ///
+  /// In en, this message translates to:
+  /// **'Simplified Chinese'**
+  String get simplified_chinese;
+
+  /// No description provided for @traditional_chinese.
+  ///
+  /// In en, this message translates to:
+  /// **'Traditional Chinese'**
+  String get traditional_chinese;
 
   /// No description provided for @logs_cleared.
   ///
@@ -287,7 +173,7 @@ abstract class AppLocalizations {
   /// No description provided for @about_walkgo_content.
   ///
   /// In en, this message translates to:
-  /// **'This application helps users automatically log steps to achieve their health goals.\n\nVersion: 1.0.0'**
+  /// **'This app helps you automatically log your steps to meet your health goals.\n\nVersion: 1.0.0'**
   String get about_walkgo_content;
 
   /// No description provided for @close.
@@ -323,7 +209,7 @@ abstract class AppLocalizations {
   /// No description provided for @rerun_setup.
   ///
   /// In en, this message translates to:
-  /// **'Rerun Welcome & Setup Process'**
+  /// **'Rerun Welcome & Setup'**
   String get rerun_setup;
 
   /// No description provided for @rerun_setup_confirm_title.
@@ -335,7 +221,7 @@ abstract class AppLocalizations {
   /// No description provided for @rerun_setup_confirm_content.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to rerun the setup process? This will return you to the welcome screen and require you to grant permissions again.'**
+  /// **'Are you sure you want to rerun the setup? This will take you to the welcome screen and require re-granting permissions.'**
   String get rerun_setup_confirm_content;
 
   /// No description provided for @cancel.
@@ -359,7 +245,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcome_message.
   ///
   /// In en, this message translates to:
-  /// **'This app helps you automatically write steps to your health data, making it easy to reach your daily goals.'**
+  /// **'This app helps you automatically write your steps to your health data, so you can easily meet your daily goals.'**
   String get welcome_message;
 
   /// No description provided for @get_started.
@@ -377,7 +263,7 @@ abstract class AppLocalizations {
   /// No description provided for @permission_health_desc.
   ///
   /// In en, this message translates to:
-  /// **'WalkGo needs to access your health data to read and write steps, which is the core function of the app.'**
+  /// **'WalkGo needs access to your health data to read and write steps. This is the core function of the app.'**
   String get permission_health_desc;
 
   /// No description provided for @permission_activity_title.
@@ -389,7 +275,7 @@ abstract class AppLocalizations {
   /// No description provided for @permission_activity_desc.
   ///
   /// In en, this message translates to:
-  /// **'On some Android versions, this permission allows the app to run more accurately in the background to detect your activity.'**
+  /// **'On some Android versions, this allows the app to run more accurately in the background to detect your activity.'**
   String get permission_activity_desc;
 
   /// No description provided for @permission_notification_title.
@@ -401,7 +287,7 @@ abstract class AppLocalizations {
   /// No description provided for @permission_notification_desc.
   ///
   /// In en, this message translates to:
-  /// **'We need to show notifications to keep the background service running and to inform you when steps are successfully written.'**
+  /// **'We need to show a notification to keep the background service running and to inform you when steps are successfully written.'**
   String get permission_notification_desc;
 
   /// No description provided for @permission_battery_title.
@@ -413,7 +299,7 @@ abstract class AppLocalizations {
   /// No description provided for @permission_battery_desc.
   ///
   /// In en, this message translates to:
-  /// **'To ensure WalkGo can run stably in the background without being shut down by the OS, please disable battery optimization for this app.'**
+  /// **'To ensure the app can run reliably in the background without being killed, please disable battery optimization for WalkGo.'**
   String get permission_battery_desc;
 
   /// No description provided for @grant_permission.
@@ -422,95 +308,239 @@ abstract class AppLocalizations {
   /// **'Grant Permission'**
   String get grant_permission;
 
-  /// No description provided for @setup_complete.
-  ///
-  /// In en, this message translates to:
-  /// **'Finish Setup'**
-  String get setup_complete;
-
   /// No description provided for @next_step.
   ///
   /// In en, this message translates to:
   /// **'Next'**
   String get next_step;
 
+  /// No description provided for @setup_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup Complete'**
+  String get setup_complete;
+
+  /// No description provided for @param_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Parameter Settings'**
+  String get param_settings;
+
+  /// No description provided for @base_steps.
+  ///
+  /// In en, this message translates to:
+  /// **'Base Steps'**
+  String get base_steps;
+
+  /// No description provided for @interval.
+  ///
+  /// In en, this message translates to:
+  /// **'Interval (minutes)'**
+  String get interval;
+
+  /// No description provided for @advanced_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Settings'**
+  String get advanced_settings;
+
+  /// No description provided for @manual_write_once.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual Write Once'**
+  String get manual_write_once;
+
+  /// No description provided for @start_auto_steps.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Auto Service'**
+  String get start_auto_steps;
+
+  /// No description provided for @stop_auto_steps.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Auto Service'**
+  String get stop_auto_steps;
+
+  /// No description provided for @status_running.
+  ///
+  /// In en, this message translates to:
+  /// **'Service is running...'**
+  String get status_running;
+
+  /// No description provided for @status_ready_to_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Service is ready to start.'**
+  String get status_ready_to_start;
+
+  /// No description provided for @steps_gt_zero.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps must be greater than 0.'**
+  String get steps_gt_zero;
+
+  /// No description provided for @manual_write_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully wrote {steps} steps.'**
+  String manual_write_success(Object steps);
+
+  /// No description provided for @write_fail_check_log.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to write steps. Please check your health app or system settings.'**
+  String get write_fail_check_log;
+
+  /// No description provided for @write_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error writing steps: {error}'**
+  String write_error(Object error);
+
+  /// No description provided for @background_service_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Background service started.'**
+  String get background_service_start;
+
+  /// No description provided for @background_service_stop.
+  ///
+  /// In en, this message translates to:
+  /// **'Background service stopped.'**
+  String get background_service_stop;
+
+  /// No description provided for @notification_update_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps Update'**
+  String get notification_update_title;
+
+  /// No description provided for @automatic_write_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully wrote {steps} steps.'**
+  String automatic_write_success(Object steps);
+
   /// No description provided for @clear_data_button.
   ///
   /// In en, this message translates to:
-  /// **'Clear Permissions & Data'**
+  /// **'Clear All App Data'**
   String get clear_data_button;
 
   /// No description provided for @clear_data_confirm_title.
   ///
   /// In en, this message translates to:
-  /// **'Confirm Data Deletion'**
+  /// **'Confirm Deletion'**
   String get clear_data_confirm_title;
 
   /// No description provided for @clear_data_confirm_content.
   ///
   /// In en, this message translates to:
-  /// **'This will clear all permissions and saved data (including step settings and logs), and stop all background services. The app will be restored to its initial state. Are you sure you want to continue?'**
+  /// **'This will permanently delete all app data, including your settings and logs. This action cannot be undone.'**
   String get clear_data_confirm_content;
 
-  /// No description provided for @clear_data_success_toast.
+  /// No description provided for @data_cleared_success.
   ///
   /// In en, this message translates to:
-  /// **'Data has been cleared. The app will now restart.'**
-  String get clear_data_success_toast;
+  /// **'App data cleared successfully.'**
+  String get data_cleared_success;
 
-  /// No description provided for @language.
+  /// No description provided for @app_will_restart.
   ///
   /// In en, this message translates to:
-  /// **'Language'**
-  String get language;
+  /// **'The app will now restart.'**
+  String get app_will_restart;
 
-  /// No description provided for @chinese.
+  /// No description provided for @auto_pause_title.
   ///
   /// In en, this message translates to:
-  /// **'Chinese'**
-  String get chinese;
+  /// **'Auto-Pause Service'**
+  String get auto_pause_title;
 
-  /// No description provided for @english.
+  /// No description provided for @auto_pause_subtitle.
   ///
   /// In en, this message translates to:
-  /// **'English'**
-  String get english;
+  /// **'Automatically stop the service when a certain number of steps have been written.'**
+  String get auto_pause_subtitle;
 
-  /// No description provided for @systemDefault.
+  /// No description provided for @auto_pause_steps_label.
   ///
   /// In en, this message translates to:
-  /// **'System Default'**
-  String get systemDefault;
+  /// **'Auto-Pause Step Threshold'**
+  String get auto_pause_steps_label;
 
-  /// No description provided for @settings.
+  /// No description provided for @auto_pause_steps_hint.
   ///
   /// In en, this message translates to:
-  /// **'Settings'**
-  String get settings;
+  /// **'Service will stop after this many steps are written in one session.'**
+  String get auto_pause_steps_hint;
+
+  /// No description provided for @offset_settings_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Randomize Steps'**
+  String get offset_settings_title;
+
+  /// No description provided for @offset_settings_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable random offset for steps'**
+  String get offset_settings_subtitle;
+
+  /// No description provided for @app_reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset App'**
+  String get app_reset;
+
+  /// No description provided for @app_reset_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'This action will clear all app data and settings, restoring the app to its initial state.'**
+  String get app_reset_desc;
+
+  /// No description provided for @offset_steps_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps will be randomized within a plus/minus range of this value.'**
+  String get offset_steps_hint;
+
+  /// No description provided for @permission_denied_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission Permanently Denied'**
+  String get permission_denied_title;
+
+  /// No description provided for @permission_denied_content.
+  ///
+  /// In en, this message translates to:
+  /// **'You have permanently denied a required permission. Please go to your device\'s settings page for this app and manually grant the permission to ensure it functions correctly.'**
+  String get permission_denied_content;
+
+  /// No description provided for @open_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get open_settings;
+
+  /// No description provided for @auto_pause_notification_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Paused Automatically'**
+  String get auto_pause_notification_title;
+
+  /// No description provided for @auto_pause_notification_content.
+  ///
+  /// In en, this message translates to:
+  /// **'The step writing service has been paused automatically as the session goal was reached.'**
+  String get auto_pause_notification_content;
 
   /// No description provided for @settings_tooltip.
   ///
   /// In en, this message translates to:
-  /// **'Settings'**
+  /// **'Open Settings'**
   String get settings_tooltip;
-
-  /// No description provided for @manage_permissions.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage App Permissions'**
-  String get manage_permissions;
-
-  /// No description provided for @manage_permissions_desc.
-  ///
-  /// In en, this message translates to:
-  /// **'Opens system settings to manually grant or revoke all app permissions.'**
-  String get manage_permissions_desc;
-
-  /// No description provided for @language_settings.
-  ///
-  /// In en, this message translates to:
-  /// **'Language Settings'**
-  String get language_settings;
 
   /// No description provided for @log_type_manual.
   ///
@@ -524,11 +554,35 @@ abstract class AppLocalizations {
   /// **'Automatic'**
   String get log_type_automatic;
 
-  /// No description provided for @status_initializing.
+  /// No description provided for @start_service_fail.
   ///
   /// In en, this message translates to:
-  /// **'Initializing...'**
-  String get status_initializing;
+  /// **'Failed to start service, please try again.'**
+  String get start_service_fail;
+
+  /// No description provided for @stop_service_fail.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to stop service, please try again.'**
+  String get stop_service_fail;
+
+  /// No description provided for @status_stopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Service is stopped.'**
+  String get status_stopped;
+
+  /// No description provided for @next_run_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Next run is pending.'**
+  String get next_run_pending;
+
+  /// No description provided for @next_run_at.
+  ///
+  /// In en, this message translates to:
+  /// **'Next run at {time}'**
+  String next_run_at(Object time);
 }
 
 class _AppLocalizationsDelegate
@@ -558,9 +612,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

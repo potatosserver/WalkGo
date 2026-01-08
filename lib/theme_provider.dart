@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const String prefTheme = "theme_mode";
+const String _prefThemeMode = "theme_mode";
 
 class ThemeProvider with ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.system;
@@ -9,24 +9,28 @@ class ThemeProvider with ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
 
   ThemeProvider() {
-    _loadTheme();
+    _loadThemeMode();
   }
 
-  Future<void> _loadTheme() async {
+  void _loadThemeMode() async {
     final prefs = await SharedPreferences.getInstance();
-    final themeString =
-        prefs.getString(prefTheme) ?? ThemeMode.system.toString();
-    _themeMode = ThemeMode.values.firstWhere(
-      (e) => e.toString() == themeString,
-      orElse: () => ThemeMode.system,
-    );
+    final themeModeString = prefs.getString(_prefThemeMode);
+    if (themeModeString == null) {
+      _themeMode = ThemeMode.system;
+    } else {
+      _themeMode = ThemeMode.values.firstWhere(
+        (e) => e.toString() == themeModeString,
+        orElse: () => ThemeMode.system,
+      );
+    }
     notifyListeners();
   }
 
-  Future<void> setTheme(ThemeMode themeMode) async {
-    _themeMode = themeMode;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(prefTheme, themeMode.toString());
+  Future<void> setThemeMode(ThemeMode mode) async {
+    if (mode == _themeMode) return;
+    _themeMode = mode;
     notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_prefThemeMode, mode.toString());
   }
 }

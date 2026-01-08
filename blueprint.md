@@ -1,29 +1,40 @@
-
 # Project Blueprint
 
 ## Overview
 
-This document outlines the plan for implementing an Android 12+ style toast notification within the Flutter application. The goal is to provide users with clear, non-intrusive feedback that aligns with modern Android UI standards.
+This document outlines the development and design of a Flutter application called WalkGo. The primary goal of WalkGo is to help users automatically log steps to their health data, making it easier to achieve daily fitness goals. The app features background services, localization, and a range of customizable settings.
 
 ## Style, Design, and Features
 
 ### Implemented
 
-*   **Initial Setup:** The project is a Flutter application with background services, localization, and basic settings pages.
-*   **Notifications:** The app currently uses local notifications (`flutter_local_notifications`) to inform the user about events, such as the success of a "manual write" operation.
+*   **Core Functionality:**
+    *   **Automatic Step Writing:** A background service automatically writes a configurable number of steps at a set interval.
+    *   **Manual Step Writing:** Users can manually trigger a step write for testing or immediate logging.
+    *   **Localization:** The app supports English and Chinese, with language selection available in the settings.
+*   **User Interface & Experience:**
+    *   **Modern Theming:** The app uses Material 3 design, with support for light, dark, and system default themes.
+    *   **Welcome & Setup Flow:** A guided, one-time setup process for new users to grant necessary permissions (Health, Activity, Notifications, Battery Optimization).
+    *   **Settings Management:** A dedicated settings page allows users to manage themes, languages, logs, and application data.
+    *   **Toast Notifications:** The app uses `fluttertoast` to provide non-intrusive feedback for actions like manual step writing, aligning with modern Android UI standards.
+*   **Advanced Features:**
+    *   **Random Step Offset:** The number of steps written can be randomized by adding or subtracting a configurable offset, making the data appear more natural. This feature is enabled by default.
+    *   **Auto-Pause:** The background service can be configured to automatically stop for the day once a specified total number of steps has been logged.
 
-### Current Plan
+### Current UI/UX Enhancements
 
-*   **Toast Notifications:**
-    *   **Technology:** We will use the `fluttertoast` package to leverage native Android Toast functionality.
-    *   **Styling:** Toasts will conform to the Android 12+ standard, automatically including the app icon and name. This will be achieved by setting the toast's gravity to a non-center position (e.g., `ToastGravity.BOTTOM`).
-    *   **Trigger:** A toast message will be displayed upon the successful completion of the "manual write once" action. This will replace the existing local notification for this event to provide a less intrusive user experience.
+*   **Relocated Advanced Settings Button:** The entry point for "Advanced Settings" has been moved from the general settings page directly to the main home screen, placing it below the primary parameter inputs for better visibility and access.
+*   **Intuitive Settings Interaction:** On the "Advanced Settings" page, when a feature (like "Random Step Offset" or "Auto-Pause") is disabled via its switch:
+    *   The corresponding input fields (e.g., offset amount, auto-pause step count) become visually disabled (grayed out) but remain visible.
+    *   The switch for enabling/disabling a feature has been moved to the main title of the setting card, creating a cleaner and more standard `Row` layout.
 
 ## Plan and Steps for Current Request
 
-1.  **Add Dependency:** Add the `fluttertoast` package to the `pubspec.yaml` file.
-2.  **Identify Trigger Location:** Examine `lib/settings_page.dart` and `lib/main.dart` to find the code that executes the "manual write" and currently triggers a local notification.
-3.  **Implement Toast:** Replace the `FlutterLocalNotificationsPlugin.show()` call with `Fluttertoast.showToast()`.
-    *   The message will be sourced from the localization files (`l10n.manual_write_success(steps)`).
-    *   The toast gravity will be set to `ToastGravity.BOTTOM`.
-4.  **Verification:** Run the app and test the "manual write" feature to ensure the toast appears correctly with the app icon on Android 12+ devices.
+1.  **Enable Offset by Default:** Modify `advanced_settings_page.dart` to set the `_offsetEnabled` state to `true` by default when settings are first loaded.
+2.  **Refactor UI in `advanced_settings_page.dart`:**
+    *   Create a reusable `_buildSettingCard` widget to encapsulate the UI for each setting option.
+    *   Use a `Row` within the card to place the setting's title and its `Switch` on the same line for a more compact layout.
+    *   Bind the `enabled` property of the `TextField` widgets to the state of their respective switches (`_offsetEnabled`, `_autoPauseEnabled`).
+    *   Adjust the visual appearance of disabled `TextField`s to have a grayed-out background, indicating they are inactive.
+3.  **Update Localization Files:** Add new keys and translations for the improved UI elements in `app_en.arb` and `app_zh.arb`.
+4.  **Update Blueprint:** Document the new design decisions and implementation details in `blueprint.md`.

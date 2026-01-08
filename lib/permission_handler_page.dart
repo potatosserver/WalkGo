@@ -17,35 +17,69 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   static const int _pageCount = 4;
+  final _health = Health();
 
   Future<void> _setPermissionsGranted() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(prefPermissionsGranted, true);
   }
 
-  Future<bool> _checkSimplePermission(Permission permission) async {
-    return await permission.isGranted;
+  Future<PermissionStatus> _checkSimplePermission(Permission permission) async {
+    return await permission.status;
   }
 
   Future<void> _requestSimplePermission(Permission permission) async {
-    await permission.request();
+    final status = await permission.request();
+    if (status.isPermanentlyDenied) {
+      _showPermanentlyDeniedDialog();
+    }
     _updatePageState();
   }
 
   Future<bool> _checkHealthPermission() async {
-    return await Health().hasPermissions(
-          [HealthDataType.STEPS],
-          permissions: [HealthDataAccess.READ_WRITE],
-        ) ??
-        false;
+    final types = [HealthDataType.STEPS];
+    final permissions = [HealthDataAccess.READ_WRITE];
+    final granted = await _health.hasPermissions(types, permissions: permissions) ?? false;
+    return granted;
   }
 
   Future<void> _requestHealthPermission() async {
-    await Health().requestAuthorization(
+    final granted = await _health.requestAuthorization(
       [HealthDataType.STEPS],
       permissions: [HealthDataAccess.READ_WRITE],
     );
+    // The health package doesn't give us a permanently denied status directly.
+    // We assume if it's not granted after a request, the user needs guidance.
+    if (!granted) {
+      // This is a soft check. A better implementation might involve checking the status before requesting.
+      // For now, we'll rely on the user to grant it. A more robust solution might be needed
+      // if users frequently get stuck here.
+    }
     _updatePageState();
+  }
+
+  void _showPermanentlyDeniedDialog() {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.permission_denied_title),
+        content: Text(l10n.permission_denied_content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              openAppSettings();
+              Navigator.pop(context);
+            },
+            child: Text(l10n.open_settings),
+          ),
+        ],
+      ),
+    );
   }
 
   void _updatePageState() {
@@ -120,8 +154,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                     description: l10n.permission_activity_desc,
                     requestPermission: () =>
                         _requestSimplePermission(Permission.activityRecognition),
-                    checkPermission: () =>
-                        _checkSimplePermission(Permission.activityRecognition),
+                    checkPermission: () async =>
+                        (await _checkSimplePermission(Permission.activityRecognition)).isGranted,
                   );
                 case 2:
                   return _buildPermissionPage(
@@ -130,8 +164,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                     description: l10n.permission_notification_desc,
                     requestPermission: () =>
                         _requestSimplePermission(Permission.notification),
-                    checkPermission: () =>
-                        _checkSimplePermission(Permission.notification),
+                    checkPermission: () async =>
+                        (await _checkSimplePermission(Permission.notification)).isGranted,
                   );
                 case 3:
                   return _buildPermissionPage(
@@ -140,8 +174,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                     description: l10n.permission_battery_desc,
                     requestPermission: () => _requestSimplePermission(
                         Permission.ignoreBatteryOptimizations),
-                    checkPermission: () => _checkSimplePermission(
-                        Permission.ignoreBatteryOptimizations),
+                    checkPermission: () async =>
+                        (await _checkSimplePermission(Permission.ignoreBatteryOptimizations)).isGranted,
                   );
                 default:
                   return const SizedBox.shrink();
@@ -223,9 +257,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                       backgroundColor:
                           WidgetStateProperty.resolveWith<Color?>((states) {
                         if (states.contains(WidgetState.disabled)) {
-                          return colorScheme.onSurface.withOpacity(0.12);
+                          return colorScheme.onSurface.withAlpha(30);
                         }
-                        // Use green for the final step button, otherwise primary color
                         if (_currentPage == _pageCount - 1) {
                           return Colors.green.shade600;
                         }
@@ -234,7 +267,7 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                       foregroundColor:
                           WidgetStateProperty.resolveWith<Color?>((states) {
                         if (states.contains(WidgetState.disabled)) {
-                          return colorScheme.onSurface.withOpacity(0.38);
+                          return colorScheme.onSurface.withAlpha(97);
                         }
                         return colorScheme.onPrimary;
                       })),
