@@ -17,14 +17,17 @@ class LanguageSettingsPage extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          _buildLanguageOption(context, l10n.english, const Locale('en'), languageService),
-          _buildLanguageOption(context, l10n.traditional_chinese, const Locale('zh', 'TW'), languageService),
+          _buildLanguageOption(
+              context, l10n.english, const Locale('en'), languageService),
+          _buildLanguageOption(context, l10n.traditional_chinese,
+              const Locale('zh', 'TW'), languageService),
         ],
       ),
     );
   }
 
-  Widget _buildLanguageOption(BuildContext context, String title, Locale locale, LanguageService service) {
+  Widget _buildLanguageOption(BuildContext context, String title, Locale locale,
+      LanguageService service) {
     final bool isSelected = service.appLocale == locale;
     return ListTile(
       title: Text(title),

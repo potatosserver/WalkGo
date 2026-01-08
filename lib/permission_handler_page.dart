@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:health/health.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:walkgo/main.dart';
+import 'package:walkgo/constants.dart';
 import 'l10n/app_localizations.dart';
 
 class PermissionHandlerPage extends StatefulWidget {
@@ -39,7 +39,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
   Future<bool> _checkHealthPermission() async {
     final types = [HealthDataType.STEPS];
     final permissions = [HealthDataAccess.READ_WRITE];
-    final granted = await _health.hasPermissions(types, permissions: permissions) ?? false;
+    final granted =
+        await _health.hasPermissions(types, permissions: permissions) ?? false;
     return granted;
   }
 
@@ -48,13 +49,7 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
       [HealthDataType.STEPS],
       permissions: [HealthDataAccess.READ_WRITE],
     );
-    // The health package doesn't give us a permanently denied status directly.
-    // We assume if it's not granted after a request, the user needs guidance.
-    if (!granted) {
-      // This is a soft check. A better implementation might involve checking the status before requesting.
-      // For now, we'll rely on the user to grant it. A more robust solution might be needed
-      // if users frequently get stuck here.
-    }
+    if (!granted) {}
     _updatePageState();
   }
 
@@ -152,10 +147,11 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                     icon: Icons.directions_run,
                     title: l10n.permission_activity_title,
                     description: l10n.permission_activity_desc,
-                    requestPermission: () =>
-                        _requestSimplePermission(Permission.activityRecognition),
-                    checkPermission: () async =>
-                        (await _checkSimplePermission(Permission.activityRecognition)).isGranted,
+                    requestPermission: () => _requestSimplePermission(
+                        Permission.activityRecognition),
+                    checkPermission: () async => (await _checkSimplePermission(
+                            Permission.activityRecognition))
+                        .isGranted,
                   );
                 case 2:
                   return _buildPermissionPage(
@@ -165,7 +161,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                     requestPermission: () =>
                         _requestSimplePermission(Permission.notification),
                     checkPermission: () async =>
-                        (await _checkSimplePermission(Permission.notification)).isGranted,
+                        (await _checkSimplePermission(Permission.notification))
+                            .isGranted,
                   );
                 case 3:
                   return _buildPermissionPage(
@@ -174,8 +171,9 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                     description: l10n.permission_battery_desc,
                     requestPermission: () => _requestSimplePermission(
                         Permission.ignoreBatteryOptimizations),
-                    checkPermission: () async =>
-                        (await _checkSimplePermission(Permission.ignoreBatteryOptimizations)).isGranted,
+                    checkPermission: () async => (await _checkSimplePermission(
+                            Permission.ignoreBatteryOptimizations))
+                        .isGranted,
                   );
                 default:
                   return const SizedBox.shrink();
@@ -216,8 +214,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                     Text(
                       title,
                       style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 15),

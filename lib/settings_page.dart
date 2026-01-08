@@ -34,7 +34,8 @@ class SettingsPage extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const AppearanceSettingsPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const AppearanceSettingsPage()),
                   );
                 },
               ),
@@ -45,7 +46,8 @@ class SettingsPage extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const LanguageSettingsPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const LanguageSettingsPage()),
                   );
                 },
               ),
@@ -84,9 +86,13 @@ class SettingsPage extends StatelessWidget {
                 onTap: () => _showRerunSetupDialog(context, l10n),
               ),
               ListTile(
-                leading: Icon(Icons.delete_forever_outlined, color: theme.colorScheme.error),
-                title: Text(l10n.clear_data_button, style: TextStyle(color: theme.colorScheme.error)),
-                subtitle: Text(l10n.app_reset_desc, style: TextStyle(color: theme.colorScheme.error.withAlpha(204))),
+                leading: Icon(Icons.delete_forever_outlined,
+                    color: theme.colorScheme.error),
+                title: Text(l10n.clear_data_button,
+                    style: TextStyle(color: theme.colorScheme.error)),
+                subtitle: Text(l10n.app_reset_desc,
+                    style: TextStyle(
+                        color: theme.colorScheme.error.withAlpha(204))),
                 onTap: () => _showClearDataDialog(context, l10n),
               ),
             ],
@@ -96,7 +102,8 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsCard(BuildContext context, {required String title, required List<Widget> children}) {
+  Widget _buildSettingsCard(BuildContext context,
+      {required String title, required List<Widget> children}) {
     final theme = Theme.of(context);
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
@@ -129,7 +136,8 @@ class SettingsPage extends StatelessWidget {
         title: Text(l10n.about_walkgo),
         content: Text(l10n.about_walkgo_content),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.close)),
+          TextButton(
+              onPressed: () => Navigator.pop(context), child: Text(l10n.close)),
         ],
       ),
     );
@@ -142,7 +150,9 @@ class SettingsPage extends StatelessWidget {
         title: Text(l10n.rerun_setup_confirm_title),
         content: Text(l10n.rerun_setup_confirm_content),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(l10n.cancel)),
+          TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(l10n.cancel)),
           TextButton(
             onPressed: () async {
               final navigator = Navigator.of(dialogContext);
@@ -171,7 +181,9 @@ class SettingsPage extends StatelessWidget {
         title: Text(l10n.clear_data_confirm_title),
         content: Text(l10n.clear_data_confirm_content),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(l10n.cancel)),
+          TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(l10n.cancel)),
           TextButton(
             onPressed: () async {
               final navigator = Navigator.of(dialogContext);
@@ -185,7 +197,8 @@ class SettingsPage extends StatelessWidget {
               navigator.popUntil((route) => route.isFirst);
               navigator.pushReplacementNamed('/');
             },
-            child: Text(l10n.confirm, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            child: Text(l10n.confirm,
+                style: TextStyle(color: Theme.of(context).colorScheme.error)),
           ),
         ],
       ),

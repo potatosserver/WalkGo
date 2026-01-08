@@ -19,7 +19,8 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
   bool _offsetEnabled = true;
   bool _autoPauseEnabled = false;
   final TextEditingController _offsetController = TextEditingController();
-  final TextEditingController _autoPauseStepsController = TextEditingController();
+  final TextEditingController _autoPauseStepsController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -33,7 +34,8 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
       _offsetEnabled = prefs.getBool(prefOffsetEnabled) ?? true;
       _offsetController.text = (prefs.getInt(prefOffset) ?? 50).toString();
       _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
-      _autoPauseStepsController.text = (prefs.getInt(prefAutoPauseSteps) ?? 50000).toString();
+      _autoPauseStepsController.text =
+          (prefs.getInt(prefAutoPauseSteps) ?? 50000).toString();
     });
   }
 
@@ -42,8 +44,9 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
     await prefs.setBool(prefOffsetEnabled, _offsetEnabled);
     await prefs.setInt(prefOffset, int.tryParse(_offsetController.text) ?? 50);
     await prefs.setBool(prefAutoPauseEnabled, _autoPauseEnabled);
-    await prefs.setInt(prefAutoPauseSteps, int.tryParse(_autoPauseStepsController.text) ?? 50000);
-    
+    await prefs.setInt(prefAutoPauseSteps,
+        int.tryParse(_autoPauseStepsController.text) ?? 50000);
+
     // Notify the background service to update its settings
     FlutterBackgroundService().invoke('update');
   }
@@ -125,7 +128,8 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
               trailing: Switch(value: value, onChanged: onChanged),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: child,
             ),
           ],

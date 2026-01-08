@@ -1,0 +1,49 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:walkgo/language_service.dart';
+import 'package:walkgo/permission_handler_page.dart';
+import 'package:walkgo/theme_provider.dart';
+import 'package:walkgo/welcome_page.dart';
+import 'home_page.dart';
+import 'initial_page.dart';
+import 'l10n/app_localizations.dart';
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageService()),
+      ],
+      child: Consumer2<ThemeProvider, LanguageService>(
+        builder: (context, themeProvider, languageService, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'WalkGo',
+            theme: ThemeData(
+                useMaterial3: true,
+                colorSchemeSeed: Colors.deepPurple,
+                brightness: Brightness.light),
+            darkTheme: ThemeData(
+                useMaterial3: true,
+                colorSchemeSeed: Colors.deepPurple,
+                brightness: Brightness.dark),
+            themeMode: themeProvider.themeMode,
+            locale: languageService.appLocale,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            initialRoute: '/',
+            routes: {
+              '/': (context) => const InitialPage(),
+              '/home': (context) => const HomePage(),
+              '/welcome': (context) => const WelcomePage(),
+              '/permission': (context) => const PermissionHandlerPage(),
+            },
+          );
+        },
+      ),
+    );
+  }
+}

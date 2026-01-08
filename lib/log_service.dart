@@ -11,17 +11,17 @@ class LogService {
   Future<void> addLog(Map<String, dynamic> logEntry) async {
     final prefs = await SharedPreferences.getInstance();
     final log = await getLogs();
-    
+
     // Add a timestamp to the log entry
     logEntry['timestamp'] = DateTime.now().toIso8601String();
-    
+
     log.insert(0, logEntry); // Add to the beginning of the list
 
     // Keep the log size manageable, e.g., 100 entries
     if (log.length > 100) {
       log.removeLast();
     }
-    
+
     await prefs.setString(_logKey, jsonEncode(log));
   }
 

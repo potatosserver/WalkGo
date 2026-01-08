@@ -53,14 +53,18 @@ class _LogsPageState extends State<LogsPage> {
                 final log = _logs[index];
                 final isManual = log['type'] == 'manual';
                 return ListTile(
-                  leading: Icon(isManual ? Icons.touch_app_outlined : Icons.sync_alt_outlined),
+                  leading: Icon(isManual
+                      ? Icons.touch_app_outlined
+                      : Icons.sync_alt_outlined),
                   title: Text(
                     isManual
                         ? l10n.manual_write_success(log['steps'] ?? 0)
                         : l10n.automatic_write_success(log['steps'] ?? 0),
                   ),
                   subtitle: Text(log['timestamp'] ?? ''),
-                  trailing: Text(isManual ? l10n.log_type_manual : l10n.log_type_automatic),
+                  trailing: Text(isManual
+                      ? l10n.log_type_manual
+                      : l10n.log_type_automatic),
                 );
               },
             ),

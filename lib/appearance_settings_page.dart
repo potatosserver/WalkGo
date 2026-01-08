@@ -17,15 +17,19 @@ class AppearanceSettingsPage extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          _buildThemeOption(context, l10n.system_theme, ThemeMode.system, themeProvider),
-          _buildThemeOption(context, l10n.light_theme, ThemeMode.light, themeProvider),
-          _buildThemeOption(context, l10n.dark_theme, ThemeMode.dark, themeProvider),
+          _buildThemeOption(
+              context, l10n.system_theme, ThemeMode.system, themeProvider),
+          _buildThemeOption(
+              context, l10n.light_theme, ThemeMode.light, themeProvider),
+          _buildThemeOption(
+              context, l10n.dark_theme, ThemeMode.dark, themeProvider),
         ],
       ),
     );
   }
 
-  Widget _buildThemeOption(BuildContext context, String title, ThemeMode mode, ThemeProvider provider) {
+  Widget _buildThemeOption(BuildContext context, String title, ThemeMode mode,
+      ThemeProvider provider) {
     final bool isSelected = provider.themeMode == mode;
     return ListTile(
       title: Text(title),
