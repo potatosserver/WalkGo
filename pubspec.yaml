@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.6
   flutter_background_service: ^5.0.0
-  flutter_local_notifications: ^17.0.0
+  flutter_local_notifications: ^19.5.0
   fluttertoast: ^8.2.1
   health: ^13.2.1
   provider: ^6.0.2

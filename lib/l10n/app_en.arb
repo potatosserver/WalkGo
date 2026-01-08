@@ -1,3 +1,4 @@
+
 {
   "walkgo": "WalkGO",
   "settings_tooltip": "Settings",
@@ -134,5 +135,27 @@
   "manual_steps_label": "Manual Steps",
   "manual_steps_hint": "Manually add a specific number of steps.",
   "auto_pause_threshold": "Auto-pause Threshold",
-  "auto_pause_threshold_hint": "The service will be stopped after writing this many steps in one session."
+  "auto_pause_threshold_hint": "The service will be stopped after writing this many steps in one session.",
+  "notification_service_running": "Service is running",
+  "notification_next_run": "Next write at: {time}",
+  "@notification_next_run": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "notification_steps_written": "{steps} steps written",
+  "@notification_steps_written": {
+    "placeholders": {
+      "steps": {
+        "type": "String"
+      }
+    }
+  },
+  "notification_channel_id": "WalkGo Service",
+  "notification_channel_desc": "Notifications for WalkGo background service",
+  "notification_service_stopped_title": "Service Stopped",
+  "notification_service_stopped_content": "Ready. Waiting for you to enable auto mode.",
+  "notification_steps_written_title": "Steps Written Successfully"
 }

@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:walkgo/constants.dart';
+import 'package:go_router/go_router.dart';
 import 'l10n/app_localizations.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
 
-  Future<void> _onGetStarted(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(prefIsFirstLaunch, false);
-    if (context.mounted) {
-      Navigator.pushReplacementNamed(context, '/permission');
-    }
+  void _onGetStarted(BuildContext context) {
+    context.go('/permission');
   }
 
   @override
@@ -24,7 +19,7 @@ class WelcomePage extends StatelessWidget {
     final systemUiOverlayStyle = SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
-      systemNavigationBarColor: theme.colorScheme.surface, // Changed from black
+      systemNavigationBarColor: theme.colorScheme.surface,
       systemNavigationBarIconBrightness:
           isLightMode ? Brightness.dark : Brightness.light,
     );

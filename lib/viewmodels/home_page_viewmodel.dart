@@ -1,3 +1,4 @@
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -102,17 +103,37 @@ class HomePageViewModel extends ChangeNotifier {
   }
 
   Future<void> toggleAutoMode() async {
+    if (_l10n == null) return; // Ensure l10n is available
+
     final newStatus = !_isAutoRunning;
     _isAutoRunning = newStatus;
     notifyListeners();
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(prefIsAuto, newStatus);
+
     if (newStatus) {
       await prefs.setInt(prefSessionTotalSteps, 0);
-      _service.invoke('start');
+      _service.invoke(
+        'start',
+        {
+          // Pass all required localized strings to the background service
+          'notification_service_running': _l10n!.notification_service_running,
+          'notification_steps_written_title': _l10n!.notification_steps_written_title,
+          'notification_steps_written': _l10n!.notification_steps_written('{steps}'), // Pass as a template
+          'notification_next_run': _l10n!.notification_next_run('{time}'), // Pass as a template
+          'automatic_write_success': _l10n!.automatic_write_success('{steps}'),
+          'write_fail_check_log': _l10n!.write_fail_check_log,
+        },
+      );
     } else {
-      _service.invoke("stop");
+      _service.invoke(
+        "stop",
+        {
+          'notification_service_stopped_title': _l10n!.notification_service_stopped_title,
+          'notification_service_stopped_content': _l10n!.notification_service_stopped_content,
+        },
+      );
     }
     await _updateStatusLogText();
   }

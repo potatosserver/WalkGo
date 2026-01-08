@@ -1,5 +1,6 @@
+
 import 'package:health/health.dart';
-import 'package:walkgo/log_service.dart';
+import 'package:walkgo/services/error_log_service.dart';
 
 class HealthService {
   static final HealthService _instance = HealthService._internal();
@@ -22,10 +23,7 @@ class HealthService {
       }
       return steps.fold<int>(0, (sum, data) => sum + (data.value as num).toInt());
     } catch (e) {
-      LogService().addLog({
-        'event': '[HealthService] Error fetching steps today',
-        'error': e.toString()
-      });
+      ErrorLogService().addErrorLog('[HealthService] Error fetching steps today', e.toString());
       return 0;
     }
   }
@@ -42,10 +40,7 @@ class HealthService {
       );
       return success;
     } catch (e) {
-      LogService().addLog({
-        'event': '[HealthService] Error writing steps',
-        'error': e.toString()
-      });
+      ErrorLogService().addErrorLog('[HealthService] Error writing steps', e.toString());
       return false;
     }
   }

@@ -703,6 +703,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The service will be stopped after writing this many steps in one session.'**
   String get auto_pause_threshold_hint;
+
+  /// No description provided for @notification_service_running.
+  ///
+  /// In en, this message translates to:
+  /// **'Service is running'**
+  String get notification_service_running;
+
+  /// No description provided for @notification_next_run.
+  ///
+  /// In en, this message translates to:
+  /// **'Next write at: {time}'**
+  String notification_next_run(String time);
+
+  /// No description provided for @notification_steps_written.
+  ///
+  /// In en, this message translates to:
+  /// **'{steps} steps written'**
+  String notification_steps_written(String steps);
+
+  /// No description provided for @notification_channel_id.
+  ///
+  /// In en, this message translates to:
+  /// **'WalkGo Service'**
+  String get notification_channel_id;
+
+  /// No description provided for @notification_channel_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications for WalkGo background service'**
+  String get notification_channel_desc;
+
+  /// No description provided for @notification_service_stopped_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Stopped'**
+  String get notification_service_stopped_title;
+
+  /// No description provided for @notification_service_stopped_content.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready. Waiting for you to enable auto mode.'**
+  String get notification_service_stopped_content;
+
+  /// No description provided for @notification_steps_written_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps Written Successfully'**
+  String get notification_steps_written_title;
 }
 
 class _AppLocalizationsDelegate

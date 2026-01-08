@@ -98,7 +98,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get auto_pause_description => '當寫入的步數達到設定的閾值時，自動暫停服務。';
 
   @override
-  String get auto_pause_steps_label => '自動暫Ting步數閾值';
+  String get auto_pause_steps_label => '自動暫停步數閾值';
 
   @override
   String get write_logs => '步數日誌';
@@ -193,7 +193,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get permission_denied_content =>
-      '您已永久GCU拒絕一項必要權限。請前往您裝置上此應用程式的設定頁面，並手動授予權限以確保其正常運作。';
+      '您已永久拒絕一項必要權限。請前往您裝置上此應用程式的設定頁面，並手動授予權限以確保其正常運作。';
 
   @override
   String get open_settings => '開啟設定';
@@ -324,4 +324,32 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get auto_pause_threshold_hint => '在一次工作階段中寫入這麼多步數後，服務將會停止。';
+
+  @override
+  String get notification_service_running => '服務運行中';
+
+  @override
+  String notification_next_run(String time) {
+    return '下次寫入於: $time';
+  }
+
+  @override
+  String notification_steps_written(String steps) {
+    return '已寫入 $steps 步';
+  }
+
+  @override
+  String get notification_channel_id => 'WalkGo 服務';
+
+  @override
+  String get notification_channel_desc => '用於 WalkGo 背景服務的通知';
+
+  @override
+  String get notification_service_stopped_title => '服務已停止';
+
+  @override
+  String get notification_service_stopped_content => '準備就緒，等待您開啟自動模式。';
+
+  @override
+  String get notification_steps_written_title => '成功寫入步數';
 }

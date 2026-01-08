@@ -1,5 +1,7 @@
+
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:walkgo/constants.dart';
 
 class LogService {
   static final LogService _instance = LogService._internal();
@@ -8,12 +10,14 @@ class LogService {
 
   static const _logKey = 'activity_log';
 
-  Future<void> addLog(Map<String, dynamic> logEntry) async {
+  Future<int> addLog(int steps) async {
     final prefs = await SharedPreferences.getInstance();
     final log = await getLogs();
 
-    // Add a timestamp to the log entry
-    logEntry['timestamp'] = DateTime.now().toIso8601String();
+    final logEntry = {
+      'steps': steps,
+      'timestamp': DateTime.now().toIso8601String(),
+    };
 
     log.insert(0, logEntry); // Add to the beginning of the list
 
@@ -23,6 +27,12 @@ class LogService {
     }
 
     await prefs.setString(_logKey, jsonEncode(log));
+
+    // Update and return the session total
+    final currentTotal = prefs.getInt(prefSessionTotalSteps) ?? 0;
+    final newTotal = currentTotal + steps;
+    await prefs.setInt(prefSessionTotalSteps, newTotal);
+    return newTotal;
   }
 
   Future<List<Map<String, dynamic>>> getLogs() async {
@@ -45,5 +55,7 @@ class LogService {
   Future<void> clearLogs() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_logKey);
+    // Also reset the session total when clearing logs
+    await prefs.setInt(prefSessionTotalSteps, 0);
   }
 }

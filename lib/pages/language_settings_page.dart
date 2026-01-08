@@ -9,67 +9,41 @@ class LanguageSettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final languageService = context.watch<LanguageService>();
+    final currentLocale = languageService.appLocale;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.language_settings),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-        child: _buildSettingsCard(
-          context,
-          title: l10n.language_settings,
-          children: [
-            _buildLanguageOption(context, l10n.system_language, null),
-            _buildLanguageOption(context, l10n.english, const Locale('en')),
-            _buildLanguageOption(context, l10n.chinese, const Locale('zh')),
-          ],
-        ),
+      body: ListView(
+        children: <Widget>[
+          RadioListTile<Locale?>(
+            title: Text(l10n.system_language),
+            value: null,
+            groupValue: currentLocale,
+            onChanged: (Locale? value) {
+              languageService.changeLanguage(value);
+            },
+          ),
+          RadioListTile<Locale?>(
+            title: Text(l10n.english),
+            value: const Locale('en'),
+            groupValue: currentLocale,
+            onChanged: (Locale? value) {
+              languageService.changeLanguage(value);
+            },
+          ),
+          RadioListTile<Locale?>(
+            title: Text(l10n.chinese),
+            value: const Locale('zh'),
+            groupValue: currentLocale,
+            onChanged: (Locale? value) {
+              languageService.changeLanguage(value);
+            },
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildSettingsCard(BuildContext context,
-      {required String title, required List<Widget> children}) {
-    final theme = Theme.of(context);
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16.0),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: Text(
-                title,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            ...children,
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLanguageOption(
-      BuildContext context, String title, Locale? locale) {
-    final languageService = Provider.of<LanguageService>(context, listen: false);
-    final bool isSelected = languageService.appLocale == locale;
-
-    return ListTile(
-      title: Text(title),
-      trailing: isSelected
-          ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary)
-          : const Icon(Icons.radio_button_unchecked),
-      onTap: () {
-        languageService.changeLanguage(locale);
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      },
     );
   }
 }

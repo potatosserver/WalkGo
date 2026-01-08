@@ -337,4 +337,34 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get auto_pause_threshold_hint =>
       'The service will be stopped after writing this many steps in one session.';
+
+  @override
+  String get notification_service_running => 'Service is running';
+
+  @override
+  String notification_next_run(String time) {
+    return 'Next write at: $time';
+  }
+
+  @override
+  String notification_steps_written(String steps) {
+    return '$steps steps written';
+  }
+
+  @override
+  String get notification_channel_id => 'WalkGo Service';
+
+  @override
+  String get notification_channel_desc =>
+      'Notifications for WalkGo background service';
+
+  @override
+  String get notification_service_stopped_title => 'Service Stopped';
+
+  @override
+  String get notification_service_stopped_content =>
+      'Ready. Waiting for you to enable auto mode.';
+
+  @override
+  String get notification_steps_written_title => 'Steps Written Successfully';
 }

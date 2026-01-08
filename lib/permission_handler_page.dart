@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health/health.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:walkgo/constants.dart';
 import 'l10n/app_localizations.dart';
 
 class PermissionHandlerPage extends StatefulWidget {
@@ -19,11 +17,6 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
   int _currentPage = 0;
   static const int _pageCount = 4;
   final _health = Health();
-
-  Future<void> _setPermissionsGranted() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(prefPermissionsGranted, true);
-  }
 
   Future<PermissionStatus> _checkSimplePermission(Permission permission) async {
     return await permission.status;
@@ -91,11 +84,7 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
         curve: Curves.easeIn,
       );
     } else {
-      _setPermissionsGranted().then((_) {
-        if (mounted) {
-          context.go('/home');
-        }
-      });
+      context.go('/home');
     }
   }
 
