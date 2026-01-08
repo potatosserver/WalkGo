@@ -7,8 +7,8 @@ import 'package:walkgo/health_service.dart';
 Future<Map<String, int>> calculateFinalSteps(SharedPreferences prefs) async {
   await prefs.reload();
   final baseSteps = prefs.getInt(prefBaseSteps) ?? 500;
-  final offsetEnabled = prefs.getBool('offset_enabled') ?? true;
-  final offset = prefs.getInt('offset_steps') ?? 50;
+  final offsetEnabled = prefs.getBool(prefOffsetEnabled) ?? true;
+  final offset = prefs.getInt(prefOffsetSteps) ?? 50;
 
   final currentSteps = await HealthService().getStepsToday();
   int stepsToAdd = baseSteps;

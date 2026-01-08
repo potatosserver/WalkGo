@@ -12,8 +12,23 @@ import 'package:walkgo/app_widget.dart';
 import 'package:walkgo/constants.dart';
 import 'package:walkgo/health_service.dart';
 import 'package:walkgo/log_service.dart';
+import 'package:walkgo/router/app_router.dart';
 import 'l10n/app_localizations.dart';
 import 'utils/step_calculator.dart';
+
+const AndroidNotificationChannel foregroundChannel = AndroidNotificationChannel(
+  foregroundChannelId, // 'foreground_service'
+  foregroundChannelName, // 'Foreground Service'
+  description: foregroundChannelDescription, // 'This channel is used for important notifications.'
+  importance: Importance.low, // To avoid sound
+);
+
+const AndroidNotificationChannel stepsUpdateChannel = AndroidNotificationChannel(
+  stepsUpdateChannelId, // 'steps_update'
+  stepsUpdateChannelName, // 'Steps Update'
+  description: stepsUpdateChannelDescription, // 'This channel is used for steps update notifications.'
+  importance: Importance.defaultImportance,
+);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +42,9 @@ Future<void> main() async {
   });
 
   await initializeService();
-  runApp(const MyApp());
+  final initialRoute = await AppRouter.getInitialRoute();
+
+  runApp(MyApp(initialRoute: initialRoute));
 }
 
 Future<void> initializeService() async {
@@ -85,6 +102,7 @@ void onStart(ServiceInstance service) async {
     if (l10n == null) await loadL10n();
     final prefs = await SharedPreferences.getInstance();
     final isRunning = prefs.getBool(prefIsAuto) ?? false;
+    final sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
 
     String contentText;
     if (isRunning) {
@@ -111,8 +129,11 @@ void onStart(ServiceInstance service) async {
         );
       }
     }
-    service.invoke(
-        'update_ui', {"status_log": contentText, "is_running": isRunning});
+    service.invoke('update_ui', {
+      "status_log": contentText,
+      "is_running": isRunning,
+      "session_total_steps": sessionTotalSteps,
+    });
   }
 
   await loadL10n();
@@ -181,7 +202,7 @@ Future<void> executeStepWrite(
     final bool success = await HealthService().writeSteps(totalStepsToWrite);
 
     if (success) {
-      notificationMessage = l10n.automatic_write_success(totalStepsToWrite);
+      notificationMessage = l10n.automatic_write_success(totalStepsToWrite.toString());
       await logService.addLog({
         'type': 'automatic',
         'originalSteps': originalSteps,
@@ -191,7 +212,7 @@ Future<void> executeStepWrite(
 
       final autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
       if (autoPauseEnabled) {
-        final autoPauseSteps = prefs.getInt(prefAutoPauseSteps) ?? 50000;
+        final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
         final currentSessionSteps =
             (prefs.getInt(prefSessionTotalSteps) ?? 0) + stepsAdded;
         await prefs.setInt(prefSessionTotalSteps, currentSessionSteps);
@@ -199,10 +220,14 @@ Future<void> executeStepWrite(
         if (currentSessionSteps >= autoPauseSteps) {
           await prefs.setBool(prefIsAuto, false);
           service.invoke('stop');
+
+          final notificationContent = l10n
+              .auto_pause_notification_content_with_steps(autoPauseSteps.toString());
+
           plugin.show(
             stepsUpdateNotificationId + 1,
             l10n.auto_pause_notification_title,
-            l10n.auto_pause_notification_content,
+            notificationContent,
             NotificationDetails(
               android: AndroidNotificationDetails(
                 stepsUpdateChannel.id,
@@ -213,6 +238,7 @@ Future<void> executeStepWrite(
               ),
             ),
           );
+          service.invoke('show_toast', {'message': notificationContent});
           return;
         }
       }

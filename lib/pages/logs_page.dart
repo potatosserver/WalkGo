@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walkgo/log_service.dart';
-import 'l10n/app_localizations.dart';
+import 'package:walkgo/l10n/app_localizations.dart';
 
 class LogsPage extends StatefulWidget {
   const LogsPage({super.key});
@@ -52,16 +52,21 @@ class _LogsPageState extends State<LogsPage> {
               itemBuilder: (context, index) {
                 final log = _logs[index];
                 final isManual = log['type'] == 'manual';
+
+                // Safely extract step details
+                final originalSteps = log['originalSteps'] ?? 0;
+                final stepsAdded = log['stepsAdded'] ?? 0;
+                final totalSteps = log['totalStepsWritten'] ?? 0;
+
                 return ListTile(
                   leading: Icon(isManual
                       ? Icons.touch_app_outlined
                       : Icons.sync_alt_outlined),
                   title: Text(
-                    isManual
-                        ? l10n.manual_write_success(log['steps'] ?? 0)
-                        : l10n.automatic_write_success(log['steps'] ?? 0),
+                    '${l10n.automatic_write_success(totalSteps)} (+$stepsAdded)',
                   ),
-                  subtitle: Text(log['timestamp'] ?? ''),
+                  subtitle: Text(
+                      'Original: $originalSteps | ${log['timestamp'] ?? ''}'),
                   trailing: Text(isManual
                       ? l10n.log_type_manual
                       : l10n.log_type_automatic),

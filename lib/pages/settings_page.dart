@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:walkgo/appearance_settings_page.dart';
-import 'package:walkgo/language_settings_page.dart';
+import 'package:walkgo/pages/advanced_settings_page.dart';
+import 'package:walkgo/pages/appearance_settings_page.dart';
+import 'package:walkgo/pages/language_settings_page.dart';
 import 'package:walkgo/log_service.dart';
-import 'package:walkgo/logs_page.dart';
-import 'l10n/app_localizations.dart';
+import 'package:walkgo/pages/logs_page.dart';
+import 'package:walkgo/l10n/app_localizations.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -48,6 +49,18 @@ class SettingsPage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => const LanguageSettingsPage()),
+                  );
+                },
+              ),
+               ListTile(
+                leading: const Icon(Icons.settings_outlined),
+                title: Text(l10n.advanced_settings),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AdvancedSettingsPage()),
                   );
                 },
               ),

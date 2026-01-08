@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-const String prefLanguageCode = "languageCode";
+import 'package:walkgo/constants.dart';
 
 class LanguageService with ChangeNotifier {
   Locale? _appLocale;

@@ -1,40 +1,46 @@
-# Project Blueprint
+# Project Blueprint: WalkGo
 
 ## Overview
 
-This document outlines the development and design of a Flutter application called WalkGo. The primary goal of WalkGo is to help users automatically log steps to their health data, making it easier to achieve daily fitness goals. The app features background services, localization, and a range of customizable settings.
+WalkGo is a Flutter application that allows users to log steps to their health data. The app provides both manual and automatic step-logging functionalities. It runs a background service to periodically write steps, and it is localized in English and Traditional Chinese.
 
-## Style, Design, and Features
+## Implemented Features
 
-### Implemented
+### Style and Design
 
-*   **Core Functionality:**
-    *   **Automatic Step Writing:** A background service automatically writes a configurable number of steps at a set interval.
-    *   **Manual Step Writing:** Users can manually trigger a step write for testing or immediate logging.
-    *   **Localization:** The app supports English and Chinese, with language selection available in the settings.
-*   **User Interface & Experience:**
-    *   **Modern Theming:** The app uses Material 3 design, with support for light, dark, and system default themes.
-    *   **Welcome & Setup Flow:** A guided, one-time setup process for new users to grant necessary permissions (Health, Activity, Notifications, Battery Optimization).
-    *   **Settings Management:** A dedicated settings page allows users to manage themes, languages, logs, and application data.
-    *   **Toast Notifications:** The app uses `fluttertoast` to provide non-intrusive feedback for actions like manual step writing, aligning with modern Android UI standards.
-*   **Advanced Features:**
-    *   **Random Step Offset:** The number of steps written can be randomized by adding or subtracting a configurable offset, making the data appear more natural. This feature is enabled by default.
-    *   **Auto-Pause:** The background service can be configured to automatically stop for the day once a specified total number of steps has been logged.
+*   **Theme:** Light and dark theme support using the `provider` package.
+*   **Localization:** English and Traditional Chinese language support.
+*   **UI:** Basic UI with buttons to start/stop the service and manually write steps.
 
-### Current UI/UX Enhancements
+### Features
 
-*   **Relocated Advanced Settings Button:** The entry point for "Advanced Settings" has been moved from the general settings page directly to the main home screen, placing it below the primary parameter inputs for better visibility and access.
-*   **Intuitive Settings Interaction:** On the "Advanced Settings" page, when a feature (like "Random Step Offset" or "Auto-Pause") is disabled via its switch:
-    *   The corresponding input fields (e.g., offset amount, auto-pause step count) become visually disabled (grayed out) but remain visible.
-    *   The switch for enabling/disabling a feature has been moved to the main title of the setting card, creating a cleaner and more standard `Row` layout.
+*   **Manual Step Logging:** Users can manually write a specific number of steps.
+*   **Automatic Step Logging:** A background service periodically writes a random number of steps.
+*   **Step Randomization:** The number of steps can be randomized.
+*   **Auto-Pause:** The service can be configured to automatically pause after a certain number of steps.
+*   **Settings:**
+    *   Base steps
+    *   Interval
+    *   Random offset
+    *   Auto-pause threshold
+*   **Logging:** The app logs all step-writing activities.
+*   **Permissions:** The app handles permissions for health data, activity recognition, notifications, and battery optimization.
 
-## Plan and Steps for Current Request
+## Current Goal: UI/UX Revamp and Code Refactoring
 
-1.  **Enable Offset by Default:** Modify `advanced_settings_page.dart` to set the `_offsetEnabled` state to `true` by default when settings are first loaded.
-2.  **Refactor UI in `advanced_settings_page.dart`:**
-    *   Create a reusable `_buildSettingCard` widget to encapsulate the UI for each setting option.
-    *   Use a `Row` within the card to place the setting's title and its `Switch` on the same line for a more compact layout.
-    *   Bind the `enabled` property of the `TextField` widgets to the state of their respective switches (`_offsetEnabled`, `_autoPauseEnabled`).
-    *   Adjust the visual appearance of disabled `TextField`s to have a grayed-out background, indicating they are inactive.
-3.  **Update Localization Files:** Add new keys and translations for the improved UI elements in `app_en.arb` and `app_zh.arb`.
-4.  **Update Blueprint:** Document the new design decisions and implementation details in `blueprint.md`.
+The current goal is to improve the user interface and user experience of the app, as well as refactor the code for better readability and maintainability.
+
+### Plan
+
+1.  **UI Overhaul:**
+    *   Redesign the main screen for a more modern and intuitive look.
+    *   Use cards to display key information like service status, total steps, and session steps.
+    *   Incorporate more visually appealing elements like icons and charts.
+    *   Improve the layout and spacing for better readability.
+2.  **Code Refactoring:**
+    *   Move business logic out of the `main.dart` file and into separate service classes.
+    *   Use a more robust state management solution (like `provider` with `ChangeNotifier`) for managing the app's state, instead of relying solely on `SharedPreferences` for UI updates.
+    *   Improve the error handling and logging mechanisms.
+3.  **New Features:**
+    *   Add a chart to visualize the user's step history.
+    *   Implement a more user-friendly way to configure the settings.
