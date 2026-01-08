@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/pages/settings_page.dart';
@@ -81,16 +82,14 @@ class _HomePageState extends State<HomePage> {
                               isLightMode ? Colors.black : Colors.white,
                         ),
                         onPressed: () async {
-                          final scaffoldMessenger = ScaffoldMessenger.of(context);
                           final steps = int.tryParse(viewModel.baseSteps);
                           if (steps != null) {
-                            await HealthService().writeSteps(steps);
+                            final success = await HealthService().writeSteps(steps);
                             if (!mounted) return;
-                            scaffoldMessenger.showSnackBar(
-                              SnackBar(
-                                content: Text(l10n.automatic_write_success(steps.toString())),
-                              ),
-                            );
+                            final message = success
+                                ? l10n.automatic_write_success(steps.toString())
+                                : l10n.write_fail_check_log;
+                            Fluttertoast.showToast(msg: message);
                           }
                         },
                       ),

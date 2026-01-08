@@ -89,7 +89,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chinese => 'Chinese';
 
   @override
-  String get advanced_settings => 'Advanced Settings';
+  String get advanced_parameters => 'Advanced Parameters';
 
   @override
   String get auto_pause_title => 'Auto Pause';
@@ -309,17 +309,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get next_step => 'Next Step';
 
   @override
-  String get rerun_setup => 'Rerun Setup';
+  String get rerun_setup => 'View Welcome Page';
 
   @override
   String get close => 'Close';
-
-  @override
-  String get rerun_setup_confirm_title => 'Rerun Setup';
-
-  @override
-  String get rerun_setup_confirm_content =>
-      'This will rerun the initial setup process. Do you want to continue?';
 
   @override
   String get confirm => 'Confirm';

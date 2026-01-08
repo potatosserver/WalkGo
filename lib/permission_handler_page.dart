@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health/health.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,7 +93,7 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
     } else {
       _setPermissionsGranted().then((_) {
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/home');
+          context.go('/home');
         }
       });
     }

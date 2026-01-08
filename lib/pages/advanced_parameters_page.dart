@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:walkgo/viewmodels/advanced_settings_viewmodel.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 
-class AdvancedSettingsPage extends StatelessWidget {
-  const AdvancedSettingsPage({super.key});
+class AdvancedParametersPage extends StatelessWidget {
+  const AdvancedParametersPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class AdvancedSettingsPage extends StatelessWidget {
       create: (context) => AdvancedSettingsViewModel(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(l10n.advanced_settings),
+          title: Text(l10n.advanced_parameters),
         ),
         body: Consumer<AdvancedSettingsViewModel>(
           builder: (context, viewModel, child) {

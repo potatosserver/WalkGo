@@ -6,9 +6,7 @@ import 'package:walkgo/theme_provider.dart';
 import 'l10n/app_localizations.dart';
 
 class MyApp extends StatelessWidget {
-  final String initialRoute;
-
-  const MyApp({super.key, required this.initialRoute});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +17,8 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer2<ThemeProvider, LanguageService>(
         builder: (context, themeProvider, languageService, child) {
-          return MaterialApp(
+          return MaterialApp.router(
+            routerConfig: AppRouter.router,
             debugShowCheckedModeBanner: false,
             title: 'WalkGo',
             theme: ThemeData(
@@ -36,8 +35,6 @@ class MyApp extends StatelessWidget {
             locale: languageService.appLocale,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            initialRoute: initialRoute,
-            onGenerateRoute: AppRouter.onGenerateRoute,
           );
         },
       ),

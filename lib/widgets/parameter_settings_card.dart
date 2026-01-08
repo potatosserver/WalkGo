@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
-import 'package:walkgo/pages/advanced_settings_page.dart';
+import 'package:walkgo/pages/advanced_parameters_page.dart';
 
 class ParameterSettingsCard extends StatelessWidget {
   const ParameterSettingsCard({super.key});
@@ -46,14 +46,22 @@ class ParameterSettingsCard extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton.icon(
-                icon: const Icon(Icons.settings_applications_outlined, size: 16),
-                label: Text(l10n.advanced_settings, style: theme.textTheme.labelMedium),
+                icon: const Icon(Icons.auto_awesome_outlined, size: 16),
+                label: Text(l10n.advanced_parameters),
                 style: TextButton.styleFrom(
-                  foregroundColor: theme.colorScheme.onSurfaceVariant,
+                  foregroundColor: theme.colorScheme.primary,
+                  backgroundColor:
+                      theme.colorScheme.primary.withAlpha(26), // Replaced withOpacity
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 ),
                 onPressed: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AdvancedSettingsPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const AdvancedParametersPage()),
                 ),
               ),
             ),

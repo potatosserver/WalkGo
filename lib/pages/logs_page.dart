@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:walkgo/log_service.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 
@@ -28,6 +29,9 @@ class _LogsPageState extends State<LogsPage> {
 
   Future<void> _clearLogs() async {
     await _logService.clearLogs();
+    if (mounted) {
+      Fluttertoast.showToast(msg: AppLocalizations.of(context)!.logs_cleared);
+    }
     _loadLogs();
   }
 
@@ -63,7 +67,7 @@ class _LogsPageState extends State<LogsPage> {
                       ? Icons.touch_app_outlined
                       : Icons.sync_alt_outlined),
                   title: Text(
-                    '${l10n.automatic_write_success(totalSteps)} (+$stepsAdded)',
+                    '${l10n.automatic_write_success(totalSteps.toString())} (+$stepsAdded)',
                   ),
                   subtitle: Text(
                       'Original: $originalSteps | ${log['timestamp'] ?? ''}'),

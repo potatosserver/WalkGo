@@ -89,7 +89,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get chinese => '中文';
 
   @override
-  String get advanced_settings => '進階設定';
+  String get advanced_parameters => '進階參數';
 
   @override
   String get auto_pause_title => '自動暫停服務';
@@ -193,7 +193,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get permission_denied_content =>
-      '您已永久拒絕一項必要權限。請前往您裝置上此應用程式的設定頁面，並手動授予權限以確保其正常運作。';
+      '您已永久GCU拒絕一項必要權限。請前往您裝置上此應用程式的設定頁面，並手動授予權限以確保其正常運作。';
 
   @override
   String get open_settings => '開啟設定';
@@ -297,16 +297,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get next_step => '下一步';
 
   @override
-  String get rerun_setup => '重新執行設定';
+  String get rerun_setup => '查看歡迎頁面';
 
   @override
   String get close => '關閉';
-
-  @override
-  String get rerun_setup_confirm_title => '重新執行設定';
-
-  @override
-  String get rerun_setup_confirm_content => '這將重新執行初始設定流程。您要繼續嗎？';
 
   @override
   String get confirm => '確認';

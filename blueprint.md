@@ -10,7 +10,7 @@ WalkGo is a Flutter application that allows users to log steps to their health d
 
 *   **Theme:** Light and dark theme support using the `provider` package.
 *   **Localization:** English and Traditional Chinese language support.
-*   **UI:** Basic UI with buttons to start/stop the service and manually write steps.
+*   **UI:** Modern, card-based UI with clear, organized settings and visually consistent themes.
 
 ### Features
 
@@ -23,23 +23,31 @@ WalkGo is a Flutter application that allows users to log steps to their health d
     *   Interval
     *   Random offset
     *   Auto-pause threshold
+    *   Advanced Parameters for more granular control, accessible from the main parameter settings card.
 *   **Logging:** The app logs all step-writing activities.
 *   **Permissions:** The app handles permissions for health data, activity recognition, notifications, and battery optimization.
 
-## Current Goal: UI/UX Revamp and Code Refactoring
+## UI/UX Revamp and Code Refactoring
 
-The current goal is to improve the user interface and user experience of the app, as well as refactor the code for better readability and maintainability.
+The previous goal was to improve the user interface and user experience of the app, as well as refactor the code for better readability and maintainability. The following changes have been implemented:
 
-### Plan
+### Recent Changes & Enhancements
+
+*   **Robust Navigation:** Fixed a fundamental navigation issue where changing the theme or language would incorrectly push a new home page onto the navigation stack. The fix ensures that after these settings are changed, the navigation stack is cleared, returning the user to the single, root home page. This correctly prevents the back button from appearing on the home screen.
+*   **Settings Refactor:** Renamed "Advanced Settings" to "Advanced Parameters" for clarity. The page was also updated to use a card-based layout for better visual organization.
+*   **Streamlined Navigation:** Consolidated the "Advanced Parameters" button within the "Parameter Settings" card on the Home page, removing the redundant standalone button and simplifying the main UI.
+*   **Consistent Theming:** Refactored the `Appearance` and `Language` settings pages to use a consistent, modern, card-based layout, unifying the visual style across all setting screens.
+*   **UI Polish:** Replaced standard checkmark icons with modern `check_circle` and `radio_button_unchecked` icons for a more polished look in selection lists. The "Advanced Parameters" button was also restyled with a chip-like design for a more refined appearance.
+
+### Next Steps
 
 1.  **UI Overhaul:**
-    *   Redesign the main screen for a more modern and intuitive look.
+    *   Continue to refine the main screen for a more modern and intuitive look.
     *   Use cards to display key information like service status, total steps, and session steps.
     *   Incorporate more visually appealing elements like icons and charts.
     *   Improve the layout and spacing for better readability.
 2.  **Code Refactoring:**
     *   Move business logic out of the `main.dart` file and into separate service classes.
-    *   Use a more robust state management solution (like `provider` with `ChangeNotifier`) for managing the app's state, instead of relying solely on `SharedPreferences` for UI updates.
     *   Improve the error handling and logging mechanisms.
 3.  **New Features:**
     *   Add a chart to visualize the user's step history.

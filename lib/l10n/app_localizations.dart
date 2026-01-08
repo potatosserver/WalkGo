@@ -254,11 +254,11 @@ abstract class AppLocalizations {
   /// **'Chinese'**
   String get chinese;
 
-  /// No description provided for @advanced_settings.
+  /// No description provided for @advanced_parameters.
   ///
   /// In en, this message translates to:
-  /// **'Advanced Settings'**
-  String get advanced_settings;
+  /// **'Advanced Parameters'**
+  String get advanced_parameters;
 
   /// No description provided for @auto_pause_title.
   ///
@@ -653,7 +653,7 @@ abstract class AppLocalizations {
   /// No description provided for @rerun_setup.
   ///
   /// In en, this message translates to:
-  /// **'Rerun Setup'**
+  /// **'View Welcome Page'**
   String get rerun_setup;
 
   /// No description provided for @close.
@@ -661,18 +661,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
-
-  /// No description provided for @rerun_setup_confirm_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Rerun Setup'**
-  String get rerun_setup_confirm_title;
-
-  /// No description provided for @rerun_setup_confirm_content.
-  ///
-  /// In en, this message translates to:
-  /// **'This will rerun the initial setup process. Do you want to continue?'**
-  String get rerun_setup_confirm_content;
 
   /// No description provided for @confirm.
   ///
