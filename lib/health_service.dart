@@ -7,13 +7,16 @@ class HealthService {
   factory HealthService() => _instance;
   HealthService._internal();
 
-  final Health _health = Health();
+  // The Health object is no longer initialized here to avoid issues with background isolates.
+  // A new instance will be created within each method where it is needed.
 
   Future<int> getStepsToday() async {
     final now = DateTime.now();
     final midnight = DateTime(now.year, now.month, now.day);
     try {
-      final steps = await _health.getHealthDataFromTypes(
+      // A new Health instance is created on each call.
+      final health = Health();
+      final steps = await health.getHealthDataFromTypes(
         startTime: midnight,
         endTime: now,
         types: [HealthDataType.STEPS],
@@ -32,7 +35,9 @@ class HealthService {
     final endTime = DateTime.now();
     final startTime = endTime.subtract(const Duration(minutes: 1));
     try {
-      final success = await _health.writeHealthData(
+      // A new Health instance is created on each call.
+      final health = Health();
+      final success = await health.writeHealthData(
         value: steps.toDouble(),
         type: HealthDataType.STEPS,
         startTime: startTime,
@@ -46,7 +51,10 @@ class HealthService {
   }
 
   Future<bool> requestAuthorization() async {
+    // A new Health instance is created on each call.
+    final health = Health();
     final types = [HealthDataType.STEPS];
-    return await _health.requestAuthorization(types);
+    // Note: It's crucial that this method is only called from the main UI thread.
+    return await health.requestAuthorization(types);
   }
 }

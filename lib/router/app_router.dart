@@ -1,3 +1,4 @@
+
 import 'package:go_router/go_router.dart';
 import 'package:walkgo/pages/advanced_parameters_page.dart';
 import 'package:walkgo/pages/appearance_settings_page.dart';
@@ -11,11 +12,10 @@ import 'package:walkgo/welcome_page.dart';
 
 class AppRouter {
   late final GoRouter router;
-  final bool isFirstLaunch;
 
-  AppRouter({required this.isFirstLaunch}) {
+  AppRouter() {
     router = GoRouter(
-      initialLocation: isFirstLaunch ? '/welcome' : '/home',
+      initialLocation: '/splash',
       routes: [
         GoRoute(
           path: '/splash',

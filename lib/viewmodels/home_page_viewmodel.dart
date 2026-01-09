@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -28,19 +27,14 @@ class HomePageViewModel extends ChangeNotifier {
 
   void setL10n(AppLocalizations l10n) {
     _l10n = l10n;
+    if (_isAutoRunning) {
+      updateLocalization();
+    }
   }
 
   HomePageViewModel() {
     _loadSettings();
     _setupServiceListeners();
-    _startService();
-  }
-
-  Future<void> _startService() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool(prefPermissionsGranted) ?? false) {
-      _service.startService();
-    }
   }
 
   void _setupServiceListeners() {
@@ -102,39 +96,58 @@ class HomePageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleAutoMode() async {
-    if (_l10n == null) return; // Ensure l10n is available
+  Map<String, String> _getLocalizedStrings() {
+    if (_l10n == null) return {};
+    return {
+      'notification_service_running': _l10n!.notification_service_running,
+      'notification_steps_written_title': _l10n!.notification_steps_written_title,
+      'notification_steps_written': _l10n!.notification_steps_written('{steps}'),
+      'notification_next_run': _l10n!.notification_next_run('{time}'),
+      'automatic_write_success': _l10n!.automatic_write_success('{steps}'),
+      'write_fail_check_log': _l10n!.write_fail_check_log,
+      'notification_service_stopped_title': _l10n!.notification_service_stopped_title,
+      'notification_service_stopped_content': _l10n!.notification_service_stopped_content,
+      'background_service_start': _l10n!.background_service_start,
+    };
+  }
 
-    final newStatus = !_isAutoRunning;
-    _isAutoRunning = newStatus;
+  Future<void> updateLocalization() async {
+    _service.invoke('update_localization', _getLocalizedStrings());
+  }
+
+  Future<void> toggleAutoMode() async {
+    if (_l10n == null) return;
+
+    final isCurrentlyRunning = await _service.isRunning();
+    final wantsToRun = !_isAutoRunning;
+
+    _isAutoRunning = wantsToRun;
     notifyListeners();
 
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(prefIsAuto, newStatus);
+    await prefs.setBool(prefIsAuto, wantsToRun);
 
-    if (newStatus) {
+    if (wantsToRun) {
       await prefs.setInt(prefSessionTotalSteps, 0);
-      _service.invoke(
-        'start',
-        {
-          // Pass all required localized strings to the background service
-          'notification_service_running': _l10n!.notification_service_running,
-          'notification_steps_written_title': _l10n!.notification_steps_written_title,
-          'notification_steps_written': _l10n!.notification_steps_written('{steps}'), // Pass as a template
-          'notification_next_run': _l10n!.notification_next_run('{time}'), // Pass as a template
-          'automatic_write_success': _l10n!.automatic_write_success('{steps}'),
-          'write_fail_check_log': _l10n!.write_fail_check_log,
-        },
-      );
+
+      if (!isCurrentlyRunning) {
+        await _service.startService();
+      }
+
+      // Starts the timer and shows the "service running" notification
+      _service.invoke('start', _getLocalizedStrings());
+
+      // Triggers an immediate write and its own confirmation notification
+      _service.invoke('write_now', _getLocalizedStrings());
+      
     } else {
-      _service.invoke(
-        "stop",
-        {
-          'notification_service_stopped_title': _l10n!.notification_service_stopped_title,
-          'notification_service_stopped_content': _l10n!.notification_service_stopped_content,
-        },
-      );
+      _service.invoke("stop", _getLocalizedStrings());
     }
     await _updateStatusLogText();
+  }
+
+  void manualWriteSteps() {
+    if (_l10n == null) return;
+    _service.invoke('write_now', _getLocalizedStrings());
   }
 }

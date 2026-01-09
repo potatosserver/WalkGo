@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
+
+import 'package:flutter/material.dart' hide RadioGroup;
 import 'package:provider/provider.dart';
 import 'package:walkgo/language_service.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
+import 'package:group_radio_button/group_radio_button.dart';
 
 class LanguageSettingsPage extends StatelessWidget {
   const LanguageSettingsPage({super.key});
@@ -12,37 +14,26 @@ class LanguageSettingsPage extends StatelessWidget {
     final languageService = context.watch<LanguageService>();
     final currentLocale = languageService.appLocale;
 
+    final languages = [null, const Locale('en'), const Locale('zh')];
+    final languageNames = [l10n.system_language, l10n.english, l10n.chinese];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.language_settings),
       ),
-      body: ListView(
-        children: <Widget>[
-          RadioListTile<Locale?>(
-            title: Text(l10n.system_language),
-            value: null,
-            groupValue: currentLocale,
-            onChanged: (Locale? value) {
-              languageService.changeLanguage(value);
-            },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: RadioGroup<Locale?>.builder(
+          groupValue: currentLocale,
+          onChanged: (Locale? value) {
+            languageService.changeLanguage(value);
+          },
+          items: languages,
+          itemBuilder: (item) => RadioButtonBuilder(
+            languageNames[languages.indexOf(item)],
           ),
-          RadioListTile<Locale?>(
-            title: Text(l10n.english),
-            value: const Locale('en'),
-            groupValue: currentLocale,
-            onChanged: (Locale? value) {
-              languageService.changeLanguage(value);
-            },
-          ),
-          RadioListTile<Locale?>(
-            title: Text(l10n.chinese),
-            value: const Locale('zh'),
-            groupValue: currentLocale,
-            onChanged: (Locale? value) {
-              languageService.changeLanguage(value);
-            },
-          ),
-        ],
+          textStyle: const TextStyle(fontSize: 16),
+        ),
       ),
     );
   }

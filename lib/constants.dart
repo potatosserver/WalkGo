@@ -28,3 +28,8 @@ const String stepsUpdateChannelName = 'Steps Update';
 const String stepsUpdateChannelDescription =
     'This channel is used for steps update notifications.';
 const int stepsUpdateNotificationId = 889;
+
+const String confirmationChannelId = 'confirmation_channel';
+const String confirmationChannelName = 'Confirmation';
+const String confirmationChannelDescription = 'Channel for confirmation notifications.';
+const int confirmationNotificationId = 890;
