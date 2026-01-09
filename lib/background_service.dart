@@ -17,16 +17,50 @@ void onStart(ServiceInstance service) {
   Timer? timer;
   Map<String, String> localizedStrings = {};
 
+  // --- Helper Functions ---
+
+  void stopService({String? statusLog}) async {
+    timer?.cancel();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(prefIsAuto, false);
+    await logService.resetLogs(); // Reset session steps
+
+    final title = localizedStrings['notification_service_stopped_title'] ?? 'Service Stopped';
+    final body = localizedStrings['notification_service_stopped_content'] ?? 'Ready to start.';
+    service.invoke('showStatusNotification', {
+      'title': title,
+      'body': body,
+    });
+
+    service.invoke('update_ui', {
+      'is_running': false,
+      'session_total_steps': 0,
+      'status_log': statusLog, // Can be null, UI will handle it
+    });
+  }
+
   Future<void> writeStepsLogic() async {
     final prefs = await SharedPreferences.getInstance();
+
+    // Check if service should be running
+    final isAuto = prefs.getBool(prefIsAuto) ?? false;
+    if (!isAuto) {
+      timer?.cancel();
+      return;
+    }
+
+    // Read settings for this run
     final baseSteps = prefs.getInt(prefBaseSteps) ?? 500;
+    final offsetEnabled = prefs.getBool(prefOffsetEnabled) ?? true;
+    final offsetSteps = prefs.getInt(prefOffsetSteps) ?? 50;
     final random = Random();
-    final offset = random.nextInt(101) - 50;
-    final steps = baseSteps + offset;
+    final offset = offsetEnabled ? random.nextInt(offsetSteps * 2 + 1) - offsetSteps : 0;
+    final steps = max(0, baseSteps + offset); // Ensure steps are not negative
 
     final completer = Completer<bool>();
+    StreamSubscription? subscription;
 
-    final subscription = service.on('write_steps_result').listen((event) {
+    subscription = service.on('write_steps_result').listen((event) {
       final success = event?['success'] as bool? ?? false;
       if (!completer.isCompleted) {
         completer.complete(success);
@@ -54,6 +88,23 @@ void onStart(ServiceInstance service) {
           'is_running': true,
           'status_log': (localizedStrings['automatic_write_success'] ?? 'Wrote {steps} steps').replaceAll('{steps}', steps.toString()),
         });
+
+        // Check for auto-pause
+        final autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
+        if (autoPauseEnabled) {
+          final autoPauseThreshold = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
+          if (total >= autoPauseThreshold) {
+            final statusLog = (localizedStrings['auto_pause_notification_content_with_steps'] ?? 'Reached {steps} steps, service stopped.').replaceAll('{steps}', total.toString());
+            final notificationTitle = localizedStrings['auto_pause_notification_title'] ?? 'Auto Paused';
+            
+            service.invoke('showStatusNotification', {
+              'title': notificationTitle,
+              'body': statusLog,
+            });
+            stopService(statusLog: statusLog);
+          }
+        }
+
       } else {
         ErrorLogService().addErrorLog('[BackgroundService] Health write failed', 'Received failure from main isolate.');
         service.invoke('update_ui', {
@@ -71,53 +122,58 @@ void onStart(ServiceInstance service) {
     }
   }
   
-  void restartTimer(int interval) {
+  void restartTimer() async {
       timer?.cancel();
+      final prefs = await SharedPreferences.getInstance();
+      final interval = prefs.getInt(prefInterval) ?? 1;
+
       timer = Timer.periodic(Duration(minutes: interval), (timer) async {
-        final prefs = await SharedPreferences.getInstance();
-        final isAuto = prefs.getBool(prefIsAuto) ?? false;
-        if (!isAuto) {
-          timer.cancel();
-          return;
-        }
-        
         await writeStepsLogic();
 
-        final currentInterval = prefs.getInt(prefInterval) ?? 1;
-        final nextRun = DateTime.now().add(Duration(minutes: currentInterval));
-        final formattedTime = DateFormat('HH:mm').format(nextRun);
-        final statusTitle = localizedStrings['notification_service_running'] ?? 'Service Running';
-        final statusBody = (localizedStrings['notification_next_run'] ?? 'Next run at {time}').replaceAll('{time}', formattedTime);
-        service.invoke('showStatusNotification', {
-          'title': statusTitle,
-          'body': statusBody,
-        });
+        // Update next run notification
+        final prefs = await SharedPreferences.getInstance();
+        final isAuto = prefs.getBool(prefIsAuto) ?? false;
+        if (isAuto) {
+            final currentInterval = prefs.getInt(prefInterval) ?? 1;
+            final nextRun = DateTime.now().add(Duration(minutes: currentInterval));
+            final formattedTime = DateFormat('HH:mm').format(nextRun);
+            final statusTitle = localizedStrings['notification_service_running'] ?? 'Service Running';
+            final statusBody = (localizedStrings['notification_next_run'] ?? 'Next run at {time}').replaceAll('{time}', formattedTime);
+            service.invoke('showStatusNotification', {
+              'title': statusTitle,
+              'body': statusBody,
+            });
+        } else {
+            timer.cancel();
+        }
       });
   }
 
-  service.on('start').listen((event) {
+  // --- Service Event Handlers ---
+
+  service.on('start').listen((event) async {
     if (event != null) {
       localizedStrings = Map<String, String>.from(event);
     }
 
-    Future.delayed(Duration.zero, () async {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool(prefIsAuto, true);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(prefIsAuto, true);
+    await logService.resetLogs(); // IMPORTANT: Reset logs on start
 
-        final interval = prefs.getInt(prefInterval) ?? 1;
-        restartTimer(interval);
+    restartTimer();
 
-        final nextRun = DateTime.now().add(Duration(minutes: interval));
-        final formattedTime = DateFormat('HH:mm').format(nextRun);
-        final title = localizedStrings['notification_service_running'] ?? 'Service Running';
-        final body = (localizedStrings['notification_next_run'] ?? 'Next run at {time}').replaceAll('{time}', formattedTime);
-        
-        service.invoke('showStatusNotification', {
-          'title': title,
-          'body': body,
-        });
+    final title = localizedStrings['notification_service_running'] ?? 'Service Running';
+    final body = localizedStrings['background_service_start'] ?? 'Background service has started.';
+    
+    service.invoke('showStatusNotification', {
+      'title': title,
+      'body': body,
+    });
 
-        service.invoke('update_ui', {'is_running': true});
+    service.invoke('update_ui', {
+      'is_running': true,
+      'session_total_steps': 0,
+      'status_log': body,
     });
   });
 
@@ -129,32 +185,39 @@ void onStart(ServiceInstance service) {
   });
 
   service.on('stop').listen((event) {
-    Future.delayed(Duration.zero, () async {
-      timer?.cancel();
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(prefIsAuto, false);
-
-      if (event != null) {
-        localizedStrings = Map<String, String>.from(event);
-      }
-
-      final title = localizedStrings['notification_service_stopped_title'] ?? 'Service Stopped';
-      final body = localizedStrings['notification_service_stopped_content'] ?? 'Ready to start.';
-      service.invoke('showStatusNotification', {
-        'title': title,
-        'body': body,
-      });
-
-      service.invoke('update_ui', {'is_running': false});
-    });
+     if (event != null) {
+      localizedStrings = Map<String, String>.from(event);
+    }
+    stopService();
   });
 
-  service.on('update').listen((event) {
-    Future.delayed(Duration.zero, () async {
-      final prefs = await SharedPreferences.getInstance();
-      final interval = prefs.getInt(prefInterval) ?? 1;
-      restartTimer(interval);
-    });
+  service.on('update').listen((event) async {
+    final prefs = await SharedPreferences.getInstance();
+    final isRunning = prefs.getBool(prefIsAuto) ?? false;
+
+    // Only perform checks if the service is currently supposed to be running.
+    if (isRunning) {
+      final total = prefs.getInt(prefSessionTotalSteps) ?? 0;
+      final autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
+
+      if (autoPauseEnabled) {
+        final autoPauseThreshold = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
+        if (total >= autoPauseThreshold) {
+          final statusLog = (localizedStrings['auto_pause_notification_content_with_steps'] ?? 'Reached {steps} steps, service stopped.').replaceAll('{steps}', total.toString());
+          final notificationTitle = localizedStrings['auto_pause_notification_title'] ?? 'Auto Paused';
+          
+          service.invoke('showStatusNotification', {
+            'title': notificationTitle,
+            'body': statusLog,
+          });
+          stopService(statusLog: statusLog);
+          return; // Stop further processing as the service is now stopped
+        }
+      }
+      
+      // If not auto-paused, just restart the timer to apply new interval.
+      restartTimer();
+    }
   });
 
   service.on('update_localization').listen((event) {

@@ -30,40 +30,52 @@ class HomePageViewModel extends ChangeNotifier {
   void setL10n(AppLocalizations l10n) {
     _l10n = l10n;
     if (_statusLog.isEmpty) {
-      _updateStatusLogText();
+      _updateStatusLogFromPrefs();
     }
   }
 
   HomePageViewModel() {
     _loadSettings();
     _setupServiceListeners();
+    // Check initial running state
+    _service.isRunning().then((running) {
+      _isAutoRunning = running;
+      _updateStatusLogFromPrefs();
+      notifyListeners();
+    });
   }
 
   void _setupServiceListeners() {
     _service.on('update_ui').listen((event) async {
-      if (event != null && _l10n != null) {
-        final prefs = await SharedPreferences.getInstance();
-        final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
+      if (event == null || _l10n == null) return;
 
-        _sessionTotalSteps = (event['session_total_steps'] as num?)?.toInt() ?? _sessionTotalSteps;
-        _isAutoRunning = event['is_running'] ?? _isAutoRunning;
-        final newStatusLog = event['status_log'] as String?;
+      final prefs = await SharedPreferences.getInstance();
+      final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
 
-        if (_isAutoRunning) {
-          if (newStatusLog != null) {
-            _statusLog = newStatusLog;
-          }
-        } else {
-          if (newStatusLog != null && newStatusLog.isNotEmpty) {
-            _statusLog = newStatusLog;
-          } else {
-            _statusLog = _l10n!.status_ready_to_start;
-          }
+      _isAutoRunning = event['is_running'] as bool? ?? _isAutoRunning;
+      final newStatusLog = event['status_log'] as String?;
+
+      if (_isAutoRunning) {
+        // If service is running, update steps and status log from service
+        _sessionTotalSteps = (event['session_total_steps'] as num?)?.toInt() ?? 0;
+        if (newStatusLog != null) {
+          _statusLog = newStatusLog;
         }
-
-        _remainingSteps = autoPauseSteps - _sessionTotalSteps;
-        notifyListeners();
+      } else {
+        // If service is not running, reset steps and show ready status
+        _sessionTotalSteps = 0;
+        if (newStatusLog != null && newStatusLog.isNotEmpty) {
+           _statusLog = newStatusLog;
+        } else {
+          _statusLog = _l10n!.status_ready_to_start;
+        }
       }
+
+      // Always recalculate remaining steps
+      _remainingSteps = autoPauseSteps - _sessionTotalSteps;
+      if (_remainingSteps < 0) _remainingSteps = 0;
+      
+      notifyListeners();
     });
   }
 
@@ -73,7 +85,7 @@ class HomePageViewModel extends ChangeNotifier {
     _baseSteps = (prefs.getInt(prefBaseSteps) ?? 500).toString();
     _interval = (prefs.getInt(prefInterval) ?? 1).toString();
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
-    await _updateStatusLogText();
+    await _updateStatusLogFromPrefs();
     notifyListeners();
   }
 
@@ -97,7 +109,7 @@ class HomePageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _updateStatusLogText() async {
+  Future<void> _updateStatusLogFromPrefs() async {
     if (_l10n == null) return;
     final prefs = await SharedPreferences.getInstance();
     final isRunning = prefs.getBool(prefIsAuto) ?? false;
@@ -143,31 +155,18 @@ class HomePageViewModel extends ChangeNotifier {
     if (_l10n == null) return;
 
     final wantsToRun = !_isAutoRunning;
-    _isAutoRunning = wantsToRun;
     
-    if (!wantsToRun) {
-        _statusLog = _l10n!.status_ready_to_start;
-    } 
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(prefIsAuto, wantsToRun);
-
+    // Send command to service, DO NOT change UI state here.
     if (wantsToRun) {
-      await prefs.setInt(prefSessionTotalSteps, 0);
-      _sessionTotalSteps = 0;
-
-      final isCurrentlyRunning = await _service.isRunning();
+       final isCurrentlyRunning = await _service.isRunning();
       if (!isCurrentlyRunning) {
         await _service.startService();
       }
-
       _service.invoke('start', _getLocalizedStrings());
       _service.invoke('write_now', _getLocalizedStrings());
     } else {
       _service.invoke("stop", _getLocalizedStrings());
     }
-
-    notifyListeners();
   }
 
   void manualWriteSteps() {

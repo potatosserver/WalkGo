@@ -58,4 +58,9 @@ class LogService {
     // Also reset the session total when clearing logs
     await prefs.setInt(prefSessionTotalSteps, 0);
   }
+
+  Future<void> resetLogs() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(prefSessionTotalSteps, 0);
+  }
 }
