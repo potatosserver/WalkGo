@@ -151,6 +151,8 @@ class HomePageViewModel extends ChangeNotifier {
       'background_service_start': _l10n!.background_service_start,
       'auto_pause_notification_title': _l10n!.auto_pause_notification_title,
       'auto_pause_notification_content_with_steps': _l10n!.auto_pause_notification_content_with_steps('{steps}'),
+      // Add the new key for the manual write toast
+      'manual_write_initiated': _l10n!.manual_write_initiated,
     };
   }
 
@@ -174,8 +176,12 @@ class HomePageViewModel extends ChangeNotifier {
     }
   }
 
+  // This function invokes the background service to perform a manual write.
   void manualWriteSteps() {
     if (_l10n == null) return;
-    _service.invoke('write_now', _getLocalizedStrings());
+    _service.invoke('write_now', {
+      ..._getLocalizedStrings(),
+      'source': 'manual',
+    });
   }
 }

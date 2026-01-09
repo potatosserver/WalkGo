@@ -1,4 +1,3 @@
-
 {
   "walkgo": "WalkGO",
   "settings_tooltip": "Settings",
@@ -49,6 +48,22 @@
   "@log_write_success": {
     "placeholders": {
       "totalSteps": {
+        "type": "String"
+      }
+    }
+  },
+   "log_write_success_auto": "Automatically wrote {steps} steps.",
+  "@log_write_success_auto": {
+    "placeholders": {
+      "steps": {
+        "type": "String"
+      }
+    }
+  },
+  "log_write_success_manual": "Manually wrote {steps} steps.",
+  "@log_write_success_manual": {
+    "placeholders": {
+      "steps": {
         "type": "String"
       }
     }
@@ -157,5 +172,6 @@
   "notification_channel_desc": "Notifications for WalkGo background service",
   "notification_service_stopped_title": "Service Stopped",
   "notification_service_stopped_content": "Ready. Waiting for you to enable auto mode.",
-  "notification_steps_written_title": "Steps Written Successfully"
+  "notification_steps_written_title": "Steps Written Successfully",
+  "manual_write_initiated": "Manual write initiated."
 }

@@ -13,35 +13,34 @@ import 'package:walkgo/services/error_log_service.dart';
 void onStart(ServiceInstance service) {
   DartPluginRegistrant.ensureInitialized();
 
-  final logService = LogService();
   Timer? timer;
   Map<String, String> localizedStrings = {};
 
   // Add these variables to hold the settings
-  bool _offsetEnabled = true;
-  int _offsetSteps = 50;
-  bool _autoPauseEnabled = false;
-  int _autoPauseThreshold = 50000;
+  bool offsetEnabled = true;
+  int offsetSteps = 50;
+  bool autoPauseEnabled = false;
+  int autoPauseThreshold = 50000;
 
   // Function to load all settings from SharedPreferences
-  Future<void> _loadSettings() async {
+  Future<void> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    _offsetEnabled = prefs.getBool(prefOffsetEnabled) ?? true;
-    _offsetSteps = prefs.getInt(prefOffsetSteps) ?? 50;
-    _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
-    _autoPauseThreshold = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
+    offsetEnabled = prefs.getBool(prefOffsetEnabled) ?? true;
+    offsetSteps = prefs.getInt(prefOffsetSteps) ?? 50;
+    autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
+    autoPauseThreshold = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
   }
 
-  Future<void> writeStepsLogic() async {
+  Future<void> writeStepsLogic({String source = 'automatic'}) async {
     // Ensure settings are loaded before writing steps
-    await _loadSettings();
+    await loadSettings();
     
     final prefs = await SharedPreferences.getInstance();
     final baseSteps = prefs.getInt(prefBaseSteps) ?? 500;
     final random = Random();
     
     // Use the loaded settings
-    final offset = _offsetEnabled ? random.nextInt(_offsetSteps * 2 + 1) - _offsetSteps : 0;
+    final offset = offsetEnabled ? random.nextInt(offsetSteps * 2 + 1) - offsetSteps : 0;
     final steps = baseSteps + offset;
 
     final completer = Completer<bool>();
@@ -60,7 +59,12 @@ void onStart(ServiceInstance service) {
       subscription.cancel();
 
       if (success) {
-        final total = await logService.addLog(steps);
+        // Use the new static method to write the log
+        final total = await LogService.writeLogToStorage(steps, source: source);
+
+        // Emit an event to notify the UI that the log has been updated
+        service.invoke('log_updated');
+
         final confirmationTitle = localizedStrings['notification_steps_written_title'] ?? 'Steps Written';
         final confirmationBody = (localizedStrings['notification_steps_written'] ?? '{steps} steps written').replaceAll('{steps}', steps.toString());
 
@@ -76,7 +80,7 @@ void onStart(ServiceInstance service) {
         });
 
         // Check for auto-pause
-        if (_autoPauseEnabled && total >= _autoPauseThreshold) {
+        if (autoPauseEnabled && total >= autoPauseThreshold) {
           service.invoke('stop', {
             // You might want to pass specific localization for auto-pause
           });
@@ -133,7 +137,7 @@ void onStart(ServiceInstance service) {
         await prefs.setBool(prefIsAuto, true);
 
         // Load settings on start
-        await _loadSettings(); 
+        await loadSettings(); 
 
         await writeStepsLogic();
 
@@ -148,8 +152,10 @@ void onStart(ServiceInstance service) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(prefIsAuto, false);
 
-      // Reset the session step count
-      await logService.resetLogs();
+      // When stopping, we don't need to use LogService anymore
+      // as it's handled by the UI or other parts.
+      await prefs.setInt(prefSessionTotalSteps, 0);
+      service.invoke('log_updated');
 
       if (event != null) {
         localizedStrings = Map<String, String>.from(event);
@@ -172,9 +178,17 @@ void onStart(ServiceInstance service) {
     });
   });
 
+  // Listener for manual write
+  service.on('write_now').listen((event) async {
+    if (event != null) {
+      localizedStrings = Map<String, String>.from(event);
+    }
+    await writeStepsLogic(source: 'manual');
+  });
+
   // When settings are updated from the UI, reload them and notify the UI.
   service.on('update').listen((event) async {
-    await _loadSettings();
+    await loadSettings();
     service.invoke('settings_updated');
   });
 

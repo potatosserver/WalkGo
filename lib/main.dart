@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -11,6 +10,7 @@ import 'package:walkgo/constants.dart';
 import 'package:walkgo/health_service.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/language_service.dart';
+import 'package:walkgo/log_service.dart';
 import 'package:walkgo/router/app_router.dart';
 import 'package:walkgo/services/notification_helper.dart';
 import 'package:walkgo/theme_provider.dart';
@@ -47,6 +47,7 @@ Future<void> initializeService() async {
     if (event == null) return;
     final steps = event['steps'] as int;
     final success = await healthService.writeSteps(steps);
+    // Notify the background service about the result
     service.invoke('write_steps_result', {'success': success});
   });
 
@@ -79,8 +80,9 @@ void main() async {
 }
 
 class WalkGoApp extends StatelessWidget {
-  final SharedPreferences prefs;
   final AppRouter appRouter = AppRouter();
+
+  final SharedPreferences prefs;
 
   WalkGoApp({super.key, required this.prefs});
 
@@ -104,6 +106,7 @@ class WalkGoApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LanguageService()),
         ChangeNotifierProvider(create: (_) => AdvancedSettingsViewModel()),
         ChangeNotifierProvider(create: (_) => HomePageViewModel()),
+        ChangeNotifierProvider(create: (_) => LogService()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

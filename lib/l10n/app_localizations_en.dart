@@ -131,6 +131,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String log_write_success_auto(String steps) {
+    return 'Automatically wrote $steps steps.';
+  }
+
+  @override
+  String log_write_success_manual(String steps) {
+    return 'Manually wrote $steps steps.';
+  }
+
+  @override
   String get start_auto_steps => 'Start Auto Steps';
 
   @override
@@ -367,4 +377,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notification_steps_written_title => 'Steps Written Successfully';
+
+  @override
+  String get manual_write_initiated => 'Manual write initiated.';
 }

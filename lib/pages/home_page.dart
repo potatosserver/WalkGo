@@ -7,7 +7,6 @@ import 'package:walkgo/pages/settings_page.dart';
 import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
 import 'package:walkgo/widgets/status_card.dart';
 import 'package:walkgo/widgets/parameter_settings_card.dart';
-import 'package:walkgo/health_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,8 +30,6 @@ class _HomePageState extends State<HomePage> {
           isLightMode ? Brightness.dark : Brightness.light,
     );
 
-    // The HomePageViewModel is now provided at the app level.
-    // We can directly consume it.
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: systemUiOverlayStyle,
       child: Scaffold(
@@ -86,16 +83,13 @@ class _HomePageState extends State<HomePage> {
                         foregroundColor:
                             isLightMode ? Colors.black : Colors.white,
                       ),
-                      onPressed: () async {
-                        final steps = int.tryParse(viewModel.baseSteps);
-                        if (steps != null) {
-                          final success = await HealthService().writeSteps(steps);
-                          if (!mounted) return;
-                          final message = success
-                              ? l10n.automatic_write_success(steps.toString())
-                              : l10n.write_fail_check_log;
-                          Fluttertoast.showToast(msg: message);
-                        }
+                      onPressed: () {
+                        // The logic is now handled in the ViewModel,
+                        // which will invoke the background service.
+                        viewModel.manualWriteSteps();
+
+                        // Show a toast to confirm that the action was triggered.
+                        Fluttertoast.showToast(msg: l10n.manual_write_initiated);
                       },
                     ),
                     const SizedBox(height: 24),

@@ -332,6 +332,18 @@ abstract class AppLocalizations {
   /// **'Total steps after write: {totalSteps}'**
   String log_write_success(String totalSteps);
 
+  /// No description provided for @log_write_success_auto.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically wrote {steps} steps.'**
+  String log_write_success_auto(String steps);
+
+  /// No description provided for @log_write_success_manual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manually wrote {steps} steps.'**
+  String log_write_success_manual(String steps);
+
   /// No description provided for @start_auto_steps.
   ///
   /// In en, this message translates to:
@@ -751,6 +763,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Steps Written Successfully'**
   String get notification_steps_written_title;
+
+  /// No description provided for @manual_write_initiated.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual write initiated.'**
+  String get manual_write_initiated;
 }
 
 class _AppLocalizationsDelegate

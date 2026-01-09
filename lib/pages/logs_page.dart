@@ -1,82 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:walkgo/log_service.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 
-class LogsPage extends StatefulWidget {
+class LogsPage extends StatelessWidget {
   const LogsPage({super.key});
-
-  @override
-  State<LogsPage> createState() => _LogsPageState();
-}
-
-class _LogsPageState extends State<LogsPage> {
-  final LogService _logService = LogService();
-  List<Map<String, dynamic>> _logs = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadLogs();
-  }
-
-  Future<void> _loadLogs() async {
-    final logs = await _logService.getLogs();
-    setState(() {
-      _logs = logs;
-    });
-  }
-
-  Future<void> _clearLogs() async {
-    await _logService.clearLogs();
-    if (mounted) {
-      Fluttertoast.showToast(msg: AppLocalizations.of(context)!.logs_cleared);
-    }
-    _loadLogs();
-  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    // Use context.watch<LogService>() to make the widget listen to changes.
+    // The FutureBuilder will re-run whenever LogService notifies its listeners.
+    final logService = context.watch<LogService>();
+
+    Future<void> clearLogs() async {
+      // Use context.read inside a callback
+      await context.read<LogService>().clearLogs();
+      if (context.mounted) {
+        Fluttertoast.showToast(msg: l10n.logs_cleared);
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.write_logs),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_sweep_outlined),
-            onPressed: _clearLogs,
+            onPressed: clearLogs,
             tooltip: l10n.clear_all_logs,
           ),
         ],
       ),
-      body: _logs.isEmpty
-          ? Center(child: Text(l10n.no_logs))
-          : ListView.builder(
-              itemCount: _logs.length,
-              itemBuilder: (context, index) {
-                final log = _logs[index];
-                final isManual = log['type'] == 'manual';
+      // FutureBuilder rebuilds when the future (getLogs) is re-fetched.
+      // By watching the logService, any change will trigger a rebuild of this widget,
+      // which in turn re-triggers the FutureBuilder.
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: logService.getLogs(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-                // Safely extract step details
-                final originalSteps = log['originalSteps'] ?? 0;
-                final stepsAdded = log['stepsAdded'] ?? 0;
-                final totalSteps = log['totalStepsWritten'] ?? 0;
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
 
-                return ListTile(
-                  leading: Icon(isManual
-                      ? Icons.touch_app_outlined
-                      : Icons.sync_alt_outlined),
-                  title: Text(
-                    '${l10n.automatic_write_success(totalSteps.toString())} (+$stepsAdded)',
-                  ),
-                  subtitle: Text(
-                      'Original: $originalSteps | ${log['timestamp'] ?? ''}'),
-                  trailing: Text(isManual
-                      ? l10n.log_type_manual
-                      : l10n.log_type_automatic),
-                );
-              },
-            ),
+          final logs = snapshot.data;
+
+          if (logs == null || logs.isEmpty) {
+            return Center(child: Text(l10n.no_logs));
+          }
+
+          return ListView.builder(
+            itemCount: logs.length,
+            itemBuilder: (context, index) {
+              final log = logs[index];
+
+              final steps = log['steps'] ?? 0;
+              final timestamp = log['timestamp'] ?? '';
+              final source = log['source'] as String?;
+
+              String title;
+              if (source == 'automatic') {
+                title = l10n.log_write_success_auto(steps.toString());
+              } else {
+                title = l10n.log_write_success_manual(steps.toString());
+              }
+
+              return ListTile(
+                leading: const Icon(Icons.check_circle_outline),
+                title: Text(title),
+                subtitle: Text(timestamp),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

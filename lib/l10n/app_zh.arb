@@ -115,6 +115,22 @@
             }
         }
     },
+    "log_write_success_auto": "自動寫入 {steps} 步。",
+    "@log_write_success_auto": {
+        "placeholders": {
+            "steps": {
+                "type": "String"
+            }
+        }
+    },
+    "log_write_success_manual": "手動寫入 {steps} 步。",
+    "@log_write_success_manual": {
+        "placeholders": {
+            "steps": {
+                "type": "String"
+            }
+        }
+    },
     "manual_steps_title": "手動寫入一次",
     "manual_steps_label": "手動步數",
     "manual_steps_hint": "手動增加特定數量的步數。",
@@ -156,5 +172,6 @@
     "notification_channel_desc": "用於 WalkGo 背景服務的通知",
     "notification_service_stopped_title": "服務已停止",
     "notification_service_stopped_content": "準備就緒，等待您開啟自動模式。",
-    "notification_steps_written_title": "成功寫入步數"
+    "notification_steps_written_title": "成功寫入步數",
+    "manual_write_initiated": "手動寫入已啟動。"
 }

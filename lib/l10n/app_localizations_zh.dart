@@ -130,6 +130,16 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String log_write_success_auto(String steps) {
+    return '自動寫入 $steps 步。';
+  }
+
+  @override
+  String log_write_success_manual(String steps) {
+    return '手動寫入 $steps 步。';
+  }
+
+  @override
   String get start_auto_steps => '啟動自動服務';
 
   @override
@@ -352,4 +362,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notification_steps_written_title => '成功寫入步數';
+
+  @override
+  String get manual_write_initiated => '手動寫入已啟動。';
 }
