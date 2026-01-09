@@ -15,6 +15,7 @@ class HomePageViewModel extends ChangeNotifier {
   int _remainingSteps = 0;
   String _baseSteps = "500";
   String _interval = "1";
+  bool _autoPauseEnabled = false;
 
   bool get isAutoRunning => _isAutoRunning;
   String get statusLog => _statusLog;
@@ -22,13 +23,14 @@ class HomePageViewModel extends ChangeNotifier {
   int get remainingSteps => _remainingSteps;
   String get baseSteps => _baseSteps;
   String get interval => _interval;
+  bool get autoPauseEnabled => _autoPauseEnabled;
 
   AppLocalizations? _l10n;
 
   void setL10n(AppLocalizations l10n) {
     _l10n = l10n;
-    if (_isAutoRunning) {
-      updateLocalization();
+    if (_statusLog.isEmpty) {
+      _updateStatusLogText();
     }
   }
 
@@ -39,24 +41,44 @@ class HomePageViewModel extends ChangeNotifier {
 
   void _setupServiceListeners() {
     _service.on('update_ui').listen((event) async {
-      if (event != null) {
+      if (event != null && _l10n != null) {
         final prefs = await SharedPreferences.getInstance();
         final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
-        _sessionTotalSteps = (event['session_total_steps'] as num?)?.toInt() ?? 0;
-        _statusLog = event['status_log'] ?? '';
-        _isAutoRunning = event['is_running'] ?? false;
+
+        _sessionTotalSteps = (event['session_total_steps'] as num?)?.toInt() ?? _sessionTotalSteps;
+        _isAutoRunning = event['is_running'] ?? _isAutoRunning;
+        final newStatusLog = event['status_log'] as String?;
+
+        if (_isAutoRunning) {
+          if (newStatusLog != null) {
+            _statusLog = newStatusLog;
+          }
+        } else {
+          if (newStatusLog != null && newStatusLog.isNotEmpty) {
+            _statusLog = newStatusLog;
+          } else {
+            _statusLog = _l10n!.status_ready_to_start;
+          }
+        }
+
         _remainingSteps = autoPauseSteps - _sessionTotalSteps;
         notifyListeners();
       }
     });
   }
 
+
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     _baseSteps = (prefs.getInt(prefBaseSteps) ?? 500).toString();
     _interval = (prefs.getInt(prefInterval) ?? 1).toString();
+    _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
     await _updateStatusLogText();
     notifyListeners();
+  }
+
+  Future<void> reloadSettings() async {
+    await _loadSettings();
   }
 
   Future<void> saveBaseSteps(String value) async {
@@ -108,6 +130,8 @@ class HomePageViewModel extends ChangeNotifier {
       'notification_service_stopped_title': _l10n!.notification_service_stopped_title,
       'notification_service_stopped_content': _l10n!.notification_service_stopped_content,
       'background_service_start': _l10n!.background_service_start,
+      'auto_pause_notification_title': _l10n!.auto_pause_notification_title,
+      'auto_pause_notification_content_with_steps': _l10n!.auto_pause_notification_content_with_steps('{steps}'),
     };
   }
 
@@ -118,32 +142,32 @@ class HomePageViewModel extends ChangeNotifier {
   Future<void> toggleAutoMode() async {
     if (_l10n == null) return;
 
-    final isCurrentlyRunning = await _service.isRunning();
     final wantsToRun = !_isAutoRunning;
-
     _isAutoRunning = wantsToRun;
-    notifyListeners();
+    
+    if (!wantsToRun) {
+        _statusLog = _l10n!.status_ready_to_start;
+    } 
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(prefIsAuto, wantsToRun);
 
     if (wantsToRun) {
       await prefs.setInt(prefSessionTotalSteps, 0);
+      _sessionTotalSteps = 0;
 
+      final isCurrentlyRunning = await _service.isRunning();
       if (!isCurrentlyRunning) {
         await _service.startService();
       }
 
-      // Starts the timer and shows the "service running" notification
       _service.invoke('start', _getLocalizedStrings());
-
-      // Triggers an immediate write and its own confirmation notification
       _service.invoke('write_now', _getLocalizedStrings());
-      
     } else {
       _service.invoke("stop", _getLocalizedStrings());
     }
-    await _updateStatusLogText();
+
+    notifyListeners();
   }
 
   void manualWriteSteps() {

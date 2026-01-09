@@ -40,13 +40,18 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(
             title: Text(l10n.walkgo),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.settings_outlined),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+              Consumer<HomePageViewModel>(
+                builder: (context, viewModel, child) => IconButton(
+                  icon: const Icon(Icons.settings_outlined),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SettingsPage()),
+                    );
+                    viewModel.reloadSettings();
+                  },
+                  tooltip: l10n.settings_tooltip,
                 ),
-                tooltip: l10n.settings_tooltip,
               ),
             ],
             elevation: 0,

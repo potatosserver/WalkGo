@@ -38,30 +38,32 @@ class StatusCard extends StatelessWidget {
               style: theme.textTheme.titleSmall
                   ?.copyWith(fontWeight: FontWeight.bold, color: contentColor),
             ),
-            if (isRunning && (viewModel.remainingSteps > 0))
+            if (isRunning)
               Padding(
                 padding: const EdgeInsets.only(top: 12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(l10n.steps_written_this_session,
-                            style: theme.textTheme.bodySmall),
+                            style: theme.textTheme.bodySmall?.copyWith(color: contentColor)),
                         Text('${viewModel.sessionTotalSteps}',
-                            style: theme.textTheme.titleLarge),
+                            style: theme.textTheme.titleLarge?.copyWith(color: contentColor)),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(l10n.auto_pause_remaining,
-                            style: theme.textTheme.bodySmall),
-                        Text('${viewModel.remainingSteps}',
-                            style: theme.textTheme.titleLarge),
-                      ],
-                    ),
+                    if (viewModel.autoPauseEnabled)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(l10n.auto_pause_remaining,
+                              style: theme.textTheme.bodySmall?.copyWith(color: contentColor)),
+                          Text('${viewModel.remainingSteps}',
+                              style: theme.textTheme.titleLarge?.copyWith(color: contentColor)),
+                        ],
+                      ),
                   ],
                 ),
               )
