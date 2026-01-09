@@ -16,13 +16,11 @@ void onStart(ServiceInstance service) {
   Timer? timer;
   Map<String, String> localizedStrings = {};
 
-  // Add these variables to hold the settings
   bool offsetEnabled = true;
   int offsetSteps = 50;
   bool autoPauseEnabled = false;
   int autoPauseThreshold = 50000;
 
-  // Function to load all settings from SharedPreferences
   Future<void> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     offsetEnabled = prefs.getBool(prefOffsetEnabled) ?? true;
@@ -32,14 +30,12 @@ void onStart(ServiceInstance service) {
   }
 
   Future<void> writeStepsLogic({String source = 'automatic'}) async {
-    // Ensure settings are loaded before writing steps
     await loadSettings();
     
     final prefs = await SharedPreferences.getInstance();
     final baseSteps = prefs.getInt(prefBaseSteps) ?? 500;
     final random = Random();
     
-    // Use the loaded settings
     final offset = offsetEnabled ? random.nextInt(offsetSteps * 2 + 1) - offsetSteps : 0;
     final steps = baseSteps + offset;
 
@@ -59,18 +55,12 @@ void onStart(ServiceInstance service) {
       subscription.cancel();
 
       if (success) {
-        // Use the new static method to write the log
         final total = await LogService.writeLogToStorage(steps, source: source);
-
-        // Emit an event to notify the UI that the log has been updated
         service.invoke('log_updated');
 
-        // Check for auto-pause
         if (autoPauseEnabled && total >= autoPauseThreshold) {
-          service.invoke('stop', {
-            // You might want to pass specific localization for auto-pause
-          });
-          return; // Stop further execution
+          service.invoke('stop', {});
+          return;
         }
 
         final confirmationTitle = localizedStrings['notification_steps_written_title'] ?? 'Steps Written';
@@ -81,10 +71,17 @@ void onStart(ServiceInstance service) {
           'body': confirmationBody,
         });
 
+        final currentInterval = prefs.getInt(prefInterval) ?? 1;
+        final nextRun = DateTime.now().add(Duration(minutes: currentInterval));
+        final formattedTime = DateFormat('HH:mm').format(nextRun);
+        await prefs.setString(prefNextRunTime, formattedTime);
+
         service.invoke('update_ui', {
           'session_total_steps': total,
           'is_running': true,
+          'last_steps_written': steps,
           'status_log': (localizedStrings['automatic_write_success'] ?? 'Wrote {steps} steps').replaceAll('{steps}', steps.toString()),
+          'next_run_time': formattedTime,
         });
 
       } else {
@@ -119,6 +116,8 @@ void onStart(ServiceInstance service) {
         final currentInterval = prefs.getInt(prefInterval) ?? 1;
         final nextRun = DateTime.now().add(Duration(minutes: currentInterval));
         final formattedTime = DateFormat('HH:mm').format(nextRun);
+        await prefs.setString(prefNextRunTime, formattedTime);
+
         final statusTitle = localizedStrings['notification_service_running'] ?? 'Service Running';
         final statusBody = (localizedStrings['notification_next_run'] ?? 'Next run at {time}').replaceAll('{time}', formattedTime);
         service.invoke('showStatusNotification', {
@@ -136,13 +135,14 @@ void onStart(ServiceInstance service) {
     Future.delayed(Duration.zero, () async {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool(prefIsAuto, true);
-
-        // Load settings on start
         await loadSettings(); 
-
         await writeStepsLogic();
 
         final interval = prefs.getInt(prefInterval) ?? 1;
+        final nextRun = DateTime.now().add(Duration(minutes: interval));
+        final formattedTime = DateFormat('HH:mm').format(nextRun);
+        await prefs.setString(prefNextRunTime, formattedTime);
+
         restartTimer(interval);
     });
   });
@@ -152,9 +152,8 @@ void onStart(ServiceInstance service) {
       timer?.cancel();
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(prefIsAuto, false);
+      await prefs.remove(prefNextRunTime); // Clear next run time on stop
 
-      // When stopping, we don't need to use LogService anymore
-      // as it's handled by the UI or other parts.
       await prefs.setInt(prefSessionTotalSteps, 0);
       service.invoke('log_updated');
 
@@ -169,17 +168,17 @@ void onStart(ServiceInstance service) {
         'body': body,
       });
 
-      // Update the UI with reset values
       service.invoke('update_ui', {
         'is_running': false,
-        'session_total_steps': 0, // Explicitly send 0
+        'session_total_steps': 0,
+        'last_steps_written': 0,
         'status_log': localizedStrings['notification_service_stopped_content'],
+        'next_run_time': null, // Explicitly clear from UI
       });
       service.stopSelf();
     });
   });
 
-  // Listener for manual write
   service.on('write_now').listen((event) async {
     if (event != null) {
       localizedStrings = Map<String, String>.from(event);
@@ -187,7 +186,6 @@ void onStart(ServiceInstance service) {
     await writeStepsLogic(source: 'manual');
   });
 
-  // When settings are updated from the UI, reload them and notify the UI.
   service.on('update').listen((event) async {
     await loadSettings();
     service.invoke('settings_updated');

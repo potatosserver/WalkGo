@@ -1,9 +1,12 @@
 {
+    "@@locale": "zh",
     "walkgo": "WalkGo",
     "settings_tooltip": "設定",
     "status_running": "服務運行中...",
     "status_ready_to_start": "服務已準備就緒。",
+    "@status_ready_to_start": {},
     "status_stopped": "服務已停止。",
+    "@status_stopped": {},
     "next_run_at": "下次運行於 {time}",
     "@next_run_at": {
         "placeholders": {
@@ -12,7 +15,9 @@
             }
         }
     },
+    "next_run_title": "下次執行於",
     "next_run_pending": "等待下次運行...",
+    "this_run": "本次步數",
     "start_auto_steps": "啟動自動服務",
     "stop_auto_steps": "停止自動服務",
     "write_fail_check_log": "寫入步數失敗，請檢查您的健康應用程式或系統設定。",
@@ -50,7 +55,7 @@
     "app_reset_desc": "此操作將清除所有應用程式資料和設定，將應用程式還原至初始狀態。",
     "offset_steps_hint": "步數將會在此值的正負範圍內隨機化。",
     "permission_denied_title": "權限已被永久拒絕",
-    "permission_denied_content": "您已永久拒絕一項必要權限。請前往您裝置上此應用程式的設定頁面，並手動授予權限以確保其正常運作。",
+    "permission_denied_content": "您已永久刪絕一項必要權限。請前往您裝置上此應用程式的設定頁面，並手動授予權限以確保其正常運作。",
     "open_settings": "開啟設定",
     "auto_pause_notification_title": "服務已自動暫停",
     "auto_pause_notification_content_with_steps": "因為已達成 {steps} 步的階段性目標，服務已自動暫停。",
@@ -61,8 +66,8 @@
             }
         }
     },
-    "steps_written_this_session": "本次已寫入步數",
-    "auto_pause_remaining": "剩餘自動暫停步數",
+    "steps_written_this_session": "累積步數",
+    "auto_pause_remaining": "剩餘步數",
     "start_service_fail": "啟動服務失敗。",
     "stop_service_fail": "停止服務失敗。",
     "param_settings": "參數設定",

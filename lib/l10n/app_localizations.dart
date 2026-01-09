@@ -140,11 +140,23 @@ abstract class AppLocalizations {
   /// **'Next run at {time}'**
   String next_run_at(String time);
 
+  /// No description provided for @next_run_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Next run at'**
+  String get next_run_title;
+
   /// No description provided for @next_run_pending.
   ///
   /// In en, this message translates to:
   /// **'Next run pending...'**
   String get next_run_pending;
+
+  /// No description provided for @this_run.
+  ///
+  /// In en, this message translates to:
+  /// **'This Run'**
+  String get this_run;
 
   /// No description provided for @session_steps.
   ///

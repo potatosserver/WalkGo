@@ -32,7 +32,13 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get next_run_title => '下次執行於';
+
+  @override
   String get next_run_pending => '等待下次運行...';
+
+  @override
+  String get this_run => '本次步數';
 
   @override
   String get session_steps => '本次步數';
@@ -203,7 +209,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get permission_denied_content =>
-      '您已永久拒絕一項必要權限。請前往您裝置上此應用程式的設定頁面，並手動授予權限以確保其正常運作。';
+      '您已永久刪絕一項必要權限。請前往您裝置上此應用程式的設定頁面，並手動授予權限以確保其正常運作。';
 
   @override
   String get open_settings => '開啟設定';
@@ -217,10 +223,10 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get steps_written_this_session => '本次已寫入步數';
+  String get steps_written_this_session => '累積步數';
 
   @override
-  String get auto_pause_remaining => '剩餘自動暫停步數';
+  String get auto_pause_remaining => '剩餘步數';
 
   @override
   String get start_service_fail => '啟動服務失敗。';

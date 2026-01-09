@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/constants.dart';
-import 'package:intl/intl.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 
 class HomePageViewModel extends ChangeNotifier {
@@ -12,25 +11,28 @@ class HomePageViewModel extends ChangeNotifier {
   bool _isAutoRunning = false;
   String _statusLog = "";
   int _sessionTotalSteps = 0;
+  int _lastStepsWritten = 0;
   int _remainingSteps = 0;
   String _baseSteps = "500";
   String _interval = "1";
   bool _autoPauseEnabled = false;
+  String? _nextRunTime;
 
   bool get isAutoRunning => _isAutoRunning;
   String get statusLog => _statusLog;
   int get sessionTotalSteps => _sessionTotalSteps;
+  int get lastStepsWritten => _lastStepsWritten;
   int get remainingSteps => _remainingSteps;
   String get baseSteps => _baseSteps;
   String get interval => _interval;
   bool get autoPauseEnabled => _autoPauseEnabled;
+  String? get nextRunTime => _nextRunTime;
 
   AppLocalizations? _l10n;
 
   void setL10n(AppLocalizations l10n) {
     if (_l10n == null) {
       _l10n = l10n;
-      // Use Future.delayed to avoid calling notifyListeners during build
       Future.delayed(Duration.zero, () => _updateStatus(isRunning: _isAutoRunning));
     }
   }
@@ -51,20 +53,17 @@ class HomePageViewModel extends ChangeNotifier {
       final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
 
       _isAutoRunning = event['is_running'] as bool? ?? _isAutoRunning;
-      final newStatusLog = event['status_log'] as String?;
+      _nextRunTime = event['next_run_time'] as String?;
+      _lastStepsWritten = (event['last_steps_written'] as num?)?.toInt() ?? 0;
 
       if (_isAutoRunning) {
         _sessionTotalSteps = (event['session_total_steps'] as num?)?.toInt() ?? 0;
-        if (newStatusLog != null) {
-          _statusLog = newStatusLog;
-        }
+        _statusLog = _l10n!.status_running;
       } else {
         _sessionTotalSteps = 0;
-        if (newStatusLog != null && newStatusLog.isNotEmpty) {
-           _statusLog = newStatusLog;
-        } else {
-          _statusLog = _l10n!.status_ready_to_start;
-        }
+        _lastStepsWritten = 0;
+        _nextRunTime = null;
+        _statusLog = _l10n!.status_ready_to_start;
       }
 
       _remainingSteps = autoPauseSteps - _sessionTotalSteps;
@@ -84,6 +83,7 @@ class HomePageViewModel extends ChangeNotifier {
     _baseSteps = (prefs.getInt(prefBaseSteps) ?? 500).toString();
     _interval = (prefs.getInt(prefInterval) ?? 1).toString();
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
+    _nextRunTime = prefs.getString(prefNextRunTime);
 
     final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
     _remainingSteps = autoPauseSteps - _sessionTotalSteps;
@@ -117,23 +117,17 @@ class HomePageViewModel extends ChangeNotifier {
 
     _isAutoRunning = isRunning;
 
-    String statusText;
     if (isRunning) {
       final prefs = await SharedPreferences.getInstance();
-      final nextRunTimestamp = prefs.getInt(prefNextRunTime);
-      if (nextRunTimestamp != null) {
-        final nextRun = DateTime.fromMillisecondsSinceEpoch(nextRunTimestamp);
-        final formattedTime = DateFormat('HH:mm').format(nextRun);
-        statusText = _l10n!.next_run_at(formattedTime);
-      } else {
-        statusText = _l10n!.status_running;
-      }
+      _nextRunTime = prefs.getString(prefNextRunTime);
+      _statusLog = _l10n!.status_running;
     } else {
-      statusText = _l10n!.status_ready_to_start;
+      _statusLog = _l10n!.status_ready_to_start;
       _sessionTotalSteps = 0;
+      _lastStepsWritten = 0;
+      _nextRunTime = null;
     }
     
-    _statusLog = statusText;
     notifyListeners();
   }
 
@@ -151,7 +145,6 @@ class HomePageViewModel extends ChangeNotifier {
       'background_service_start': _l10n!.background_service_start,
       'auto_pause_notification_title': _l10n!.auto_pause_notification_title,
       'auto_pause_notification_content_with_steps': _l10n!.auto_pause_notification_content_with_steps('{steps}'),
-      // Add the new key for the manual write toast
       'manual_write_initiated': _l10n!.manual_write_initiated,
     };
   }
@@ -176,7 +169,6 @@ class HomePageViewModel extends ChangeNotifier {
     }
   }
 
-  // This function invokes the background service to perform a manual write.
   void manualWriteSteps() {
     if (_l10n == null) return;
     _service.invoke('write_now', {

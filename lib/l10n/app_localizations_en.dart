@@ -32,7 +32,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get next_run_title => 'Next run at';
+
+  @override
   String get next_run_pending => 'Next run pending...';
+
+  @override
+  String get this_run => 'This Run';
 
   @override
   String get session_steps => 'Session Steps';
