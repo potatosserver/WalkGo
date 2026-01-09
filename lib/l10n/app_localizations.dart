@@ -781,6 +781,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manual write initiated.'**
   String get manual_write_initiated;
+
+  /// No description provided for @manual_write_button_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Write Once'**
+  String get manual_write_button_text;
+
+  /// No description provided for @manual_write_success_feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Manually wrote {steps} steps'**
+  String manual_write_success_feedback(String steps);
+
+  /// No description provided for @auto_service_started.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto service started'**
+  String get auto_service_started;
+
+  /// No description provided for @auto_service_stopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto service stopped'**
+  String get auto_service_stopped;
 }
 
 class _AppLocalizationsDelegate

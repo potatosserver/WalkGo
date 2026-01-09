@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
@@ -16,6 +17,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    final service = FlutterBackgroundService();
+    service.on('manual_write_complete').listen((event) {
+      if (!mounted) return;
+      final steps = event?['steps'] as int?;
+      if (steps == null) return;
+
+      final l10n = AppLocalizations.of(context)!;
+      Fluttertoast.showToast(
+        msg: l10n.manual_write_success_feedback(steps.toString()),
+        toastLength: Toast.LENGTH_SHORT,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -84,12 +102,7 @@ class _HomePageState extends State<HomePage> {
                             isLightMode ? Colors.black : Colors.white,
                       ),
                       onPressed: () {
-                        // The logic is now handled in the ViewModel,
-                        // which will invoke the background service.
                         viewModel.manualWriteSteps();
-
-                        // Show a toast to confirm that the action was triggered.
-                        Fluttertoast.showToast(msg: l10n.manual_write_initiated);
                       },
                     ),
                     const SizedBox(height: 24),

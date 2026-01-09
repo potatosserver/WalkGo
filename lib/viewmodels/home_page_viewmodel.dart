@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/constants.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
@@ -145,7 +146,6 @@ class HomePageViewModel extends ChangeNotifier {
       'background_service_start': _l10n!.background_service_start,
       'auto_pause_notification_title': _l10n!.auto_pause_notification_title,
       'auto_pause_notification_content_with_steps': _l10n!.auto_pause_notification_content_with_steps('{steps}'),
-      'manual_write_initiated': _l10n!.manual_write_initiated,
     };
   }
 
@@ -159,13 +159,15 @@ class HomePageViewModel extends ChangeNotifier {
     final wantsToRun = !_isAutoRunning;
     
     if (wantsToRun) {
-       final isCurrentlyRunning = await _service.isRunning();
+      final isCurrentlyRunning = await _service.isRunning();
       if (!isCurrentlyRunning) {
         await _service.startService();
       }
       _service.invoke('start', _getLocalizedStrings());
+      Fluttertoast.showToast(msg: _l10n!.auto_service_started);
     } else {
       _service.invoke("stop", _getLocalizedStrings());
+      Fluttertoast.showToast(msg: _l10n!.auto_service_stopped);
     }
   }
 

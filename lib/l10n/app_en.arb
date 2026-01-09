@@ -285,5 +285,18 @@
   "notification_steps_written_title": "Steps Written Successfully",
   "@notification_steps_written_title": {},
   "manual_write_initiated": "Manual write initiated.",
-  "@manual_write_initiated": {}
+  "@manual_write_initiated": {},
+  "manual_write_button_text": "Write Once",
+  "manual_write_success_feedback": "Manually wrote {steps} steps",
+  "@manual_write_success_feedback": {
+    "placeholders": {
+      "steps": {
+        "type": "String"
+      }
+    }
+  },
+  "auto_service_started": "Auto service started",
+  "@auto_service_started": {},
+  "auto_service_stopped": "Auto service stopped",
+  "@auto_service_stopped": {}
 }

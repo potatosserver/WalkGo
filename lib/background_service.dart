@@ -22,8 +22,6 @@ void onStart(ServiceInstance service) {
   bool autoPauseEnabled = false;
   int autoPauseThreshold = 50000;
 
-  // Function declarations are now in the correct order to avoid circular reference.
-
   Future<void> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     offsetEnabled = prefs.getBool(prefOffsetEnabled) ?? true;
@@ -57,23 +55,25 @@ void onStart(ServiceInstance service) {
         'next_run_time': null,
       });
 
-      service.stopSelf();
       return true; // Indicates that the service WAS stopped
     }
     return false; // Indicates that the service should continue
   }
 
-  /// Performs a single write operation, checks if it needs to stop, and updates UI.
-  /// Returns `true` if the service was stopped, `false` otherwise.
   Future<bool> writeStepsLogic({String source = 'automatic'}) async {
     await loadSettings();
     
     final prefs = await SharedPreferences.getInstance();
     final baseSteps = prefs.getInt(prefBaseSteps) ?? 500;
-    final random = Random();
     
-    final offset = offsetEnabled ? random.nextInt(offsetSteps * 2 + 1) - offsetSteps : 0;
-    final steps = baseSteps + offset;
+    int steps;
+    if (source == 'manual') {
+      steps = baseSteps; // Manual write uses base steps only
+    } else { // For 'automatic' source
+      final random = Random();
+      final offset = offsetEnabled ? random.nextInt(offsetSteps * 2 + 1) - offsetSteps : 0;
+      steps = baseSteps + offset; // Automatic write includes random offset
+    }
 
     final completer = Completer<bool>();
 
@@ -92,11 +92,8 @@ void onStart(ServiceInstance service) {
 
       if (success) {
         await LogService.writeLogToStorage(steps, source: source);
-        sessionTotalSteps += steps;
-        await prefs.setInt(prefSessionTotalSteps, sessionTotalSteps);
-
         service.invoke('log_updated');
-
+        
         final confirmationTitle = localizedStrings['notification_steps_written_title'] ?? 'Steps Written';
         final confirmationBody = (localizedStrings['notification_steps_written'] ?? '{steps} steps written').replaceAll('{steps}', steps.toString());
 
@@ -105,26 +102,32 @@ void onStart(ServiceInstance service) {
           'body': confirmationBody,
         });
 
-        final stopped = await checkAndStopIfNeeded();
-        if (stopped) {
-          return true; // Service was stopped, report back up.
+        if (source == 'automatic') {
+          sessionTotalSteps += steps;
+          await prefs.setInt(prefSessionTotalSteps, sessionTotalSteps);
+
+          final stopped = await checkAndStopIfNeeded();
+          if (stopped) {
+            return true; 
+          }
+
+          final currentInterval = prefs.getInt(prefInterval) ?? 1;
+          final nextRun = DateTime.now().add(Duration(minutes: currentInterval));
+          final formattedTime = DateFormat('HH:mm').format(nextRun);
+          await prefs.setString(prefNextRunTime, formattedTime);
+
+          service.invoke('update_ui', {
+            'session_total_steps': sessionTotalSteps,
+            'is_running': true,
+            'last_steps_written': steps,
+            'status_log': (localizedStrings['automatic_write_success'] ?? 'Wrote {steps} steps').replaceAll('{steps}', steps.toString()),
+            'next_run_time': formattedTime,
+          });
+        } else if (source == 'manual') {
+            service.invoke('manual_write_complete', {'steps': steps});
         }
-
-        // --- This part only runs if the service is NOT stopped ---
-        final currentInterval = prefs.getInt(prefInterval) ?? 1;
-        final nextRun = DateTime.now().add(Duration(minutes: currentInterval));
-        final formattedTime = DateFormat('HH:mm').format(nextRun);
-        await prefs.setString(prefNextRunTime, formattedTime);
-
-        service.invoke('update_ui', {
-          'session_total_steps': sessionTotalSteps,
-          'is_running': true,
-          'last_steps_written': steps,
-          'status_log': (localizedStrings['automatic_write_success'] ?? 'Wrote {steps} steps').replaceAll('{steps}', steps.toString()),
-          'next_run_time': formattedTime,
-        });
         
-        return false; // Service continues, report back up.
+        return false;
 
       } else {
         ErrorLogService().addErrorLog('[BackgroundService] Health write failed', 'Received failure from main isolate.');
@@ -141,7 +144,7 @@ void onStart(ServiceInstance service) {
         'status_log': localizedStrings['write_fail_check_log'] ?? 'Write failed. Check logs.',
       });
     }
-    return false; // Return false in case of error to allow potential continuation
+    return false; 
   }
   
   void restartTimer(int interval) {
@@ -203,7 +206,6 @@ void onStart(ServiceInstance service) {
         'status_log': localizedStrings['notification_service_stopped_content'],
         'next_run_time': null,
       });
-      service.stopSelf();
     });
   });
 

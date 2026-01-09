@@ -371,4 +371,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get manual_write_initiated => '手動寫入已啟動。';
+
+  @override
+  String get manual_write_button_text => '手動寫入一次';
+
+  @override
+  String manual_write_success_feedback(String steps) {
+    return '已手動寫入 $steps 步';
+  }
+
+  @override
+  String get auto_service_started => '自動服務已啟動';
+
+  @override
+  String get auto_service_stopped => '自動服務已停止';
 }

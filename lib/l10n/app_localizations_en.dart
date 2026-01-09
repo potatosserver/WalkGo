@@ -386,4 +386,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get manual_write_initiated => 'Manual write initiated.';
+
+  @override
+  String get manual_write_button_text => 'Write Once';
+
+  @override
+  String manual_write_success_feedback(String steps) {
+    return 'Manually wrote $steps steps';
+  }
+
+  @override
+  String get auto_service_started => 'Auto service started';
+
+  @override
+  String get auto_service_stopped => 'Auto service stopped';
 }
