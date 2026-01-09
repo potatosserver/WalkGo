@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/constants.dart';
@@ -17,7 +19,7 @@ class LanguageService with ChangeNotifier {
     if (languageCode != null && languageCode.isNotEmpty) {
       _appLocale = Locale(languageCode);
     } else {
-      _appLocale = null;
+      _appLocale = PlatformDispatcher.instance.locale;
     }
     notifyListeners();
   }
