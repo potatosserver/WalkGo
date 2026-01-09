@@ -31,3 +31,7 @@
 
 ```bash
 flutter build apk --split-per-abi --obfuscate --split-debug-info=./debug-info
+```
+```bash
+gh auth login
+```
