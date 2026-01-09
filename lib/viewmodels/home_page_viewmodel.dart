@@ -34,16 +34,17 @@ class HomePageViewModel extends ChangeNotifier {
   void setL10n(AppLocalizations l10n) {
     if (_l10n == null) {
       _l10n = l10n;
-      Future.delayed(Duration.zero, () => _updateStatus(isRunning: _isAutoRunning));
     }
   }
 
   HomePageViewModel() {
-    _loadSettings();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
     _setupServiceListeners();
-    _service.isRunning().then((running) {
-      _updateStatus(isRunning: running);
-    });
+    await _loadSettings(); // This now reads the correct persistent state
+    _updateUiFromState(); // Update UI based on loaded state
   }
 
   void _setupServiceListeners() {
@@ -53,19 +54,14 @@ class HomePageViewModel extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
 
+      // The service is the source of truth for its running state.
+      // Update our local state from the service's event.
       _isAutoRunning = event['is_running'] as bool? ?? _isAutoRunning;
       _nextRunTime = event['next_run_time'] as String?;
       _lastStepsWritten = (event['last_steps_written'] as num?)?.toInt() ?? 0;
+      _sessionTotalSteps = (event['session_total_steps'] as num?)?.toInt() ?? _sessionTotalSteps;
 
-      if (_isAutoRunning) {
-        _sessionTotalSteps = (event['session_total_steps'] as num?)?.toInt() ?? 0;
-        _statusLog = _l10n!.status_running;
-      } else {
-        _sessionTotalSteps = 0;
-        _lastStepsWritten = 0;
-        _nextRunTime = null;
-        _statusLog = _l10n!.status_ready_to_start;
-      }
+      _updateUiFromState();
 
       _remainingSteps = autoPauseSteps - _sessionTotalSteps;
       if (_remainingSteps < 0) _remainingSteps = 0;
@@ -78,13 +74,35 @@ class HomePageViewModel extends ChangeNotifier {
     });
   }
 
+  // A central function to update UI text based on the current state
+  void _updateUiFromState() {
+    if (_l10n == null) return;
+
+    if (_isAutoRunning) {
+      _statusLog = _l10n!.status_running;
+    } else {
+      _statusLog = _l10n!.status_ready_to_start;
+      // If the service is not running, reset transient values
+      _sessionTotalSteps = 0;
+      _lastStepsWritten = 0;
+      _nextRunTime = null;
+    }
+  }
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
+    // This is the key change: read the persisted user intent
+    _isAutoRunning = prefs.getBool(prefIsAuto) ?? false; 
+    
     _baseSteps = (prefs.getInt(prefBaseSteps) ?? 500).toString();
     _interval = (prefs.getInt(prefInterval) ?? 1).toString();
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
-    _nextRunTime = prefs.getString(prefNextRunTime);
+    
+    // Load session steps and next run time if the service was running
+    if (_isAutoRunning) {
+      _sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
+      _nextRunTime = prefs.getString(prefNextRunTime);
+    }
 
     final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
     _remainingSteps = autoPauseSteps - _sessionTotalSteps;
@@ -110,25 +128,6 @@ class HomePageViewModel extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefInterval, int.tryParse(value) ?? 1);
     _service.invoke('update');
-    notifyListeners();
-  }
-
-  Future<void> _updateStatus({required bool isRunning}) async {
-    if (_l10n == null) return;
-
-    _isAutoRunning = isRunning;
-
-    if (isRunning) {
-      final prefs = await SharedPreferences.getInstance();
-      _nextRunTime = prefs.getString(prefNextRunTime);
-      _statusLog = _l10n!.status_running;
-    } else {
-      _statusLog = _l10n!.status_ready_to_start;
-      _sessionTotalSteps = 0;
-      _lastStepsWritten = 0;
-      _nextRunTime = null;
-    }
-    
     notifyListeners();
   }
 
@@ -159,8 +158,8 @@ class HomePageViewModel extends ChangeNotifier {
     final wantsToRun = !_isAutoRunning;
     
     if (wantsToRun) {
-      final isCurrentlyRunning = await _service.isRunning();
-      if (!isCurrentlyRunning) {
+      final isServiceProcessRunning = await _service.isRunning();
+      if (!isServiceProcessRunning) {
         await _service.startService();
       }
       _service.invoke('start', _getLocalizedStrings());
@@ -169,6 +168,10 @@ class HomePageViewModel extends ChangeNotifier {
       _service.invoke("stop", _getLocalizedStrings());
       Fluttertoast.showToast(msg: _l10n!.auto_service_stopped);
     }
+
+    _isAutoRunning = wantsToRun;
+    _updateUiFromState();
+    notifyListeners();
   }
 
   void manualWriteSteps() {
