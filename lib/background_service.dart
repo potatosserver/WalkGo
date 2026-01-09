@@ -65,6 +65,14 @@ void onStart(ServiceInstance service) {
         // Emit an event to notify the UI that the log has been updated
         service.invoke('log_updated');
 
+        // Check for auto-pause
+        if (autoPauseEnabled && total >= autoPauseThreshold) {
+          service.invoke('stop', {
+            // You might want to pass specific localization for auto-pause
+          });
+          return; // Stop further execution
+        }
+
         final confirmationTitle = localizedStrings['notification_steps_written_title'] ?? 'Steps Written';
         final confirmationBody = (localizedStrings['notification_steps_written'] ?? '{steps} steps written').replaceAll('{steps}', steps.toString());
 
@@ -78,13 +86,6 @@ void onStart(ServiceInstance service) {
           'is_running': true,
           'status_log': (localizedStrings['automatic_write_success'] ?? 'Wrote {steps} steps').replaceAll('{steps}', steps.toString()),
         });
-
-        // Check for auto-pause
-        if (autoPauseEnabled && total >= autoPauseThreshold) {
-          service.invoke('stop', {
-            // You might want to pass specific localization for auto-pause
-          });
-        }
 
       } else {
         ErrorLogService().addErrorLog('[BackgroundService] Health write failed', 'Received failure from main isolate.');
