@@ -14,6 +14,8 @@ import 'package:walkgo/language_service.dart';
 import 'package:walkgo/router/app_router.dart';
 import 'package:walkgo/services/notification_helper.dart';
 import 'package:walkgo/theme_provider.dart';
+import 'package:walkgo/viewmodels/advanced_settings_viewmodel.dart';
+import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
@@ -100,6 +102,8 @@ class WalkGoApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LanguageService()),
+        ChangeNotifierProvider(create: (_) => AdvancedSettingsViewModel()),
+        ChangeNotifierProvider(create: (_) => HomePageViewModel()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

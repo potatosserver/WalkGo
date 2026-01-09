@@ -28,20 +28,18 @@ class HomePageViewModel extends ChangeNotifier {
   AppLocalizations? _l10n;
 
   void setL10n(AppLocalizations l10n) {
-    _l10n = l10n;
-    if (_statusLog.isEmpty) {
-      _updateStatusLogFromPrefs();
+    if (_l10n == null) {
+      _l10n = l10n;
+      // Use Future.delayed to avoid calling notifyListeners during build
+      Future.delayed(Duration.zero, () => _updateStatus(isRunning: _isAutoRunning));
     }
   }
 
   HomePageViewModel() {
     _loadSettings();
     _setupServiceListeners();
-    // Check initial running state
     _service.isRunning().then((running) {
-      _isAutoRunning = running;
-      _updateStatusLogFromPrefs();
-      notifyListeners();
+      _updateStatus(isRunning: running);
     });
   }
 
@@ -56,13 +54,11 @@ class HomePageViewModel extends ChangeNotifier {
       final newStatusLog = event['status_log'] as String?;
 
       if (_isAutoRunning) {
-        // If service is running, update steps and status log from service
         _sessionTotalSteps = (event['session_total_steps'] as num?)?.toInt() ?? 0;
         if (newStatusLog != null) {
           _statusLog = newStatusLog;
         }
       } else {
-        // If service is not running, reset steps and show ready status
         _sessionTotalSteps = 0;
         if (newStatusLog != null && newStatusLog.isNotEmpty) {
            _statusLog = newStatusLog;
@@ -71,11 +67,14 @@ class HomePageViewModel extends ChangeNotifier {
         }
       }
 
-      // Always recalculate remaining steps
       _remainingSteps = autoPauseSteps - _sessionTotalSteps;
       if (_remainingSteps < 0) _remainingSteps = 0;
       
       notifyListeners();
+    });
+
+    _service.on('settings_updated').listen((event) {
+      reloadSettings();
     });
   }
 
@@ -85,7 +84,11 @@ class HomePageViewModel extends ChangeNotifier {
     _baseSteps = (prefs.getInt(prefBaseSteps) ?? 500).toString();
     _interval = (prefs.getInt(prefInterval) ?? 1).toString();
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
-    await _updateStatusLogFromPrefs();
+
+    final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
+    _remainingSteps = autoPauseSteps - _sessionTotalSteps;
+    if (_remainingSteps < 0) _remainingSteps = 0;
+
     notifyListeners();
   }
 
@@ -109,12 +112,14 @@ class HomePageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _updateStatusLogFromPrefs() async {
+  Future<void> _updateStatus({required bool isRunning}) async {
     if (_l10n == null) return;
-    final prefs = await SharedPreferences.getInstance();
-    final isRunning = prefs.getBool(prefIsAuto) ?? false;
+
+    _isAutoRunning = isRunning;
+
     String statusText;
     if (isRunning) {
+      final prefs = await SharedPreferences.getInstance();
       final nextRunTimestamp = prefs.getInt(prefNextRunTime);
       if (nextRunTimestamp != null) {
         final nextRun = DateTime.fromMillisecondsSinceEpoch(nextRunTimestamp);
@@ -125,7 +130,9 @@ class HomePageViewModel extends ChangeNotifier {
       }
     } else {
       statusText = _l10n!.status_ready_to_start;
+      _sessionTotalSteps = 0;
     }
+    
     _statusLog = statusText;
     notifyListeners();
   }
@@ -156,14 +163,12 @@ class HomePageViewModel extends ChangeNotifier {
 
     final wantsToRun = !_isAutoRunning;
     
-    // Send command to service, DO NOT change UI state here.
     if (wantsToRun) {
        final isCurrentlyRunning = await _service.isRunning();
       if (!isCurrentlyRunning) {
         await _service.startService();
       }
       _service.invoke('start', _getLocalizedStrings());
-      _service.invoke('write_now', _getLocalizedStrings());
     } else {
       _service.invoke("stop", _getLocalizedStrings());
     }
