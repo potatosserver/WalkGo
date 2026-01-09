@@ -13,6 +13,7 @@
     <!-- Background Service & Power Management -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <!-- For exact alarms -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
