@@ -15,19 +15,16 @@ import 'package:walkgo/services/notification_helper.dart';
 void onStart(ServiceInstance service) {
   DartPluginRegistrant.ensureInitialized();
 
-  // --- 1. INITIALIZATION ---
   final healthService = HealthService();
   final notificationHelper = NotificationHelper();
   notificationHelper.init();
 
-  // --- 2. STATE VARIABLES ---
   Timer? timer;
   Map<String, String> localizedStrings = {};
   int sessionTotalSteps = 0;
+  int lastStepsWritten = 0; // Keep track of the last write
   bool offsetEnabled = true;
   int offsetSteps = 50;
-
-  // --- 3. FUNCTION DEFINITIONS (in correct dependency order) ---
 
   Future<void> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
@@ -54,6 +51,7 @@ void onStart(ServiceInstance service) {
       timer?.cancel();
       await prefs.setBool(prefIsAuto, false);
       await prefs.remove(prefNextRunTime);
+      await prefs.remove(prefLastStepsWritten); // Clear last steps on pause
 
       final title = localizedStrings['auto_pause_notification_title'] ?? 'Service Automatically Paused';
       final body = (localizedStrings['auto_pause_notification_content_with_steps'] ?? 'Paused after reaching {steps} steps.').replaceAll('{steps}', sessionTotalSteps.toString());
@@ -63,6 +61,7 @@ void onStart(ServiceInstance service) {
       service.invoke('update_ui', {
         'is_running': false,
         'session_total_steps': sessionTotalSteps,
+        'last_steps_written': 0, // Reset last written steps
         'status_log': title,
         'next_run_time': null,
       });
@@ -94,6 +93,8 @@ void onStart(ServiceInstance service) {
         await LogService.writeLogToStorage(steps, source: source);
         service.invoke('log_updated');
         
+        lastStepsWritten = steps; // Update the in-memory variable
+
         final confirmationTitle = localizedStrings['notification_steps_written_title'] ?? 'Steps Written';
         final confirmationBody = (localizedStrings['notification_steps_written'] ?? '{steps} written').replaceAll('{steps}', steps.toString());
 
@@ -104,7 +105,10 @@ void onStart(ServiceInstance service) {
 
         if (source == 'automatic') {
           sessionTotalSteps += steps;
+          // ---- START OF FIX ----
           await prefs.setInt(prefSessionTotalSteps, sessionTotalSteps);
+          await prefs.setInt(prefLastStepsWritten, lastStepsWritten); // Persist last written steps
+          // ---- END OF FIX ----
 
           final stopped = await checkAndStopIfNeeded();
           if (stopped) {
@@ -128,7 +132,7 @@ void onStart(ServiceInstance service) {
           service.invoke('update_ui', {
             'session_total_steps': sessionTotalSteps,
             'is_running': true,
-            'last_steps_written': steps,
+            'last_steps_written': lastStepsWritten, // Use the in-memory variable
             'status_log': statusLog, 
             'next_run_time': formattedTime,
           });
@@ -181,6 +185,7 @@ void onStart(ServiceInstance service) {
 
     if (isAutoRunning) {
       sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
+      lastStepsWritten = prefs.getInt(prefLastStepsWritten) ?? 0; // Restore last written steps
       final interval = prefs.getInt(prefInterval) ?? 1;
       
       if (timer == null || !timer!.isActive) {
@@ -188,16 +193,11 @@ void onStart(ServiceInstance service) {
       }
 
     } else {
-      // THIS IS THE CRITICAL FIX: 
-      // Only reset the in-memory variable. 
-      // DO NOT touch the value stored on disk (SharedPreferences).
       sessionTotalSteps = 0;
-      // await prefs.setInt(prefSessionTotalSteps, 0); // THIS LINE WAS THE BUG
+      lastStepsWritten = 0;
       await prefs.remove(prefNextRunTime);
     }
   }
-
-  // --- 4. EXECUTION AND EVENT LISTENERS ---
 
   initializeOrRestoreState();
 
@@ -228,10 +228,14 @@ void onStart(ServiceInstance service) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(prefIsAuto, false);
       await prefs.remove(prefNextRunTime);
-
-      // This is the ONLY place where both in-memory and on-disk session steps are reset.
+      
+      // ---- START OF FIX ----
+      // Clear all session-related data from disk and memory
       sessionTotalSteps = 0;
+      lastStepsWritten = 0;
       await prefs.setInt(prefSessionTotalSteps, 0);
+      await prefs.setInt(prefLastStepsWritten, 0);
+      // ---- END OF FIX ----
       service.invoke('log_updated');
 
       if (event != null) {

@@ -5,6 +5,7 @@ const String prefPermissionsGranted = 'permissions_granted';
 const String prefIsAuto = 'is_auto';
 const String prefNextRunTime = 'next_run_time';
 const String prefSessionTotalSteps = 'session_total_steps';
+const String prefLastStepsWritten = 'last_steps_written';
 const String prefOffsetEnabled = 'offset_enabled';
 const String prefOffsetSteps = 'offset_steps';
 const String prefBaseSteps = 'base_steps';
