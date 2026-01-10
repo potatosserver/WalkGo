@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/constants.dart';
@@ -17,16 +15,19 @@ import 'package:walkgo/services/notification_helper.dart';
 void onStart(ServiceInstance service) {
   DartPluginRegistrant.ensureInitialized();
 
+  // --- 1. INITIALIZATION ---
   final healthService = HealthService();
   final notificationHelper = NotificationHelper();
   notificationHelper.init();
 
+  // --- 2. STATE VARIABLES ---
   Timer? timer;
   Map<String, String> localizedStrings = {};
   int sessionTotalSteps = 0;
-
   bool offsetEnabled = true;
   int offsetSteps = 50;
+
+  // --- 3. FUNCTION DEFINITIONS (in correct dependency order) ---
 
   Future<void> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
@@ -163,7 +164,7 @@ void onStart(ServiceInstance service) {
     }
     return false; 
   }
-  
+
   void restartTimer(int interval) {
       timer?.cancel();
       timer = Timer.periodic(Duration(minutes: interval), (timer) async {
@@ -174,6 +175,32 @@ void onStart(ServiceInstance service) {
       });
   }
 
+  Future<void> initializeOrRestoreState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isAutoRunning = prefs.getBool(prefIsAuto) ?? false;
+
+    if (isAutoRunning) {
+      sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
+      final interval = prefs.getInt(prefInterval) ?? 1;
+      
+      if (timer == null || !timer!.isActive) {
+          restartTimer(interval);
+      }
+
+    } else {
+      // THIS IS THE CRITICAL FIX: 
+      // Only reset the in-memory variable. 
+      // DO NOT touch the value stored on disk (SharedPreferences).
+      sessionTotalSteps = 0;
+      // await prefs.setInt(prefSessionTotalSteps, 0); // THIS LINE WAS THE BUG
+      await prefs.remove(prefNextRunTime);
+    }
+  }
+
+  // --- 4. EXECUTION AND EVENT LISTENERS ---
+
+  initializeOrRestoreState();
+
   service.on('start').listen((event) {
     if (event != null) {
       localizedStrings = Map<String, String>.from(event);
@@ -182,17 +209,15 @@ void onStart(ServiceInstance service) {
     Future.delayed(Duration.zero, () async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(prefIsAuto, true);
-      sessionTotalSteps = 0;
-      await prefs.setInt(prefSessionTotalSteps, 0);
-      
+
       final interval = prefs.getInt(prefInterval) ?? 1;
 
-      // Immediately write steps once upon starting
-      final bool wasStoppedInitially = await writeStepsLogic();
+      if(timer == null || !timer!.isActive){
+        final bool wasStoppedInitially = await writeStepsLogic();
 
-      // Only start the timer if the initial write didn't cause a stop
-      if (!wasStoppedInitially) {
-        restartTimer(interval);
+        if (!wasStoppedInitially) {
+          restartTimer(interval);
+        }
       }
     });
   });
@@ -204,6 +229,7 @@ void onStart(ServiceInstance service) {
       await prefs.setBool(prefIsAuto, false);
       await prefs.remove(prefNextRunTime);
 
+      // This is the ONLY place where both in-memory and on-disk session steps are reset.
       sessionTotalSteps = 0;
       await prefs.setInt(prefSessionTotalSteps, 0);
       service.invoke('log_updated');
