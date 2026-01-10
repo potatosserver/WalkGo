@@ -6,12 +6,18 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/constants.dart';
+import 'package:walkgo/health_service.dart';
 import 'package:walkgo/log_service.dart';
 import 'package:walkgo/services/error_log_service.dart';
+import 'package:walkgo/services/notification_helper.dart';
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) {
   DartPluginRegistrant.ensureInitialized();
+
+  final healthService = HealthService();
+  final notificationHelper = NotificationHelper();
+  notificationHelper.init();
 
   Timer? timer;
   Map<String, String> localizedStrings = {};
@@ -19,20 +25,17 @@ void onStart(ServiceInstance service) {
 
   bool offsetEnabled = true;
   int offsetSteps = 50;
-  bool autoPauseEnabled = false;
-  int autoPauseThreshold = 50000;
 
   Future<void> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     offsetEnabled = prefs.getBool(prefOffsetEnabled) ?? true;
     offsetSteps = prefs.getInt(prefOffsetSteps) ?? 50;
-    autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
-    autoPauseThreshold = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
   }
 
   Future<bool> checkAndStopIfNeeded() async {
-    await loadSettings();
     final prefs = await SharedPreferences.getInstance();
+    final autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
+    final autoPauseThreshold = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
     final baseSteps = prefs.getInt(prefBaseSteps) ?? 500;
 
     if (autoPauseEnabled && (sessionTotalSteps + baseSteps) > autoPauseThreshold) {
@@ -43,9 +46,9 @@ void onStart(ServiceInstance service) {
       final title = localizedStrings['auto_pause_notification_title'] ?? 'Service Automatically Paused';
       final body = (localizedStrings['auto_pause_notification_content_with_steps'] ?? 'Paused after reaching {steps} steps.').replaceAll('{steps}', sessionTotalSteps.toString());
       
-      service.invoke('showStatusNotification', {
+      service.invoke('update', {
         'title': title,
-        'body': body,
+        'content': body,
       });
 
       service.invoke('update_ui', {
@@ -55,9 +58,9 @@ void onStart(ServiceInstance service) {
         'next_run_time': null,
       });
 
-      return true; // Indicates that the service WAS stopped
+      return true; 
     }
-    return false; // Indicates that the service should continue
+    return false; 
   }
 
   Future<bool> writeStepsLogic({String source = 'automatic'}) async {
@@ -68,39 +71,27 @@ void onStart(ServiceInstance service) {
     
     int steps;
     if (source == 'manual') {
-      steps = baseSteps; // Manual write uses base steps only
-    } else { // For 'automatic' source
+      steps = baseSteps;
+    } else {
       final random = Random();
       final offset = offsetEnabled ? random.nextInt(offsetSteps * 2 + 1) - offsetSteps : 0;
-      steps = baseSteps + offset; // Automatic write includes random offset
+      steps = baseSteps + offset;
     }
 
-    final completer = Completer<bool>();
-
-    final subscription = service.on('write_steps_result').listen((event) {
-      final success = event?['success'] as bool? ?? false;
-      if (!completer.isCompleted) {
-        completer.complete(success);
-      }
-    });
-
-    service.invoke('write_steps', {'steps': steps});
-
     try {
-      final bool success = await completer.future.timeout(const Duration(seconds: 15));
-      subscription.cancel();
+      final bool success = await healthService.writeSteps(steps);
 
       if (success) {
         await LogService.writeLogToStorage(steps, source: source);
         service.invoke('log_updated');
         
         final confirmationTitle = localizedStrings['notification_steps_written_title'] ?? 'Steps Written';
-        final confirmationBody = (localizedStrings['notification_steps_written'] ?? '{steps} steps written').replaceAll('{steps}', steps.toString());
+        final confirmationBody = (localizedStrings['notification_steps_written'] ?? '{steps} written').replaceAll('{steps}', steps.toString());
 
-        service.invoke('showConfirmationNotification', {
-          'title': confirmationTitle,
-          'body': confirmationBody,
-        });
+        notificationHelper.showWriteConfirmationNotification(
+          title: confirmationTitle,
+          body: confirmationBody,
+        );
 
         if (source == 'automatic') {
           sessionTotalSteps += steps;
@@ -111,16 +102,25 @@ void onStart(ServiceInstance service) {
             return true; 
           }
 
+          final statusLog = (localizedStrings['automatic_write_success'] ?? 'Wrote {steps} steps').replaceAll('{steps}', steps.toString());
+          
           final currentInterval = prefs.getInt(prefInterval) ?? 1;
           final nextRun = DateTime.now().add(Duration(minutes: currentInterval));
           final formattedTime = DateFormat('HH:mm').format(nextRun);
           await prefs.setString(prefNextRunTime, formattedTime);
 
+          final nextRunBody = (localizedStrings['notification_next_run'] ?? 'Next run at {time}').replaceAll('{time}', formattedTime);
+
+          service.invoke('update', {
+            'title': localizedStrings['notification_service_running'] ?? 'Service Running',
+            'content': nextRunBody,
+          });
+
           service.invoke('update_ui', {
             'session_total_steps': sessionTotalSteps,
             'is_running': true,
             'last_steps_written': steps,
-            'status_log': (localizedStrings['automatic_write_success'] ?? 'Wrote {steps} steps').replaceAll('{steps}', steps.toString()),
+            'status_log': statusLog, 
             'next_run_time': formattedTime,
           });
         } else if (source == 'manual') {
@@ -130,18 +130,27 @@ void onStart(ServiceInstance service) {
         return false;
 
       } else {
-        ErrorLogService().addErrorLog('[BackgroundService] Health write failed', 'Received failure from main isolate.');
+        ErrorLogService().addErrorLog('[BackgroundService] Health write failed', 'Received failure from health service.');
+        final errorLog = localizedStrings['write_fail_check_log'] ?? 'Write failed. Check logs.';
+        service.invoke('update', {
+          'title': localizedStrings['notification_service_running'] ?? 'Service Running',
+          'content': errorLog,
+        });
         service.invoke('update_ui', {
           'is_running': true,
-          'status_log': localizedStrings['write_fail_check_log'] ?? 'Write failed. Check logs.',
+          'status_log': errorLog,
         });
       }
     } catch (e) {
-      subscription.cancel();
       ErrorLogService().addErrorLog('[BackgroundService] Error writing steps', e.toString());
+      final errorLog = localizedStrings['write_fail_check_log'] ?? 'Write failed. Check logs.';
+      service.invoke('update', {
+        'title': localizedStrings['notification_service_running'] ?? 'Service Running',
+        'content': errorLog,
+      });
       service.invoke('update_ui', {
         'is_running': true,
-        'status_log': localizedStrings['write_fail_check_log'] ?? 'Write failed. Check logs.',
+        'status_log': errorLog,
       });
     }
     return false; 
@@ -165,13 +174,16 @@ void onStart(ServiceInstance service) {
     Future.delayed(Duration.zero, () async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(prefIsAuto, true);
-      sessionTotalSteps = 0; // Always reset on start
+      sessionTotalSteps = 0;
       await prefs.setInt(prefSessionTotalSteps, 0);
       
-      final bool wasStopped = await writeStepsLogic();
+      final interval = prefs.getInt(prefInterval) ?? 1;
 
-      if (!wasStopped) {
-        final interval = prefs.getInt(prefInterval) ?? 1;
+      // Immediately write steps once upon starting
+      final bool wasStoppedInitially = await writeStepsLogic();
+
+      // Only start the timer if the initial write didn't cause a stop
+      if (!wasStoppedInitially) {
         restartTimer(interval);
       }
     });
@@ -194,16 +206,17 @@ void onStart(ServiceInstance service) {
 
       final title = localizedStrings['notification_service_stopped_title'] ?? 'Service Stopped';
       final body = localizedStrings['notification_service_stopped_content'] ?? 'Ready to start.';
-      service.invoke('showStatusNotification', {
+      
+      service.invoke('update', {
         'title': title,
-        'body': body,
+        'content': body,
       });
 
       service.invoke('update_ui', {
         'is_running': false,
         'session_total_steps': 0,
         'last_steps_written': 0,
-        'status_log': localizedStrings['notification_service_stopped_content'],
+        'status_log': body,
         'next_run_time': null,
       });
     });

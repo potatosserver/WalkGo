@@ -7,22 +7,16 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/background_service.dart';
 import 'package:walkgo/constants.dart';
-import 'package:walkgo/health_service.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/language_service.dart';
 import 'package:walkgo/log_service.dart';
 import 'package:walkgo/router/app_router.dart';
-import 'package:walkgo/services/notification_helper.dart';
 import 'package:walkgo/theme_provider.dart';
 import 'package:walkgo/viewmodels/advanced_settings_viewmodel.dart';
 import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
-  final healthService = HealthService();
-  final notificationHelper = NotificationHelper();
-
-  await notificationHelper.init();
 
   await service.configure(
     androidConfiguration: AndroidConfiguration(
@@ -30,42 +24,15 @@ Future<void> initializeService() async {
       autoStart: false,
       isForegroundMode: true,
       notificationChannelId: foregroundChannelId,
-      initialNotificationTitle: 'WalkGo Service',
-      initialNotificationContent: 'Preparing...',
+      initialNotificationTitle: '服務已停止',
+      initialNotificationContent: '準備就緒，等待您開啟自動模式。',
       foregroundServiceNotificationId: foregroundNotificationId,
     ),
     iosConfiguration: IosConfiguration(
       autoStart: false,
       onForeground: onStart,
-      onBackground: (ServiceInstance service) async {
-        return true;
-      },
     ),
   );
-
-  service.on('write_steps').listen((event) async {
-    if (event == null) return;
-    final steps = event['steps'] as int;
-    final success = await healthService.writeSteps(steps);
-    // Notify the background service about the result
-    service.invoke('write_steps_result', {'success': success});
-  });
-
-  service.on('showStatusNotification').listen((event) {
-    if (event == null) return;
-    notificationHelper.showOrUpdateStatusNotification(
-      title: event['title'],
-      body: event['body'],
-    );
-  });
-
-  service.on('showConfirmationNotification').listen((event) {
-    if (event == null) return;
-    notificationHelper.showWriteConfirmationNotification(
-      title: event['title'],
-      body: event['body'],
-    );
-  });
 }
 
 void main() async {
@@ -73,6 +40,9 @@ void main() async {
   DartPluginRegistrant.ensureInitialized();
 
   await initializeService();
+
+  final service = FlutterBackgroundService();
+  await service.startService();
 
   final prefs = await SharedPreferences.getInstance();
 

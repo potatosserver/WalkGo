@@ -1,4 +1,3 @@
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:walkgo/constants.dart';
 
@@ -9,11 +8,8 @@ class NotificationHelper {
 
   final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  // Notification IDs
-  static const int _statusNotificationId = foregroundNotificationId; // Use the constant
+  static const int _statusNotificationId = foregroundNotificationId;
   static const int _confirmationNotificationId = 1;
-
-  // Notification Channel IDs
   static const String _confirmationChannelId = 'walkgo_confirmation_notification';
 
   Future<void> init() async {
@@ -34,11 +30,11 @@ class NotificationHelper {
   Future<void> showOrUpdateStatusNotification({required String title, required String body}) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      foregroundChannelId, // CORRECTED: Use the consistent channel ID from constants.dart
+      foregroundChannelId, 
       foregroundChannelName, 
       channelDescription: foregroundChannelDescription,
-      importance: Importance.defaultImportance, 
-      priority: Priority.defaultPriority,
+      importance: Importance.high, 
+      priority: Priority.high,
       ongoing: true, 
       autoCancel: false,
     );
@@ -60,8 +56,8 @@ class NotificationHelper {
       _confirmationChannelId,
       'WalkGo Step Confirmation', 
       channelDescription: 'Notification channel for step write confirmations.',
-      importance: Importance.defaultImportance,
-      priority: Priority.defaultPriority,
+      importance: Importance.high,
+      priority: Priority.high,
       ongoing: false,
       autoCancel: true, 
     );

@@ -32,9 +32,7 @@ class HomePageViewModel extends ChangeNotifier {
   AppLocalizations? _l10n;
 
   void setL10n(AppLocalizations l10n) {
-    if (_l10n == null) {
-      _l10n = l10n;
-    }
+    _l10n ??= l10n;
   }
 
   HomePageViewModel() {
