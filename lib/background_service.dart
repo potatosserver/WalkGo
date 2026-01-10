@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/constants.dart';
@@ -32,6 +34,15 @@ void onStart(ServiceInstance service) {
     offsetSteps = prefs.getInt(prefOffsetSteps) ?? 50;
   }
 
+  void updateNotification(String title, String content) {
+    if (service is AndroidServiceInstance) {
+      service.setForegroundNotificationInfo(
+        title: title,
+        content: content,
+      );
+    }
+  }
+
   Future<bool> checkAndStopIfNeeded() async {
     final prefs = await SharedPreferences.getInstance();
     final autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
@@ -46,10 +57,7 @@ void onStart(ServiceInstance service) {
       final title = localizedStrings['auto_pause_notification_title'] ?? 'Service Automatically Paused';
       final body = (localizedStrings['auto_pause_notification_content_with_steps'] ?? 'Paused after reaching {steps} steps.').replaceAll('{steps}', sessionTotalSteps.toString());
       
-      service.invoke('update', {
-        'title': title,
-        'content': body,
-      });
+      updateNotification(title, body);
 
       service.invoke('update_ui', {
         'is_running': false,
@@ -111,10 +119,10 @@ void onStart(ServiceInstance service) {
 
           final nextRunBody = (localizedStrings['notification_next_run'] ?? 'Next run at {time}').replaceAll('{time}', formattedTime);
 
-          service.invoke('update', {
-            'title': localizedStrings['notification_service_running'] ?? 'Service Running',
-            'content': nextRunBody,
-          });
+          updateNotification(
+            localizedStrings['notification_service_running'] ?? 'Service Running',
+            nextRunBody,
+          );
 
           service.invoke('update_ui', {
             'session_total_steps': sessionTotalSteps,
@@ -132,10 +140,10 @@ void onStart(ServiceInstance service) {
       } else {
         ErrorLogService().addErrorLog('[BackgroundService] Health write failed', 'Received failure from health service.');
         final errorLog = localizedStrings['write_fail_check_log'] ?? 'Write failed. Check logs.';
-        service.invoke('update', {
-          'title': localizedStrings['notification_service_running'] ?? 'Service Running',
-          'content': errorLog,
-        });
+        updateNotification(
+          localizedStrings['notification_service_running'] ?? 'Service Running',
+          errorLog,
+        );
         service.invoke('update_ui', {
           'is_running': true,
           'status_log': errorLog,
@@ -144,10 +152,10 @@ void onStart(ServiceInstance service) {
     } catch (e) {
       ErrorLogService().addErrorLog('[BackgroundService] Error writing steps', e.toString());
       final errorLog = localizedStrings['write_fail_check_log'] ?? 'Write failed. Check logs.';
-      service.invoke('update', {
-        'title': localizedStrings['notification_service_running'] ?? 'Service Running',
-        'content': errorLog,
-      });
+      updateNotification(
+        localizedStrings['notification_service_running'] ?? 'Service Running',
+        errorLog,
+      );
       service.invoke('update_ui', {
         'is_running': true,
         'status_log': errorLog,
@@ -207,10 +215,7 @@ void onStart(ServiceInstance service) {
       final title = localizedStrings['notification_service_stopped_title'] ?? 'Service Stopped';
       final body = localizedStrings['notification_service_stopped_content'] ?? 'Ready to start.';
       
-      service.invoke('update', {
-        'title': title,
-        'content': body,
-      });
+      updateNotification(title, body);
 
       service.invoke('update_ui', {
         'is_running': false,
