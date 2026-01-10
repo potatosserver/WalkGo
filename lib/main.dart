@@ -4,16 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:walkgo/background_service.dart';
-import 'package:walkgo/constants.dart';
-import 'package:walkgo/l10n/app_localizations.dart';
-import 'package:walkgo/language_service.dart';
-import 'package:walkgo/log_service.dart';
-import 'package:walkgo/router/app_router.dart';
-import 'package:walkgo/theme_provider.dart';
-import 'package:walkgo/viewmodels/advanced_settings_viewmodel.dart';
-import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
+import 'background_service.dart';
+import 'constants.dart';
+import 'l10n/app_localizations.dart';
+import 'language_service.dart';
+import 'log_service.dart';
+import 'router/app_router.dart';
+import 'theme_provider.dart';
+import 'viewmodels/advanced_settings_viewmodel.dart';
+import 'viewmodels/home_page_viewmodel.dart';
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
@@ -44,20 +43,15 @@ void main() async {
   final service = FlutterBackgroundService();
   await service.startService();
 
-  final prefs = await SharedPreferences.getInstance();
-
-  runApp(WalkGoApp(prefs: prefs));
+  runApp(const WalkGoApp());
 }
 
 class WalkGoApp extends StatelessWidget {
-  final AppRouter appRouter = AppRouter();
-
-  final SharedPreferences prefs;
-
-  WalkGoApp({super.key, required this.prefs});
+  const WalkGoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final appRouter = AppRouter();
     final lightTheme = ThemeData(
       useMaterial3: true,
       colorSchemeSeed: Colors.deepPurple,
@@ -88,7 +82,7 @@ class WalkGoApp extends StatelessWidget {
                 theme: lightTheme,
                 darkTheme: darkTheme,
                 themeMode: themeProvider.themeMode,
-                locale: languageService.appLocale ?? Locale(prefs.getString(prefLanguageCode) ?? 'en'),
+                locale: languageService.appLocale,
                 localizationsDelegates: const [
                   AppLocalizations.delegate,
                   GlobalMaterialLocalizations.delegate,
