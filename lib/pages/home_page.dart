@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
-import 'package:walkgo/pages/settings_page.dart';
 import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
 import 'package:walkgo/widgets/status_card.dart';
 import 'package:walkgo/widgets/parameter_settings_card.dart';
@@ -55,18 +55,12 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: Text(l10n.walkgo),
           actions: [
-            Consumer<HomePageViewModel>(
-              builder: (context, viewModel, child) => IconButton(
-                icon: const Icon(Icons.settings_outlined),
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SettingsPage()),
-                  );
-                  viewModel.reloadSettings();
-                },
-                tooltip: l10n.settings_tooltip,
-              ),
+            IconButton(
+              icon: const Icon(Icons.settings_outlined),
+              onPressed: () {
+                context.push('/settings');
+              },
+              tooltip: l10n.settings_tooltip,
             ),
           ],
           elevation: 0,
