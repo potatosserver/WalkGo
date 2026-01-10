@@ -805,6 +805,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Auto service stopped'**
   String get auto_service_stopped;
+
+  /// No description provided for @auto_mode_running_lock_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto mode is running. Parameters cannot be modified.'**
+  String get auto_mode_running_lock_warning;
 }
 
 class _AppLocalizationsDelegate

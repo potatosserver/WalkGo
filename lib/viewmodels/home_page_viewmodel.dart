@@ -42,7 +42,6 @@ class HomePageViewModel extends ChangeNotifier {
   Future<void> _initialize() async {
     await _loadSettings();
     _setupServiceListeners();
-    _updateUiFromState();
   }
 
   void _setupServiceListeners() {
@@ -52,15 +51,19 @@ class HomePageViewModel extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
 
-      // ---- START OF FIX ----
-      // The service is the source of truth. Update ViewModel state from the event.
-      _isAutoRunning = event['is_running'] as bool? ?? _isAutoRunning;
+      if (event.containsKey('is_running')) {
+        _isAutoRunning = event['is_running'] as bool;
+      }
+      
       _sessionTotalSteps = (event['session_total_steps'] as num?)?.toInt() ?? _sessionTotalSteps;
       _lastStepsWritten = (event['last_steps_written'] as num?)?.toInt() ?? _lastStepsWritten;
       _nextRunTime = event['next_run_time'] as String?;
-      // ---- END OF FIX ----
-
-      _updateUiFromState();
+      
+      if (_isAutoRunning) {
+          _statusLog = event['status_log'] as String? ?? _l10n!.status_running;
+      } else {
+          _statusLog = event['status_log'] as String? ?? _l10n!.status_ready_to_start;
+      }
 
       _remainingSteps = autoPauseSteps - _sessionTotalSteps;
       if (_remainingSteps < 0) _remainingSteps = 0;
@@ -73,44 +76,17 @@ class HomePageViewModel extends ChangeNotifier {
     });
   }
 
-  void _updateUiFromState() {
-    if (_l10n == null) return;
-
-    if (_isAutoRunning) {
-      _statusLog = _l10n!.status_running;
-    } else {
-      _statusLog = _l10n!.status_ready_to_start;
-      // Only reset UI-related fields when the service is confirmed to be not running
-      if (!_isAutoRunning) {
-        _sessionTotalSteps = 0;
-        _lastStepsWritten = 0;
-        _nextRunTime = null;
-      }
-    }
-  }
-
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     
-    // ---- START OF FIX ----
-    // Load the persisted state of the service
     _isAutoRunning = prefs.getBool(prefIsAuto) ?? false;
     _baseSteps = (prefs.getInt(prefBaseSteps) ?? 500).toString();
     _interval = (prefs.getInt(prefInterval) ?? 1).toString();
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
 
-    if (_isAutoRunning) {
-      // If the service was running, restore all relevant values
-      _sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
-      _lastStepsWritten = prefs.getInt(prefLastStepsWritten) ?? 0; // Restore last written steps
-      _nextRunTime = prefs.getString(prefNextRunTime);
-    } else {
-      // If not running, ensure values are reset
-      _sessionTotalSteps = 0;
-      _lastStepsWritten = 0;
-      _nextRunTime = null;
-    }
-    // ---- END OF FIX ----
+    _sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
+    _lastStepsWritten = prefs.getInt(prefLastStepsWritten) ?? 0;
+    _nextRunTime = prefs.getString(prefNextRunTime);
 
     final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
     _remainingSteps = autoPauseSteps - _sessionTotalSteps;
@@ -163,10 +139,9 @@ class HomePageViewModel extends ChangeNotifier {
   Future<void> toggleAutoMode() async {
     if (_l10n == null) return;
 
-    final wantsToRun = !_isAutoRunning;
-    final prefs = await SharedPreferences.getInstance();
+    final isCurrentlyRunning = _isAutoRunning;
     
-    if (wantsToRun) {
+    if (!isCurrentlyRunning) {
       final isServiceProcessRunning = await _service.isRunning();
       if (!isServiceProcessRunning) {
         await _service.startService();
@@ -176,16 +151,7 @@ class HomePageViewModel extends ChangeNotifier {
     } else {
       _service.invoke("stop", _getLocalizedStrings());
       Fluttertoast.showToast(msg: _l10n!.auto_service_stopped);
-      // Clear session steps from storage when manually stopping
-      await prefs.setInt(prefSessionTotalSteps, 0);
-      await prefs.setInt(prefLastStepsWritten, 0);
     }
-
-    _isAutoRunning = wantsToRun;
-    await prefs.setBool(prefIsAuto, _isAutoRunning);
-
-    _updateUiFromState();
-    notifyListeners();
   }
 
   void manualWriteSteps() {

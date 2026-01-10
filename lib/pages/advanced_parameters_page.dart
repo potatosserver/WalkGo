@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:walkgo/viewmodels/advanced_settings_viewmodel.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 
-// The page is now a StatefulWidget to manage the controllers.
 class AdvancedParametersPage extends StatefulWidget {
   const AdvancedParametersPage({super.key});
 
@@ -12,24 +11,19 @@ class AdvancedParametersPage extends StatefulWidget {
 }
 
 class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
-  // Controllers for the text fields.
   late final TextEditingController _offsetStepsController;
   late final TextEditingController _autoPauseThresholdController;
 
   @override
   void initState() {
     super.initState();
-    // Get the ViewModel without listening, as the Consumer will handle updates.
     final viewModel = Provider.of<AdvancedSettingsViewModel>(context, listen: false);
-
-    // Initialize controllers with values from the ViewModel.
     _offsetStepsController = TextEditingController(text: viewModel.offsetSteps);
     _autoPauseThresholdController = TextEditingController(text: viewModel.autoPauseThreshold);
   }
 
   @override
   void dispose() {
-    // Dispose controllers to free up resources.
     _offsetStepsController.dispose();
     _autoPauseThresholdController.dispose();
     super.dispose();
@@ -38,15 +32,16 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    // Use a Consumer to listen for changes in the ViewModel and rebuild the UI.
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.advanced_parameters),
       ),
       body: Consumer<AdvancedSettingsViewModel>(
         builder: (context, viewModel, child) {
-          // Update controllers if the viewmodel's data has changed from an external source.
-          // This check prevents cursor jumping.
+          final isLocked = viewModel.isAutoModeRunning;
+
           if (_offsetStepsController.text != viewModel.offsetSteps) {
             _offsetStepsController.text = viewModel.offsetSteps;
           }
@@ -54,62 +49,88 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
             _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
           }
 
-          return ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-            children: [
-              _buildSettingsCard(
-                context,
-                title: l10n.offset_settings_title,
-                subtitle: l10n.offset_settings_subtitle,
-                trailing: Switch(
-                  value: viewModel.offsetEnabled,
-                  onChanged: (bool value) {
-                    viewModel.setOffsetEnabled(value);
-                  },
-                ),
-                child: Visibility(
-                  visible: viewModel.offsetEnabled,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    // Use the controller instead of initialValue.
-                    child: _buildTextField(
-                      controller: _offsetStepsController,
-                      label: l10n.offset_steps,
-                      hint: l10n.offset_steps_hint,
-                      onChanged: (value) {
-                        viewModel.saveOffsetSteps(value);
-                      },
+          return AbsorbPointer(
+            absorbing: isLocked,
+            child: Opacity(
+              opacity: isLocked ? 0.5 : 1.0,
+              child: Column(
+                children: [
+                  if (isLocked)
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      color: theme.colorScheme.errorContainer,
+                      width: double.infinity,
+                      child: Text(
+                        l10n.auto_mode_running_lock_warning,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: theme.colorScheme.onErrorContainer,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+                      children: [
+                        _buildSettingsCard(
+                          context,
+                          title: l10n.offset_settings_title,
+                          subtitle: l10n.offset_settings_subtitle,
+                          trailing: Switch(
+                            value: viewModel.offsetEnabled,
+                            onChanged: isLocked ? null : (bool value) {
+                              viewModel.setOffsetEnabled(value);
+                            },
+                          ),
+                          child: Visibility(
+                            visible: viewModel.offsetEnabled,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                              child: _buildTextField(
+                                enabled: !isLocked,
+                                controller: _offsetStepsController,
+                                label: l10n.offset_steps,
+                                hint: l10n.offset_steps_hint,
+                                onChanged: (value) {
+                                  viewModel.saveOffsetSteps(value);
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        _buildSettingsCard(
+                          context,
+                          title: l10n.auto_pause_title,
+                          subtitle: l10n.auto_pause_subtitle,
+                          trailing: Switch(
+                            value: viewModel.autoPauseEnabled,
+                            onChanged: isLocked ? null : (bool value) {
+                              viewModel.setAutoPauseEnabled(value);
+                            },
+                          ),
+                          child: Visibility(
+                            visible: viewModel.autoPauseEnabled,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                              child: _buildTextField(
+                                enabled: !isLocked,
+                                controller: _autoPauseThresholdController,
+                                label: l10n.auto_pause_threshold,
+                                hint: l10n.auto_pause_threshold_hint,
+                                onChanged: (value) {
+                                  viewModel.saveAutoPauseThreshold(value);
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
+                ],
               ),
-              _buildSettingsCard(
-                context,
-                title: l10n.auto_pause_title,
-                subtitle: l10n.auto_pause_subtitle,
-                trailing: Switch(
-                  value: viewModel.autoPauseEnabled,
-                  onChanged: (bool value) {
-                    viewModel.setAutoPauseEnabled(value);
-                  },
-                ),
-                child: Visibility(
-                  visible: viewModel.autoPauseEnabled,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    // Use the controller instead of initialValue.
-                    child: _buildTextField(
-                      controller: _autoPauseThresholdController,
-                      label: l10n.auto_pause_threshold,
-                      hint: l10n.auto_pause_threshold_hint,
-                      onChanged: (value) {
-                        viewModel.saveAutoPauseThreshold(value);
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           );
         },
       ),
@@ -172,16 +193,17 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
     );
   }
 
-  // Modified helper method to accept a controller.
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
     required String hint,
     required ValueChanged<String> onChanged,
+    bool enabled = true,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: TextInputType.number,
+      enabled: enabled,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,

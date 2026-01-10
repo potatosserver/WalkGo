@@ -400,4 +400,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get auto_service_stopped => 'Auto service stopped';
+
+  @override
+  String get auto_mode_running_lock_warning =>
+      'Auto mode is running. Parameters cannot be modified.';
 }

@@ -385,4 +385,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get auto_service_stopped => '自動服務已停止';
+
+  @override
+  String get auto_mode_running_lock_warning => '自動模式運行中，無法修改參數。';
 }

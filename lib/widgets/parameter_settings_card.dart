@@ -12,6 +12,7 @@ class ParameterSettingsCard extends StatelessWidget {
     final viewModel = Provider.of<HomePageViewModel>(context);
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final bool isEnabled = !viewModel.isAutoRunning;
 
     return Card(
       elevation: 0,
@@ -35,6 +36,7 @@ class ParameterSettingsCard extends StatelessWidget {
               label: l10n.base_steps,
               icon: Icons.filter_1,
               onChanged: (value) => viewModel.saveBaseSteps(value),
+              enabled: isEnabled,
             ),
             const SizedBox(height: 16),
             _buildTextField(
@@ -42,6 +44,7 @@ class ParameterSettingsCard extends StatelessWidget {
               label: l10n.interval,
               icon: Icons.timer_outlined,
               onChanged: (value) => viewModel.saveInterval(value),
+              enabled: isEnabled,
             ),
             Align(
               alignment: Alignment.centerRight,
@@ -51,7 +54,7 @@ class ParameterSettingsCard extends StatelessWidget {
                 style: TextButton.styleFrom(
                   foregroundColor: theme.colorScheme.primary,
                   backgroundColor:
-                      theme.colorScheme.primary.withAlpha(26), // Replaced withOpacity
+                      theme.colorScheme.primary.withAlpha(26),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -76,10 +79,12 @@ class ParameterSettingsCard extends StatelessWidget {
     required String label,
     required IconData icon,
     required ValueChanged<String> onChanged,
+    required bool enabled,
   }) {
     return TextFormField(
       initialValue: initialValue,
       keyboardType: TextInputType.number,
+      enabled: enabled,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon),
