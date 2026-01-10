@@ -5,13 +5,13 @@ import 'package:walkgo/constants.dart';
 
 class AdvancedSettingsViewModel extends ChangeNotifier {
   final _service = FlutterBackgroundService();
-  
+
   bool _isAutoModeRunning = false;
   bool _offsetEnabled = true;
   String _offsetSteps = "50";
   String _manualSteps = "1000";
   bool _autoPauseEnabled = false;
-  String _autoPauseThreshold = "50000";
+  String _autoPauseThreshold = "5000";
 
   bool get isAutoModeRunning => _isAutoModeRunning;
   bool get offsetEnabled => _offsetEnabled;
@@ -36,10 +36,10 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
   Future<void> _checkInitialRunningState() async {
     final prefs = await SharedPreferences.getInstance();
     final isRunning = prefs.getBool(prefIsAuto) ?? false;
-     if (_isAutoModeRunning != isRunning) {
-        _isAutoModeRunning = isRunning;
-        notifyListeners();
-      }
+    if (_isAutoModeRunning != isRunning) {
+      _isAutoModeRunning = isRunning;
+      notifyListeners();
+    }
   }
 
   Future<void> _loadSettings() async {
@@ -48,7 +48,8 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     _offsetSteps = (prefs.getInt(prefOffsetSteps) ?? 50).toString();
     _manualSteps = (prefs.getInt(prefManualSteps) ?? 1000).toString();
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
-    _autoPauseThreshold = (prefs.getInt(prefAutoPauseThreshold) ?? 50000).toString();
+    _autoPauseThreshold =
+        (prefs.getInt(prefAutoPauseThreshold) ?? 5000).toString();
     notifyListeners();
   }
 
@@ -91,7 +92,7 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
   Future<void> saveAutoPauseThreshold(String value) async {
     _autoPauseThreshold = value;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(prefAutoPauseThreshold, int.tryParse(value) ?? 50000);
+    await prefs.setInt(prefAutoPauseThreshold, int.tryParse(value) ?? 5000);
     notifyListeners();
     await _saveAndNotify();
   }

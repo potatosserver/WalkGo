@@ -49,25 +49,28 @@ class HomePageViewModel extends ChangeNotifier {
       if (event == null || _l10n == null) return;
 
       final prefs = await SharedPreferences.getInstance();
-      final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
+      final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 5000;
 
       if (event.containsKey('is_running')) {
         _isAutoRunning = event['is_running'] as bool;
       }
-      
-      _sessionTotalSteps = (event['session_total_steps'] as num?)?.toInt() ?? _sessionTotalSteps;
-      _lastStepsWritten = (event['last_steps_written'] as num?)?.toInt() ?? _lastStepsWritten;
+
+      _sessionTotalSteps =
+          (event['session_total_steps'] as num?)?.toInt() ?? _sessionTotalSteps;
+      _lastStepsWritten =
+          (event['last_steps_written'] as num?)?.toInt() ?? _lastStepsWritten;
       _nextRunTime = event['next_run_time'] as String?;
-      
+
       if (_isAutoRunning) {
-          _statusLog = event['status_log'] as String? ?? _l10n!.status_running;
+        _statusLog = event['status_log'] as String? ?? _l10n!.status_running;
       } else {
-          _statusLog = event['status_log'] as String? ?? _l10n!.status_ready_to_start;
+        _statusLog =
+            event['status_log'] as String? ?? _l10n!.status_ready_to_start;
       }
 
       _remainingSteps = autoPauseSteps - _sessionTotalSteps;
       if (_remainingSteps < 0) _remainingSteps = 0;
-      
+
       notifyListeners();
     });
 
@@ -78,7 +81,7 @@ class HomePageViewModel extends ChangeNotifier {
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    
+
     _isAutoRunning = prefs.getBool(prefIsAuto) ?? false;
     _baseSteps = (prefs.getInt(prefBaseSteps) ?? 500).toString();
     _interval = (prefs.getInt(prefInterval) ?? 1).toString();
@@ -88,7 +91,7 @@ class HomePageViewModel extends ChangeNotifier {
     _lastStepsWritten = prefs.getInt(prefLastStepsWritten) ?? 0;
     _nextRunTime = prefs.getString(prefNextRunTime);
 
-    final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
+    final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 5000;
     _remainingSteps = autoPauseSteps - _sessionTotalSteps;
     if (_remainingSteps < 0) _remainingSteps = 0;
 
@@ -119,16 +122,21 @@ class HomePageViewModel extends ChangeNotifier {
     if (_l10n == null) return {};
     return {
       'notification_service_running': _l10n!.notification_service_running,
-      'notification_steps_written_title': _l10n!.notification_steps_written_title,
-      'notification_steps_written': _l10n!.notification_steps_written('{steps}'),
+      'notification_steps_written_title':
+          _l10n!.notification_steps_written_title,
+      'notification_steps_written':
+          _l10n!.notification_steps_written('{steps}'),
       'notification_next_run': _l10n!.notification_next_run('{time}'),
       'automatic_write_success': _l10n!.automatic_write_success('{steps}'),
       'write_fail_check_log': _l10n!.write_fail_check_log,
-      'notification_service_stopped_title': _l10n!.notification_service_stopped_title,
-      'notification_service_stopped_content': _l10n!.notification_service_stopped_content,
+      'notification_service_stopped_title':
+          _l10n!.notification_service_stopped_title,
+      'notification_service_stopped_content':
+          _l10n!.notification_service_stopped_content,
       'background_service_start': _l10n!.background_service_start,
       'auto_pause_notification_title': _l10n!.auto_pause_notification_title,
-      'auto_pause_notification_content_with_steps': _l10n!.auto_pause_notification_content_with_steps('{steps}'),
+      'auto_pause_notification_content_with_steps':
+          _l10n!.auto_pause_notification_content_with_steps('{steps}'),
     };
   }
 
@@ -140,7 +148,7 @@ class HomePageViewModel extends ChangeNotifier {
     if (_l10n == null) return;
 
     final isCurrentlyRunning = _isAutoRunning;
-    
+
     if (!isCurrentlyRunning) {
       final isServiceProcessRunning = await _service.isRunning();
       if (!isServiceProcessRunning) {

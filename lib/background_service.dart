@@ -27,7 +27,7 @@ void onStart(ServiceInstance service) {
   int baseSteps = 500;
   int currentInterval = 1;
   bool autoPauseEnabled = false;
-  int autoPauseThreshold = 50000;
+  int autoPauseThreshold = 5000;
 
   // --- FUNCTION DEFINITIONS (Must be defined before use) ---
 
@@ -39,7 +39,7 @@ void onStart(ServiceInstance service) {
     baseSteps = prefs.getInt(prefBaseSteps) ?? 500;
     currentInterval = prefs.getInt(prefInterval) ?? 1;
     autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
-    autoPauseThreshold = prefs.getInt(prefAutoPauseThreshold) ?? 50000;
+    autoPauseThreshold = prefs.getInt(prefAutoPauseThreshold) ?? 5000;
   }
 
   void updateNotification(String title, String content) {
@@ -59,9 +59,13 @@ void onStart(ServiceInstance service) {
       await prefs.remove(prefNextRunTime);
       await prefs.remove(prefLastStepsWritten);
 
-      final title = localizedStrings['auto_pause_notification_title'] ?? 'Service Automatically Paused';
-      final body = (localizedStrings['auto_pause_notification_content_with_steps'] ?? 'Paused after reaching {steps} steps.').replaceAll('{steps}', sessionTotalSteps.toString());
-      
+      final title = localizedStrings['auto_pause_notification_title'] ??
+          'Service Automatically Paused';
+      final body =
+          (localizedStrings['auto_pause_notification_content_with_steps'] ??
+                  'Paused after reaching {steps} steps.')
+              .replaceAll('{steps}', sessionTotalSteps.toString());
+
       updateNotification(title, body);
 
       service.invoke('update_ui', {
@@ -72,9 +76,9 @@ void onStart(ServiceInstance service) {
         'next_run_time': null,
       });
 
-      return true; 
+      return true;
     }
-    return false; 
+    return false;
   }
 
   Future<bool> writeStepsLogic({String source = 'automatic'}) async {
@@ -83,7 +87,8 @@ void onStart(ServiceInstance service) {
       steps = baseSteps;
     } else {
       final random = Random();
-      final offset = offsetEnabled ? random.nextInt(offsetSteps * 2 + 1) - offsetSteps : 0;
+      final offset =
+          offsetEnabled ? random.nextInt(offsetSteps * 2 + 1) - offsetSteps : 0;
       steps = baseSteps + offset;
     }
 
@@ -93,32 +98,38 @@ void onStart(ServiceInstance service) {
       if (success) {
         await LogService.writeLogToStorage(steps, source: source);
         service.invoke('log_updated');
-        
+
         lastStepsWritten = steps;
 
         if (source == 'automatic') {
           sessionTotalSteps += steps;
-          
+
           final prefs = await SharedPreferences.getInstance();
           await prefs.setInt(prefSessionTotalSteps, sessionTotalSteps);
           await prefs.setInt(prefLastStepsWritten, lastStepsWritten);
 
           final stopped = await checkAndStopIfNeeded();
           if (stopped) {
-            return true; 
+            return true;
           }
 
-          final statusLog = (localizedStrings['automatic_write_success'] ?? 'Wrote {steps} steps').replaceAll('{steps}', steps.toString());
-          
-          final nextRun = DateTime.now().add(Duration(minutes: currentInterval));
+          final statusLog = (localizedStrings['automatic_write_success'] ??
+                  'Wrote {steps} steps')
+              .replaceAll('{steps}', steps.toString());
+
+          final nextRun =
+              DateTime.now().add(Duration(minutes: currentInterval));
           final formattedTime = DateFormat('HH:mm').format(nextRun);
           await prefs.setString(prefNextRunTime, formattedTime);
 
-          final nextRunBody = (localizedStrings['notification_next_run'] ?? 'Next run at {time}').replaceAll('{time}', formattedTime);
+          final nextRunBody = (localizedStrings['notification_next_run'] ??
+                  'Next run at {time}')
+              .replaceAll('{time}', formattedTime);
           final combinedNotificationBody = '$statusLog, $nextRunBody';
 
           updateNotification(
-            localizedStrings['notification_service_running'] ?? 'Service Running',
+            localizedStrings['notification_service_running'] ??
+                'Service Running',
             combinedNotificationBody,
           );
 
@@ -126,18 +137,19 @@ void onStart(ServiceInstance service) {
             'session_total_steps': sessionTotalSteps,
             'is_running': true,
             'last_steps_written': lastStepsWritten,
-            'status_log': statusLog, 
+            'status_log': statusLog,
             'next_run_time': formattedTime,
           });
         } else if (source == 'manual') {
-            service.invoke('manual_write_complete', {'steps': steps});
+          service.invoke('manual_write_complete', {'steps': steps});
         }
-        
-        return false;
 
+        return false;
       } else {
-        ErrorLogService().addErrorLog('[BackgroundService] Health write failed', 'Received failure from health service.');
-        final errorLog = localizedStrings['write_fail_check_log'] ?? 'Write failed. Check logs.';
+        ErrorLogService().addErrorLog('[BackgroundService] Health write failed',
+            'Received failure from health service.');
+        final errorLog = localizedStrings['write_fail_check_log'] ??
+            'Write failed. Check logs.';
         updateNotification(
           localizedStrings['notification_service_running'] ?? 'Service Running',
           errorLog,
@@ -148,8 +160,10 @@ void onStart(ServiceInstance service) {
         });
       }
     } catch (e) {
-      ErrorLogService().addErrorLog('[BackgroundService] Error writing steps', e.toString());
-      final errorLog = localizedStrings['write_fail_check_log'] ?? 'Write failed. Check logs.';
+      ErrorLogService()
+          .addErrorLog('[BackgroundService] Error writing steps', e.toString());
+      final errorLog = localizedStrings['write_fail_check_log'] ??
+          'Write failed. Check logs.';
       updateNotification(
         localizedStrings['notification_service_running'] ?? 'Service Running',
         errorLog,
@@ -159,17 +173,17 @@ void onStart(ServiceInstance service) {
         'status_log': errorLog,
       });
     }
-    return false; 
+    return false;
   }
 
   void restartTimer(int interval) {
-      timer?.cancel();
-      timer = Timer.periodic(Duration(minutes: interval), (timer) async {
-        final bool wasStopped = await writeStepsLogic();
-        if (wasStopped) {
-          timer.cancel();
-        }
-      });
+    timer?.cancel();
+    timer = Timer.periodic(Duration(minutes: interval), (timer) async {
+      final bool wasStopped = await writeStepsLogic();
+      if (wasStopped) {
+        timer.cancel();
+      }
+    });
   }
 
   Future<void> initializeOrRestoreState() async {
@@ -180,11 +194,10 @@ void onStart(ServiceInstance service) {
     if (isAutoRunning) {
       sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
       lastStepsWritten = prefs.getInt(prefLastStepsWritten) ?? 0;
-      
-      if (timer == null || !timer!.isActive) {
-          restartTimer(currentInterval);
-      }
 
+      if (timer == null || !timer!.isActive) {
+        restartTimer(currentInterval);
+      }
     } else {
       sessionTotalSteps = 0;
       lastStepsWritten = 0;
@@ -211,7 +224,7 @@ void onStart(ServiceInstance service) {
       await prefs.setInt(prefSessionTotalSteps, 0);
       await prefs.setInt(prefLastStepsWritten, 0);
 
-      if(timer == null || !timer!.isActive){
+      if (timer == null || !timer!.isActive) {
         final bool wasStoppedInitially = await writeStepsLogic();
 
         if (!wasStoppedInitially) {
@@ -227,7 +240,7 @@ void onStart(ServiceInstance service) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(prefIsAuto, false);
       await prefs.remove(prefNextRunTime);
-      
+
       sessionTotalSteps = 0;
       lastStepsWritten = 0;
       await prefs.setInt(prefSessionTotalSteps, 0);
@@ -238,9 +251,11 @@ void onStart(ServiceInstance service) {
         localizedStrings = Map<String, String>.from(event);
       }
 
-      final title = localizedStrings['notification_service_stopped_title'] ?? 'Service Stopped';
-      final body = localizedStrings['notification_service_stopped_content'] ?? 'Ready to start.';
-      
+      final title = localizedStrings['notification_service_stopped_title'] ??
+          'Service Stopped';
+      final body = localizedStrings['notification_service_stopped_content'] ??
+          'Ready to start.';
+
       updateNotification(title, body);
 
       service.invoke('update_ui', {
@@ -257,7 +272,7 @@ void onStart(ServiceInstance service) {
     if (event != null) {
       localizedStrings = Map<String, String>.from(event);
     }
-    await loadSettings(); 
+    await loadSettings();
     await writeStepsLogic(source: 'manual');
   });
 
@@ -271,7 +286,7 @@ void onStart(ServiceInstance service) {
     if (isAutoRunning && oldInterval != currentInterval) {
       restartTimer(currentInterval);
     }
-    
+
     service.invoke('settings_updated');
   });
 
