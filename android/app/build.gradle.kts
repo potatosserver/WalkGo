@@ -1,14 +1,17 @@
+import java.util.Properties
+import java.io.FileInputStream
+import java.io.File
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Load properties for signing
-val keyPropertiesFile = rootProject.file("android/key.properties")
-val keyProperties = java.util.Properties()
+val keyProperties = Properties()
+val keyPropertiesFile = File(project.rootDir, "key.properties")
 if (keyPropertiesFile.exists()) {
-    keyProperties.load(java.io.FileInputStream(keyPropertiesFile))
+    keyProperties.load(FileInputStream(keyPropertiesFile))
 }
 
 android {
@@ -26,13 +29,14 @@ android {
         jvmTarget = "1.8"
     }
 
-    // Signing configurations
     signingConfigs {
         create("release") {
-            keyAlias = keyProperties["keyAlias"] as String?
-            keyPassword = keyProperties["keyPassword"] as String?
-            storeFile = if (keyProperties["storeFile"] != null) rootProject.file(keyProperties["storeFile"] as String) else null
-            storePassword = keyProperties["storePassword"] as String?
+            if (keyProperties.containsKey("storeFile")) {
+                keyAlias = keyProperties.getProperty("keyAlias")
+                keyPassword = keyProperties.getProperty("keyPassword")
+                storeFile = File(project.rootDir, keyProperties.getProperty("storeFile"))
+                storePassword = keyProperties.getProperty("storePassword")
+            }
         }
     }
 
@@ -47,7 +51,6 @@ android {
 
     buildTypes {
         release {
-            // Use the release signing config
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
