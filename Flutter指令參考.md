@@ -42,11 +42,14 @@
 
 - **掃描未使用的檔案**
   此工具可以幫助您找到專案中未被引用的檔案，以保持程式碼庫的整潔。如果您尚未安裝，請先執行安裝指令。
+  
+  1. 安裝工具(如果尚未安裝) 
   ```bash
-  # 1. (如果尚未安裝) 安裝工具
   dart pub global activate dart_unused_files
-
-  # 2. 執行掃描
+  ```
+  
+  2. 執行掃描
+  ```bash
   dart_unused_files scan
   ```
 
@@ -108,11 +111,14 @@
 
 - **推送變更至 GitHub**
   如果您尚未登入 GitHub，請先執行登入指令。然後，使用標準的 Git 流程來提交並推送您的變更。
+  
+  1. 進行 GitHub 身份驗證(如果尚未登入) 
   ```bash
-  # 1. (如果尚未登入) 進行 GitHub 身份驗證
   gh auth login
-
-  # 2. 提交並推送程式碼
+  ```
+  
+  2. 提交並推送程式碼
+  ```
   git add .
   git commit -m "您的提交訊息"
   git push
