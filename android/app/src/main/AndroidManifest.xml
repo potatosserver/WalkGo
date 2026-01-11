@@ -27,7 +27,9 @@
         android:label="WalkGo"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:enableOnBackInvokedCallback="true">
+        android:enableOnBackInvokedCallback="true"
+        android:allowBackup="false"
+        android:fullBackupOnly="false">
         <activity
             android:name=".MainActivity"
             android:exported="true"
