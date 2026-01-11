@@ -96,7 +96,7 @@ void onStart(ServiceInstance service) {
       final bool success = await healthService.writeSteps(steps);
 
       if (success) {
-        await LogService.writeLogToStorage(steps, source: source);
+        await LogService.writeLogFromBackground(steps, source: source);
         service.invoke('log_updated');
 
         lastStepsWritten = steps;

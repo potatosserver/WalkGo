@@ -1,10 +1,9 @@
-
 import 'package:go_router/go_router.dart';
 import 'package:walkgo/pages/advanced_parameters_page.dart';
 import 'package:walkgo/pages/appearance_settings_page.dart';
 import 'package:walkgo/pages/home_page.dart';
 import 'package:walkgo/pages/language_settings_page.dart';
-import 'package:walkgo/pages/logs_page.dart';
+import 'package:walkgo/log_page.dart';
 import 'package:walkgo/pages/settings_page.dart';
 import 'package:walkgo/permission_handler_page.dart';
 import 'package:walkgo/splash_screen.dart';
@@ -47,7 +46,7 @@ class AppRouter {
               ),
               GoRoute(
                 path: 'logs',
-                builder: (context, state) => const LogsPage(),
+                builder: (context, state) => const LogPage(),
               ),
             ]),
         GoRoute(
