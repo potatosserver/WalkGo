@@ -123,3 +123,47 @@
   git commit -m "您的提交訊息"
   git push
   ```
+
+---
+
+## 5. 發布到 GitHub Release (Publishing to GitHub Release)
+
+將建置好的 APK 檔案發布到 GitHub Release，方便使用者或測試人員下載。
+
+### 步驟 1: 認證與建立版本
+
+環境重建完成後，您就可以開始發布流程。
+
+1.  **登入您的 GitHub 帳號** (每次在新環境或重建後都需要)
+    ```bash
+    gh auth login
+    ```
+    按照螢幕指示，在瀏覽器中完成授權。
+
+2.  **建立版本標籤 (Tag)**
+    為您的 Release 建立一個獨一無二的 Git 標籤，例如 `v1.0.0`。
+    ```bash
+    git tag v1.0.0
+    ```
+
+3.  **將標籤推送到 GitHub**
+    ```bash
+    git push origin v1.0.0
+    ```
+
+### 步驟 2: 產生校驗和並發布
+
+為了確保檔案的完整性與安全性，建議為您的 APK 產生校驗和 (Checksum)。
+
+1.  **建立 Release 並上傳所有檔案**
+    這個指令會找到您剛剛推送的標籤，建立一個 Release 頁面，並上傳所有 `.apk` 和 `.sha256` 檔案。
+    `--generate-notes` 參數會自動幫您產生版本說明。
+    ```bash
+    gh release create v1.0.0 \
+    build/app/outputs/flutter-apk/*.apk \
+    build/app/outputs/flutter-apk/*.sha256 \
+    --generate-notes \
+    --title "Version 1.0.0"
+    ```
+
+完成後，您就可以在 GitHub 專案的 "Releases" 頁面看到您發布的新版本了。
