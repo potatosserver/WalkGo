@@ -4,6 +4,13 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Load properties for signing
+val keyPropertiesFile = rootProject.file("android/key.properties")
+val keyProperties = java.util.Properties()
+if (keyPropertiesFile.exists()) {
+    keyProperties.load(java.io.FileInputStream(keyPropertiesFile))
+}
+
 android {
     namespace = "com.potatsserver.walkgo"
     compileSdk = 36
@@ -19,6 +26,16 @@ android {
         jvmTarget = "1.8"
     }
 
+    // Signing configurations
+    signingConfigs {
+        create("release") {
+            keyAlias = keyProperties["keyAlias"] as String?
+            keyPassword = keyProperties["keyPassword"] as String?
+            storeFile = if (keyProperties["storeFile"] != null) rootProject.file(keyProperties["storeFile"] as String) else null
+            storePassword = keyProperties["storePassword"] as String?
+        }
+    }
+
     defaultConfig {
         applicationId = "com.potatsserver.walkgo"
         minSdk = 28
@@ -30,7 +47,8 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            // Use the release signing config
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
         }
