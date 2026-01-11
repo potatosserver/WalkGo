@@ -5,10 +5,10 @@ import 'dart:ui';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:walkgo/constants.dart';
-import 'package:walkgo/health_service.dart';
-import 'package:walkgo/log_service.dart';
-import 'package:walkgo/services/error_log_service.dart';
+import '../constants.dart';
+import 'health_service.dart';
+import 'log_service.dart';
+import 'error_log_service.dart';
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart' hide RadioGroup;
 import 'package:provider/provider.dart';
 import 'package:group_radio_button/group_radio_button.dart';
 import '../l10n/app_localizations.dart';
-import '../language_service.dart';
+import '../services/language_service.dart';
 
 class LanguageSettingsPage extends StatelessWidget {
   const LanguageSettingsPage({super.key});

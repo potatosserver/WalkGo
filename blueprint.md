@@ -1,52 +1,111 @@
-# WalkGo App Blueprint
+# WalkGo 應用程式藍圖
 
-## Overview
+## 總覽
 
-WalkGo is a Flutter application designed to help users track and log their walking steps. It provides both manual and automatic step recording functionalities, along with customizable settings to tailor the user experience. The app leverages a background service to ensure continuous operation and provides users with real-time updates and notifications.
+WalkGo 是一款 Flutter 應用程式，旨在幫助使用者追蹤和記錄他們的步行步數。它提供手動和自動步數記錄功能，以及可自訂的設定以調整使用者體驗。該應用程式利用背景服務來確保持續運作，並為使用者提供即時更新和通知。
 
-## Style and Design
+## 專案結構
 
-The application follows Material Design 3 guidelines, offering a clean and intuitive user interface. It supports both light and dark themes, and the UI is designed to be responsive and accessible. Key design elements include:
+專案的目錄結構如下：
 
-*   **Color Scheme:** A color scheme generated from a seed color, ensuring a harmonious and visually appealing look.
-*   **Typography:** Consistent and readable typography using the `google_fonts` package.
-*   **Component Theming:** Centralized theming for widgets like `AppBar` and `ElevatedButton` to maintain a consistent style throughout the app.
-*   **Iconography:** Meaningful icons to enhance user understanding and navigation.
+*   **l10n:** 包含支援多國語言的本地化檔案。
+*   **lib:** 應用程式的主要原始碼。
+    *   **api:** 包含與背景服務互動的 API。
+    *   **constants:** 包含整個應用程式中使用的常數值。
+    *   **l10n:** 包含應用程式的本地化代理和生成的本地化內容。
+    *   **models:** 包含應用程式中使用的資料模型。
+    *   **pages:** 包含應用程式的不同頁面或畫面。
+    *   **providers:** 包含用於狀態管理的提供者。
+    *   **services:** 包含提供特定功能的服務，例如與健康應用程式互動或管理權限。
+    *   **utils:** 包含工具類別和函式。
+    *   **widgets:** 包含在整個應用程式中重複使用的元件。
+*   **test:** 包含應用程式的單元和元件測試。
 
-## Features
+## `lib` 檔案夾檔案結構
 
-### 1. Step Tracking and Logging
+以下是 `lib` 檔案夾中檔案的細分及其功能：
 
-*   **Manual Step Entry:** Users can manually input and log a specific number of steps.
-*   **Automatic Step Logging:** The app can automatically log steps at regular intervals.
-*   **Background Service:** A persistent background service ensures that steps are logged even when the app is not in the foreground.
-*   **Health App Integration:** The app integrates with the platform's health service to write step data.
+```
+lib
+├── app_router.dart (應用程式路由)
+├── constants.dart (應用程式常數)
+├── main.dart (應用程式進入點)
+├── theme_provider.dart (主題供應商)
+├── l10n
+│   ├── app_en.arb (英文本地化)
+│   ├── app_localizations.dart (本地化基礎)
+│   ├── app_localizations_en.dart (英文本地化)
+│   ├── app_localizations_zh.dart (中文本地化)
+│   └── app_zh.arb (中文本地化)
+├── pages
+│   ├── advanced_parameters_page.dart (進階參數頁面)
+│   ├── appearance_settings_page.dart (外觀設定頁面)
+│   ├── home_page.dart (首頁)
+│   ├── language_settings_page.dart (語言設定頁面)
+│   ├── log_page.dart (日誌頁面)
+│   ├── permission_handler_page.dart (權限處理頁面)
+│   ├── settings_page.dart (設定頁面)
+│   ├── splash_screen.dart (啟動畫面)
+│   └── welcome_page.dart (歡迎頁面)
+├── services
+│   ├── background_service.dart (背景服務)
+│   ├── error_log_service.dart (錯誤日誌服務)
+│   ├── health_service.dart (健康服務)
+│   ├── language_service.dart (語言服務)
+│   ├── log_service.dart (日誌服務)
+│   └── permission_service.dart (權限服務)
+├── viewmodels
+│   ├── advanced_settings_viewmodel.dart (進階設定視圖模型)
+│   └── home_page_viewmodel.dart (首頁視圖模型)
+└── widgets
+    ├── parameter_settings_card.dart (參數設定卡片)
+    └── status_card.dart (狀態卡片)
+```
 
-### 2. Customizable Settings
+## 風格與設計
 
-*   **Parameter Settings:**
-    *   **Base Steps:** The default number of steps to be logged in each interval.
-    *   **Offset Steps:** A random offset to be added or subtracted from the base steps.
-    *   **Interval:** The time interval (in minutes) for automatic step logging.
-*   **Advanced Parameters:**
-    *   **Auto Pause:** Automatically pause the service when the step count exceeds a specified threshold.
-    *   **Offset Settings:** Enable or disable the random step offset.
-*   **Appearance Settings:**
-    *   **Theme:** Choose between light, dark, and system default themes.
-    *   **Language:** Switch between English and Chinese.
+本應用程式遵循 Material Design 3 指南，提供乾淨直觀的使用者介面。它支援淺色和深色主題，且使用者介面設計為響應式和無障礙的。主要設計元素包括：
 
-### 3. User Interface and Experience
+*   **色彩配置：** 從種子顏色生成的色彩配置，確保和諧且具視覺吸引力的外觀。
+*   **排版：** 使用 `google_fonts` 套件，提供一致且易讀的排版。
+*   **元件主題：** 為 `AppBar` 和 `ElevatedButton` 等元件進行集中式主題設定，以在整個應用程式中保持一致的風格。
+*   **圖示：** 使用有意義的圖示來增強使用者的理解和導覽。
 
-*   **Home Page:** Displays the current status of the service, session steps, and provides controls to start or stop the automatic mode.
-*   **Settings Page:** A centralized location for all customizable settings.
-*   **Logs Page:** A historical view of all logged step entries.
-*   **Welcome and Permissions:** A guided setup process to grant necessary permissions for the app to function correctly.
-*   **Notifications:** The app provides notifications for service status, step logging, and other important events.
+## 功能
 
-### 4. Technical Implementation
+### 1. 步數追蹤與記錄
 
-*   **State Management:** The app uses the `provider` package for state management, ensuring a clear and maintainable architecture.
-*   **Routing:** The `go_router` package is used for declarative routing, providing a robust and flexible navigation system.
-*   **Localization:** The app supports multiple languages using Flutter's built-in internationalization capabilities.
-*   **Error Handling and Logging:** A comprehensive logging system is in place to track errors and important events.
-*   **Permissions Handling:** The `permission_handler` package is used to manage and request necessary permissions from the user.
+*   **手動輸入步數：** 使用者可以手動輸入並記錄特定的步數。
+*   **自動記錄步數：** 應用程式可以依固定間隔自動記錄步數。
+*   **背景服務：** 一個持久的背景服務確保即使應用程式不在前景，步數也能被記錄。
+*   **健康應用程式整合：** 應用程式與平台的健康服務整合，以寫入步數資料。
+
+### 2. 可自訂設定
+
+*   **參數設定：**
+    *   **基礎步數：** 每個間隔中要記錄的預設步數。
+    *   **偏移步數：** 從基礎步數中隨機增加或減少的偏移量。
+    *   **間隔：** 自動記錄步數的時間間隔（以分鐘為單位）。
+*   **進階參數：**
+    *   **自動暫停：** 當步數超過指定閾值時，自動暫停服務。
+    *   **偏移設定：** 啟用或禁用隨機步數偏移。
+*   **外觀設定：**
+    *   **主題：** 在淺色、深色和系統預設主題之間選擇。
+    *   **語言：** 在英文和中文之間切換。
+
+### 3. 使用者介面與體驗
+
+*   **主頁：** 顯示服務的目前狀態、本次工作階段的步數，並提供啟動或停止自動模式的控制項。
+*   **設定頁面：** 所有可自訂設定的集中位置。
+*   **記錄頁面：** 所有已記錄步數項目的歷史視圖。
+*   **歡迎與權限：** 引導式的設定過程，以授予應用程式正常運
+作所需的權限。
+*   **通知：** 應用程式提供有關服務狀態、步數記錄和其他重要事件的通知。
+
+### 4. 技術實現
+
+*   **狀態管理：** 本應用程式使用 `provider` 套件進行狀態管理，確保架構清晰且易於維護。
+*   **路由：** 使用 `go_router` 套件進行宣告式路由，提供強大而靈活的導覽系統。
+*   **本地化：** 本應用程式使用 Flutter 的內建國際化功能支援多種語言。
+*   **錯誤處理與記錄：** 已建立一個全面的記錄系統來追蹤錯誤和重要事件。
+*   **權限處理：** 使用 `permission_handler` 套件來管理和向使用者請求必要的權限。

@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:walkgo/log_service.dart';
-import 'package:walkgo/l10n/app_localizations.dart';
+import '../services/log_service.dart';
+import '../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
 class LogPage extends StatelessWidget {

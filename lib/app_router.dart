@@ -1,13 +1,13 @@
 import 'package:go_router/go_router.dart';
-import 'package:walkgo/pages/advanced_parameters_page.dart';
-import 'package:walkgo/pages/appearance_settings_page.dart';
-import 'package:walkgo/pages/home_page.dart';
-import 'package:walkgo/pages/language_settings_page.dart';
-import 'package:walkgo/log_page.dart';
-import 'package:walkgo/pages/settings_page.dart';
-import 'package:walkgo/permission_handler_page.dart';
-import 'package:walkgo/splash_screen.dart';
-import 'package:walkgo/welcome_page.dart';
+import 'pages/advanced_parameters_page.dart';
+import 'pages/appearance_settings_page.dart';
+import 'pages/home_page.dart';
+import 'pages/language_settings_page.dart';
+import 'pages/log_page.dart';
+import 'pages/settings_page.dart';
+import 'pages/permission_handler_page.dart';
+import 'pages/splash_screen.dart';
+import 'pages/welcome_page.dart';
 
 class AppRouter {
   late final GoRouter router;

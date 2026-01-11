@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:walkgo/log_service.dart';
-import 'package:walkgo/l10n/app_localizations.dart';
+import '../services/log_service.dart';
+import '../l10n/app_localizations.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -125,11 +126,11 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _showClearDataDialog(BuildContext context, AppLocalizations l10n) {
-    final LogService logService = LogService();
     final router = GoRouter.of(context);
     showDialog(
       context: context,
       builder: (dialogContext) {
+        final logService = Provider.of<LogService>(dialogContext, listen: false);
         final navigator = Navigator.of(dialogContext);
         return AlertDialog(
           title: Text(l10n.clear_data_confirm_title),
@@ -150,7 +151,7 @@ class SettingsPage extends StatelessWidget {
                 router.go('/');
               },
               child: Text(l10n.confirm,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                  style: TextStyle(color: Theme.of(dialogContext).colorScheme.error)),
             ),
           ],
         );
