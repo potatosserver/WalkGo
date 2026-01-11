@@ -25,7 +25,6 @@ devtools_options.yaml
 *.iml
 *.ipr
 *.iws
-.idea
 
 # Debugging
 debug-info/
@@ -37,3 +36,13 @@ debug-info/
 /android/.gradle/
 /android/app/build/
 /android/gradle/wrapper/gradle-wrapper.jar
+
+# === Lines below were added for enhanced security and platform compatibility ===
+
+# Sensitive and secret files
+# These should NEVER be committed to version control.
+*.jks
+*.keystore
+key.properties
+/android/app/google-services.json
+
