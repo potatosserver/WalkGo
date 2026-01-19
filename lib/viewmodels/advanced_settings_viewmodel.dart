@@ -72,8 +72,7 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     _offsetSteps = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefOffsetSteps, int.tryParse(value) ?? 50);
-    // No need to notify, text field controller manages its own state.
-    // Let's trigger a save on the main service.
+    notifyListeners();
     _homePageViewModel.updateSettingsInService();
   }
 
@@ -81,6 +80,7 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     _manualSteps = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefManualSteps, int.tryParse(value) ?? 1000);
+    notifyListeners();
     _homePageViewModel.updateSettingsInService();
   }
 
@@ -96,6 +96,7 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     _autoPauseThreshold = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefAutoPauseThreshold, int.tryParse(value) ?? 5000);
+    notifyListeners();
     _homePageViewModel.updateSettingsInService();
   }
 }

@@ -13,19 +13,39 @@ class AdvancedParametersPage extends StatefulWidget {
 class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
   late final TextEditingController _offsetStepsController;
   late final TextEditingController _autoPauseThresholdController;
+  late final FocusNode _offsetStepsFocusNode;
+  late final FocusNode _autoPauseThresholdFocusNode;
 
   @override
   void initState() {
     super.initState();
     final viewModel = Provider.of<AdvancedSettingsViewModel>(context, listen: false);
+
     _offsetStepsController = TextEditingController(text: viewModel.offsetSteps);
     _autoPauseThresholdController = TextEditingController(text: viewModel.autoPauseThreshold);
+
+    _offsetStepsFocusNode = FocusNode();
+    _autoPauseThresholdFocusNode = FocusNode();
+
+    _offsetStepsFocusNode.addListener(() {
+      if (!_offsetStepsFocusNode.hasFocus) {
+        viewModel.saveOffsetSteps(_offsetStepsController.text);
+      }
+    });
+
+    _autoPauseThresholdFocusNode.addListener(() {
+      if (!_autoPauseThresholdFocusNode.hasFocus) {
+        viewModel.saveAutoPauseThreshold(_autoPauseThresholdController.text);
+      }
+    });
   }
 
   @override
   void dispose() {
     _offsetStepsController.dispose();
     _autoPauseThresholdController.dispose();
+    _offsetStepsFocusNode.dispose();
+    _autoPauseThresholdFocusNode.dispose();
     super.dispose();
   }
 
@@ -70,62 +90,61 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                       ),
                     ),
                   Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-                      children: [
-                        _buildSettingsCard(
-                          context,
-                          title: l10n.offset_settings_title,
-                          subtitle: l10n.offset_settings_subtitle,
-                          trailing: Switch(
-                            value: viewModel.offsetEnabled,
-                            onChanged: isLocked ? null : (bool value) {
-                              viewModel.setOffsetEnabled(value);
-                            },
-                          ),
-                          child: Visibility(
-                            visible: viewModel.offsetEnabled,
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                              child: _buildTextField(
-                                enabled: !isLocked,
-                                controller: _offsetStepsController,
-                                label: l10n.offset_steps,
-                                hint: l10n.offset_steps_hint,
-                                onChanged: (value) {
-                                  viewModel.saveOffsetSteps(value);
-                                },
+                    child: GestureDetector(
+                      onTap: () => FocusScope.of(context).unfocus(),
+                      child: ListView(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+                        children: [
+                          _buildSettingsCard(
+                            context,
+                            title: l10n.offset_settings_title,
+                            subtitle: l10n.offset_settings_subtitle,
+                            trailing: Switch(
+                              value: viewModel.offsetEnabled,
+                              onChanged: isLocked ? null : (bool value) {
+                                viewModel.setOffsetEnabled(value);
+                              },
+                            ),
+                            child: Visibility(
+                              visible: viewModel.offsetEnabled,
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                                child: _buildTextField(
+                                  enabled: !isLocked,
+                                  controller: _offsetStepsController,
+                                  focusNode: _offsetStepsFocusNode,
+                                  label: l10n.offset_steps,
+                                  hint: l10n.offset_steps_hint,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        _buildSettingsCard(
-                          context,
-                          title: l10n.auto_pause_title,
-                          subtitle: l10n.auto_pause_subtitle,
-                          trailing: Switch(
-                            value: viewModel.autoPauseEnabled,
-                            onChanged: isLocked ? null : (bool value) {
-                              viewModel.setAutoPauseEnabled(value);
-                            },
-                          ),
-                          child: Visibility(
-                            visible: viewModel.autoPauseEnabled,
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                              child: _buildTextField(
-                                enabled: !isLocked,
-                                controller: _autoPauseThresholdController,
-                                label: l10n.auto_pause_threshold,
-                                hint: l10n.auto_pause_threshold_hint,
-                                onChanged: (value) {
-                                  viewModel.saveAutoPauseThreshold(value);
-                                },
+                          _buildSettingsCard(
+                            context,
+                            title: l10n.auto_pause_title,
+                            subtitle: l10n.auto_pause_subtitle,
+                            trailing: Switch(
+                              value: viewModel.autoPauseEnabled,
+                              onChanged: isLocked ? null : (bool value) {
+                                viewModel.setAutoPauseEnabled(value);
+                              },
+                            ),
+                            child: Visibility(
+                              visible: viewModel.autoPauseEnabled,
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                                child: _buildTextField(
+                                  enabled: !isLocked,
+                                  controller: _autoPauseThresholdController,
+                                  focusNode: _autoPauseThresholdFocusNode,
+                                  label: l10n.auto_pause_threshold,
+                                  hint: l10n.auto_pause_threshold_hint,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -197,11 +216,12 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
     required TextEditingController controller,
     required String label,
     required String hint,
-    required ValueChanged<String> onChanged,
+    FocusNode? focusNode,
     bool enabled = true,
   }) {
     return TextFormField(
       controller: controller,
+      focusNode: focusNode,
       keyboardType: TextInputType.number,
       enabled: enabled,
       decoration: InputDecoration(
@@ -212,7 +232,6 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
         ),
         filled: true,
       ),
-      onChanged: onChanged,
     );
   }
 }
