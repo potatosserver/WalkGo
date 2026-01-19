@@ -15,7 +15,7 @@ if (keyPropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.potatsserver.walkgo"
+    namespace = "com.potatosserver.walkgo"
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
@@ -41,7 +41,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.potatsserver.walkgo"
+        applicationId = "com.potatosserver.walkgo"
         minSdk = 28
         targetSdk = 34
         versionCode = flutter.versionCode

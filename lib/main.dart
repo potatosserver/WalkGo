@@ -40,9 +40,6 @@ void main() async {
 
   await initializeService();
 
-  final service = FlutterBackgroundService();
-  await service.startService();
-
   runApp(const WalkGoApp());
 }
 
@@ -68,9 +65,13 @@ class WalkGoApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LanguageService()),
-        ChangeNotifierProvider(create: (_) => AdvancedSettingsViewModel()),
-        ChangeNotifierProvider(create: (_) => HomePageViewModel()),
         ChangeNotifierProvider(create: (_) => LogService()),
+        ChangeNotifierProvider(create: (_) => HomePageViewModel()),
+        ChangeNotifierProxyProvider<HomePageViewModel, AdvancedSettingsViewModel>(
+          create: (context) => AdvancedSettingsViewModel(Provider.of<HomePageViewModel>(context, listen: false)),
+          update: (context, homePageViewModel, previous) =>
+              AdvancedSettingsViewModel(homePageViewModel),
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

@@ -1,4 +1,4 @@
-package com.potatsserver.walkgo
+package com.potatosserver.walkgo
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

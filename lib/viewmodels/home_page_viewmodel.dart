@@ -32,7 +32,11 @@ class HomePageViewModel extends ChangeNotifier {
   AppLocalizations? _l10n;
 
   void setL10n(AppLocalizations l10n) {
-    _l10n ??= l10n;
+    if (_l10n == null) {
+      _l10n = l10n;
+      // When l10n is first set, we can finally get the status with proper localization.
+      _service.invoke('get_status');
+    }
   }
 
   HomePageViewModel() {
@@ -40,36 +44,37 @@ class HomePageViewModel extends ChangeNotifier {
   }
 
   Future<void> _initialize() async {
-    await _loadSettings();
+    await _loadNonStateSettings(); // Load settings that don't depend on service state
     _setupServiceListeners();
+
+    // Request initial status from the service.
+    // The service will respond with an 'update_ui' event.
+    final isServiceRunning = await _service.isRunning();
+    if (isServiceRunning) {
+      _service.invoke('get_status');
+    }
   }
 
   void _setupServiceListeners() {
     _service.on('update_ui').listen((event) async {
-      if (event == null || _l10n == null) return;
+      if (event == null) return;
 
-      final prefs = await SharedPreferences.getInstance();
-      final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 5000;
-
-      if (event.containsKey('is_running')) {
-        _isAutoRunning = event['is_running'] as bool;
-      }
-
+      _isAutoRunning = event['is_running'] as bool? ?? _isAutoRunning;
       _sessionTotalSteps =
           (event['session_total_steps'] as num?)?.toInt() ?? _sessionTotalSteps;
       _lastStepsWritten =
           (event['last_steps_written'] as num?)?.toInt() ?? _lastStepsWritten;
       _nextRunTime = event['next_run_time'] as String?;
 
-      if (_isAutoRunning) {
-        _statusLog = event['status_log'] as String? ?? _l10n!.status_running;
-      } else {
-        _statusLog =
-            event['status_log'] as String? ?? _l10n!.status_ready_to_start;
+      if (_l10n != null) {
+         if (_isAutoRunning) {
+          _statusLog = event['status_log'] as String? ?? _l10n!.status_running;
+        } else {
+          _statusLog = event['status_log'] as String? ?? _l10n!.status_ready_to_start;
+        }
       }
 
-      _remainingSteps = autoPauseSteps - _sessionTotalSteps;
-      if (_remainingSteps < 0) _remainingSteps = 0;
+      await _updateRemainingSteps();
 
       notifyListeners();
     });
@@ -79,34 +84,31 @@ class HomePageViewModel extends ChangeNotifier {
     });
   }
 
-  Future<void> _loadSettings() async {
+  Future<void> _loadNonStateSettings() async {
     final prefs = await SharedPreferences.getInstance();
-
-    _isAutoRunning = prefs.getBool(prefIsAuto) ?? false;
     _baseSteps = (prefs.getInt(prefBaseSteps) ?? 500).toString();
     _interval = (prefs.getInt(prefInterval) ?? 1).toString();
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
-
-    _sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
-    _lastStepsWritten = prefs.getInt(prefLastStepsWritten) ?? 0;
-    _nextRunTime = prefs.getString(prefNextRunTime);
-
-    final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 5000;
-    _remainingSteps = autoPauseSteps - _sessionTotalSteps;
-    if (_remainingSteps < 0) _remainingSteps = 0;
-
+    await _updateRemainingSteps();
     notifyListeners();
   }
 
+  Future<void> _updateRemainingSteps() async {
+    final prefs = await SharedPreferences.getInstance();
+    final autoPauseSteps = prefs.getInt(prefAutoPauseThreshold) ?? 5000;
+    _remainingSteps = autoPauseSteps - _sessionTotalSteps;
+    if (_remainingSteps < 0) _remainingSteps = 0;
+  }
+
   Future<void> reloadSettings() async {
-    await _loadSettings();
+    await _loadNonStateSettings();
   }
 
   Future<void> saveBaseSteps(String value) async {
     _baseSteps = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefBaseSteps, int.tryParse(value) ?? 500);
-    _service.invoke('update');
+    updateSettingsInService();
     notifyListeners();
   }
 
@@ -114,8 +116,13 @@ class HomePageViewModel extends ChangeNotifier {
     _interval = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefInterval, int.tryParse(value) ?? 1);
-    _service.invoke('update');
+    updateSettingsInService();
     notifyListeners();
+  }
+
+  // Method to be called from other ViewModels to trigger a service settings refresh.
+  void updateSettingsInService() {
+    _service.invoke('update');
   }
 
   Map<String, String> _getLocalizedStrings() {
@@ -141,7 +148,9 @@ class HomePageViewModel extends ChangeNotifier {
   }
 
   Future<void> updateLocalization() async {
-    _service.invoke('update_localization', _getLocalizedStrings());
+    if (_l10n != null) {
+      _service.invoke('update_localization', _getLocalizedStrings());
+    }
   }
 
   Future<void> toggleAutoMode() async {
