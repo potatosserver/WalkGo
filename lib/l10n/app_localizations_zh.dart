@@ -170,7 +170,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String automatic_write_success(String steps) {
-    return '成功自動寫入 $steps 步。';
+    return '成功自動寫入 $steps 步';
   }
 
   @override

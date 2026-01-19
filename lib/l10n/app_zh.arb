@@ -32,7 +32,7 @@
     "background_service_start": "背景服務已啟動。",
     "background_service_stop": "背景服務已停止。",
     "notification_update_title": "步數更新",
-    "automatic_write_success": "成功自動寫入 {steps} 步。",
+    "automatic_write_success": "成功自動寫入 {steps} 步",
     "@automatic_write_success": {
         "placeholders": {
             "steps": {
