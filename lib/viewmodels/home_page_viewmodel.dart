@@ -59,6 +59,7 @@ class HomePageViewModel extends ChangeNotifier {
     _service.on('update_ui').listen((event) async {
       if (event == null) return;
 
+      final prefs = await SharedPreferences.getInstance();
       _isAutoRunning = event['is_running'] as bool? ?? _isAutoRunning;
       _sessionTotalSteps =
           (event['session_total_steps'] as num?)?.toInt() ?? _sessionTotalSteps;
@@ -74,6 +75,7 @@ class HomePageViewModel extends ChangeNotifier {
         }
       }
 
+      await prefs.setString(prefStatusLog, _statusLog);
       await _updateRemainingSteps();
 
       notifyListeners();
@@ -89,6 +91,7 @@ class HomePageViewModel extends ChangeNotifier {
     _baseSteps = (prefs.getInt(prefBaseSteps) ?? 500).toString();
     _interval = (prefs.getInt(prefInterval) ?? 1).toString();
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
+    _statusLog = prefs.getString(prefStatusLog) ?? "";
     await _updateRemainingSteps();
     notifyListeners();
   }
