@@ -16,10 +16,11 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     final service = FlutterBackgroundService();
     service.on('manual_write_complete').listen((event) {
       if (!mounted) return;
@@ -32,6 +33,21 @@ class _HomePageState extends State<HomePage> {
         toastLength: Toast.LENGTH_SHORT,
       );
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.detached) {
+      final viewModel = Provider.of<HomePageViewModel>(context, listen: false);
+      viewModel.notifyAppDetached();
+    }
   }
 
   @override

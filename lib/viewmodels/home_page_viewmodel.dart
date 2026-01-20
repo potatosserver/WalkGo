@@ -55,6 +55,12 @@ class HomePageViewModel extends ChangeNotifier {
     }
   }
 
+  // This method is now specifically for a conditional shutdown.
+  void notifyAppDetached() {
+    _service.invoke("app_detached");
+  }
+
+
   void _setupServiceListeners() {
     _service.on('update_ui').listen((event) async {
       if (event == null) return;

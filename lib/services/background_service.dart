@@ -21,7 +21,6 @@ void onStart(ServiceInstance service) {
   int sessionTotalSteps = 0;
   int lastStepsWritten = 0;
   // Authoritative state for the service, IN-MEMORY ONLY.
-  // This ensures that if the service is killed and restarted by the OS, it starts clean.
   bool isRunning = false;
 
   // Service-isolate specific cache for all settings
@@ -41,7 +40,6 @@ void onStart(ServiceInstance service) {
     currentInterval = prefs.getInt(prefInterval) ?? 1;
     autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
     autoPauseThreshold = prefs.getInt(prefAutoPauseThreshold) ?? 5000;
-    // Load non-running state from prefs, but not isRunning state
     sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
     lastStepsWritten = prefs.getInt(prefLastStepsWritten) ?? 0;
   }
@@ -60,7 +58,7 @@ void onStart(ServiceInstance service) {
     if (isRunning) {
       final nextRun = DateTime.now().add(Duration(minutes: currentInterval));
       nextRunTime = DateFormat('HH:mm').format(nextRun);
-    } 
+    }
 
     service.invoke('update_ui', {
       'is_running': isRunning,
@@ -157,35 +155,26 @@ void onStart(ServiceInstance service) {
     });
   }
 
-  // Initial setup when the service is first created.
   loadSettings().then((_) => broadcastUIUpdate());
-
 
   service.on('get_status').listen((event) => broadcastUIUpdate());
 
   service.on('start').listen((event) async {
     if (isRunning) {
-      broadcastUIUpdate(); // Already running, just send current status
+      broadcastUIUpdate();
       return;
     }
-
     if (event != null) localizedStrings = Map<String, String>.from(event);
     await loadSettings();
-
     isRunning = true;
-
-    // Reset counters on new start
     sessionTotalSteps = 0;
     lastStepsWritten = 0;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefSessionTotalSteps, 0);
     await prefs.setInt(prefLastStepsWritten, 0);
     service.invoke('log_updated');
-
     final statusLog = localizedStrings['background_service_start'] ?? 'Service started.';
     broadcastUIUpdate(statusLog: statusLog);
-
-    // Perform the first write immediately, then start the timer.
     if (!(await writeStepsLogic())) {
       restartTimer(currentInterval);
     }
@@ -194,15 +183,12 @@ void onStart(ServiceInstance service) {
   service.on('stop').listen((event) async {
     timer?.cancel();
     if (!isRunning) {
-      broadcastUIUpdate(); // Already stopped
+      broadcastUIUpdate();
       return;
     }
-
     isRunning = false;
     if (event != null) localizedStrings = Map<String, String>.from(event);
-
-    lastStepsWritten = 0; // No steps are written on stop
-    
+    lastStepsWritten = 0;
     final title = localizedStrings['notification_service_stopped_title'] ?? 'Service Stopped';
     final body = localizedStrings['notification_service_stopped_content'] ?? 'Ready to start.';
     updateNotification(title, body);
@@ -226,5 +212,13 @@ void onStart(ServiceInstance service) {
 
   service.on('update_localization').listen((event) {
     if (event != null) localizedStrings = Map<String, String>.from(event);
+  });
+
+  service.on('app_detached').listen((event) {
+    // The UI is informing us that the app is closing.
+    // We only stop the service if it's not actively running.
+    if (!isRunning) {
+      service.stopSelf();
+    }
   });
 }
