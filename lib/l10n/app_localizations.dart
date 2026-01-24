@@ -811,6 +811,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Auto mode is running. Parameters cannot be modified.'**
   String get auto_mode_running_lock_warning;
+
+  /// No description provided for @error_base_less_than_offset.
+  ///
+  /// In en, this message translates to:
+  /// **'Base steps must be greater than random offset steps.'**
+  String get error_base_less_than_offset;
+
+  /// No description provided for @error_threshold_too_low.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-pause threshold must be greater than maximum single write (base + offset).'**
+  String get error_threshold_too_low;
 }
 
 class _AppLocalizationsDelegate

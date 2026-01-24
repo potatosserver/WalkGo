@@ -388,4 +388,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get auto_mode_running_lock_warning => '自動模式運行中，無法修改參數。';
+
+  @override
+  String get error_base_less_than_offset => '基礎步數必須大於隨機偏移步數。';
+
+  @override
+  String get error_threshold_too_low => '自動暫停閾值必須大於單次最大步數（基礎 + 偏移）。';
 }

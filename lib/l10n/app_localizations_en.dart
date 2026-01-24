@@ -404,4 +404,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get auto_mode_running_lock_warning =>
       'Auto mode is running. Parameters cannot be modified.';
+
+  @override
+  String get error_base_less_than_offset =>
+      'Base steps must be greater than random offset steps.';
+
+  @override
+  String get error_threshold_too_low =>
+      'Auto-pause threshold must be greater than maximum single write (base + offset).';
 }

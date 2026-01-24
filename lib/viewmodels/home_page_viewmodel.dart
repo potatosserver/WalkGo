@@ -18,6 +18,9 @@ class HomePageViewModel extends ChangeNotifier {
   String _baseSteps = "500";
   String _interval = "1";
   bool _autoPauseEnabled = false;
+  int _autoPauseThreshold = 5000;
+  bool _offsetEnabled = true;
+  int _offsetSteps = 50;
   String? _nextRunTime;
 
   bool get isAutoRunning => _isAutoRunning;
@@ -110,6 +113,9 @@ class HomePageViewModel extends ChangeNotifier {
     _baseSteps = (prefs.getInt(prefBaseSteps) ?? 500).toString();
     _interval = (prefs.getInt(prefInterval) ?? 1).toString();
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
+    _autoPauseThreshold = prefs.getInt(prefAutoPauseThreshold) ?? 5000;
+    _offsetEnabled = prefs.getBool(prefOffsetEnabled) ?? true;
+    _offsetSteps = prefs.getInt(prefOffsetSteps) ?? 50;
 
     // Only load session data from prefs if service is NOT running.
     // Otherwise, let the 'update_ui' event handle it.
@@ -124,6 +130,30 @@ class HomePageViewModel extends ChangeNotifier {
 
     await _updateRemainingSteps();
     notifyListeners();
+  }
+
+  bool _validateParameters() {
+    if (_l10n == null) return true;
+
+    final int? base = int.tryParse(_baseSteps);
+    if (base == null) return false;
+
+    // 1. Base steps must be > offset steps (if enabled)
+    if (_offsetEnabled && base <= _offsetSteps) {
+      Fluttertoast.showToast(msg: _l10n!.error_base_less_than_offset);
+      return false;
+    }
+
+    // 2. Threshold must be > (base + offset) (if enabled)
+    if (_autoPauseEnabled) {
+      final int maxPossibleWrite = _offsetEnabled ? base + _offsetSteps : base;
+      if (_autoPauseThreshold <= maxPossibleWrite) {
+        Fluttertoast.showToast(msg: _l10n!.error_threshold_too_low);
+        return false;
+      }
+    }
+
+    return true;
   }
 
   Future<void> _updateRemainingSteps() async {
@@ -198,6 +228,9 @@ class HomePageViewModel extends ChangeNotifier {
     final serviceAlive = await _service.isRunning();
 
     if (!_isAutoRunning) {
+      // Validate parameters before starting
+      if (!_validateParameters()) return;
+
       if (!serviceAlive) {
         await _service.startService();
       }
