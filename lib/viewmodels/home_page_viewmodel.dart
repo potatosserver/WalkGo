@@ -34,6 +34,13 @@ class HomePageViewModel extends ChangeNotifier {
   void setL10n(AppLocalizations l10n) {
     if (_l10n == null) {
       _l10n = l10n;
+      
+      // Fix for first launch: checks if we have a status, if not, set to ready.
+      if (_statusLog.isEmpty) {
+        _statusLog = _l10n!.status_ready_to_start;
+        notifyListeners();
+      }
+
       // When l10n is first set, we can finally get the status with proper localization.
       _service.invoke('get_status');
     }
@@ -97,7 +104,10 @@ class HomePageViewModel extends ChangeNotifier {
     _baseSteps = (prefs.getInt(prefBaseSteps) ?? 500).toString();
     _interval = (prefs.getInt(prefInterval) ?? 1).toString();
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
-    _statusLog = prefs.getString(prefStatusLog) ?? "";
+    final savedStatus = prefs.getString(prefStatusLog);
+    if (savedStatus != null) {
+      _statusLog = savedStatus;
+    }
     await _updateRemainingSteps();
     notifyListeners();
   }
