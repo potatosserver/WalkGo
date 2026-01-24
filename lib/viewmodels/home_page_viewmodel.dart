@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:walkgo/services/health_service.dart';
 import 'package:walkgo/constants.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/services/log_service.dart';
@@ -21,6 +22,7 @@ class HomePageViewModel extends ChangeNotifier {
   int _autoPauseThreshold = 5000;
   bool _offsetEnabled = true;
   int _offsetSteps = 50;
+  int _todayTotalSteps = 0;
   String? _nextRunTime;
 
   bool get isAutoRunning => _isAutoRunning;
@@ -31,6 +33,7 @@ class HomePageViewModel extends ChangeNotifier {
   String get baseSteps => _baseSteps;
   String get interval => _interval;
   bool get autoPauseEnabled => _autoPauseEnabled;
+  int get todayTotalSteps => _todayTotalSteps;
   String? get nextRunTime => _nextRunTime;
 
   AppLocalizations? _l10n;
@@ -60,6 +63,7 @@ class HomePageViewModel extends ChangeNotifier {
   Future<void> _initialize() async {
     _setupServiceListeners();
     await _loadNonStateSettings();
+    await refreshTodaySteps();
 
     // Request initial status from the service.
     // The service will respond with an 'update_ui' event.
@@ -132,8 +136,16 @@ class HomePageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _validateParameters() {
+  Future<void> refreshTodaySteps() async {
+    _todayTotalSteps = await HealthService().getStepsToday();
+    notifyListeners();
+  }
+
+  Future<bool> _validateParameters() async {
     if (_l10n == null) return true;
+
+    // Force reload latest settings from storage to ensure we are not using stale memory
+    await _loadNonStateSettings();
 
     final int? base = int.tryParse(_baseSteps);
     if (base == null) return false;
@@ -165,6 +177,7 @@ class HomePageViewModel extends ChangeNotifier {
 
   Future<void> reloadSettings() async {
     await _loadNonStateSettings();
+    await refreshTodaySteps();
   }
 
   Future<void> saveBaseSteps(String value) async {
@@ -229,7 +242,7 @@ class HomePageViewModel extends ChangeNotifier {
 
     if (!_isAutoRunning) {
       // Validate parameters before starting
-      if (!_validateParameters()) return;
+      if (!(await _validateParameters())) return;
 
       if (!serviceAlive) {
         await _service.startService();

@@ -393,5 +393,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get error_base_less_than_offset => '基礎步數必須大於隨機偏移步數。';
 
   @override
-  String get error_threshold_too_low => '自動暫停閾值必須大於單次最大步數（基礎 + 偏移）。';
+  String get error_threshold_too_low => '自動暫停閾值必須大於單次最大步數（基礎 + 偏移）。同步更新。';
+
+  @override
+  String today_steps_total(String steps) {
+    return '今日總計：$steps 步';
+  }
 }

@@ -823,6 +823,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Auto-pause threshold must be greater than maximum single write (base + offset).'**
   String get error_threshold_too_low;
+
+  /// No description provided for @today_steps_total.
+  ///
+  /// In en, this message translates to:
+  /// **'Today Total: {steps} steps'**
+  String today_steps_total(String steps);
 }
 
 class _AppLocalizationsDelegate

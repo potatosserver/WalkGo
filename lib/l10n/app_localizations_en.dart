@@ -412,4 +412,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get error_threshold_too_low =>
       'Auto-pause threshold must be greater than maximum single write (base + offset).';
+
+  @override
+  String today_steps_total(String steps) {
+    return 'Today Total: $steps steps';
+  }
 }

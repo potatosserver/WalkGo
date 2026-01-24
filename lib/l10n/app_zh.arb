@@ -195,5 +195,13 @@
     "auto_mode_running_lock_warning": "自動模式運行中，無法修改參數。",
     "@auto_mode_running_lock_warning": {},
     "error_base_less_than_offset": "基礎步數必須大於隨機偏移步數。",
-    "error_threshold_too_low": "自動暫停閾值必須大於單次最大步數（基礎 + 偏移）。"
+    "error_threshold_too_low": "自動暫停閾值必須大於單次最大步數（基礎 + 偏移）。同步更新。",
+    "today_steps_total": "今日總計：{steps} 步",
+    "@today_steps_total": {
+        "placeholders": {
+            "steps": {
+                "type": "String"
+            }
+        }
+    }
 }

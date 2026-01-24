@@ -57,7 +57,8 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     // Settings changes are picked up by the background service automatically
     // when it re-reads them from SharedPreferences before each run.
     // We might need a manual trigger if settings need to apply instantly.
-    _homePageViewModel.reloadSettings(); // Trigger a reload on the home page as well
+    _homePageViewModel
+        .reloadSettings(); // Trigger a reload on the home page as well
   }
 
   Future<void> setOffsetEnabled(bool value) async {
@@ -73,6 +74,7 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefOffsetSteps, int.tryParse(value) ?? 50);
     notifyListeners();
+    await _homePageViewModel.reloadSettings();
     _homePageViewModel.updateSettingsInService();
   }
 
@@ -81,6 +83,7 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefManualSteps, int.tryParse(value) ?? 1000);
     notifyListeners();
+    await _homePageViewModel.reloadSettings();
     _homePageViewModel.updateSettingsInService();
   }
 
@@ -89,6 +92,7 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(prefAutoPauseEnabled, value);
     notifyListeners();
+    await _homePageViewModel.reloadSettings();
     _homePageViewModel.updateSettingsInService();
   }
 
@@ -97,6 +101,7 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefAutoPauseThreshold, int.tryParse(value) ?? 5000);
     notifyListeners();
+    await _homePageViewModel.reloadSettings();
     _homePageViewModel.updateSettingsInService();
   }
 }

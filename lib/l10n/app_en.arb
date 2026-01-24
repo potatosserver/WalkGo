@@ -94,7 +94,7 @@
       }
     }
   },
-   "log_write_success_auto": "Automatically wrote {steps} steps.",
+  "log_write_success_auto": "Automatically wrote {steps} steps.",
   "@log_write_success_auto": {
     "placeholders": {
       "steps": {
@@ -302,5 +302,13 @@
   "auto_mode_running_lock_warning": "Auto mode is running. Parameters cannot be modified.",
   "@auto_mode_running_lock_warning": {},
   "error_base_less_than_offset": "Base steps must be greater than random offset steps.",
-  "error_threshold_too_low": "Auto-pause threshold must be greater than maximum single write (base + offset)."
+  "error_threshold_too_low": "Auto-pause threshold must be greater than maximum single write (base + offset).",
+  "today_steps_total": "Today Total: {steps} steps",
+  "@today_steps_total": {
+    "placeholders": {
+      "steps": {
+        "type": "String"
+      }
+    }
+  }
 }

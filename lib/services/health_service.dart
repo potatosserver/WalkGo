@@ -1,4 +1,3 @@
-
 import 'package:health/health.dart';
 import 'package:walkgo/services/error_log_service.dart';
 
@@ -14,19 +13,31 @@ class HealthService {
     final now = DateTime.now();
     final midnight = DateTime(now.year, now.month, now.day);
     try {
-      // A new Health instance is created on each call.
       final health = Health();
-      final steps = await health.getHealthDataFromTypes(
-        startTime: midnight,
-        endTime: now,
-        types: [HealthDataType.STEPS],
-      );
-      if (steps.isEmpty) {
-        return 0;
+
+      // Ensure we have read permissions. In some systems, write doesn't imply read.
+      final bool hasPermission =
+          await health.hasPermissions([HealthDataType.STEPS]) ?? false;
+      if (!hasPermission) {
+        final bool authorized =
+            await health.requestAuthorization([HealthDataType.STEPS]);
+        if (!authorized) {
+          print('[HealthService] Read permission denied by user.');
+          return 0;
+        }
       }
-      return steps.fold<int>(0, (sum, data) => sum + (data.value as num).toInt());
+
+      // Using getTotalStepsInInterval is more efficient and reliable for a summary
+      final steps = await health.getTotalStepsInInterval(midnight, now);
+
+      // Debug log for troubleshooting
+      print('[HealthService] Fetched today steps: $steps');
+
+      return steps ?? 0;
     } catch (e) {
-      ErrorLogService().addErrorLog('[HealthService] Error fetching steps today', e.toString());
+      print('[HealthService] Error fetching today steps: $e');
+      ErrorLogService().addErrorLog(
+          '[HealthService] Error fetching steps today', e.toString());
       return 0;
     }
   }
@@ -45,7 +56,8 @@ class HealthService {
       );
       return success;
     } catch (e) {
-      ErrorLogService().addErrorLog('[HealthService] Error writing steps', e.toString());
+      ErrorLogService()
+          .addErrorLog('[HealthService] Error writing steps', e.toString());
       return false;
     }
   }
