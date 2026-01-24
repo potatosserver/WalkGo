@@ -22,7 +22,6 @@ class HealthService {
         final bool authorized =
             await health.requestAuthorization([HealthDataType.STEPS]);
         if (!authorized) {
-          print('[HealthService] Read permission denied by user.');
           return 0;
         }
       }
@@ -30,12 +29,8 @@ class HealthService {
       // Using getTotalStepsInInterval is more efficient and reliable for a summary
       final steps = await health.getTotalStepsInInterval(midnight, now);
 
-      // Debug log for troubleshooting
-      print('[HealthService] Fetched today steps: $steps');
-
       return steps ?? 0;
     } catch (e) {
-      print('[HealthService] Error fetching today steps: $e');
       ErrorLogService().addErrorLog(
           '[HealthService] Error fetching steps today', e.toString());
       return 0;

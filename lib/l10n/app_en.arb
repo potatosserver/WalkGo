@@ -287,6 +287,7 @@
   "manual_write_initiated": "Manual write initiated.",
   "@manual_write_initiated": {},
   "manual_write_button_text": "Write Once",
+  "@manual_write_button_text": {},
   "manual_write_success_feedback": "Manually wrote {steps} steps",
   "@manual_write_success_feedback": {
     "placeholders": {
@@ -302,11 +303,25 @@
   "auto_mode_running_lock_warning": "Auto mode is running. Parameters cannot be modified.",
   "@auto_mode_running_lock_warning": {},
   "error_base_less_than_offset": "Base steps must be greater than random offset steps.",
+  "@error_base_less_than_offset": {},
   "error_threshold_too_low": "Auto-pause threshold must be greater than maximum single write (base + offset).",
+  "@error_threshold_too_low": {},
   "today_steps_total": "Today Total: {steps} steps",
   "@today_steps_total": {
     "placeholders": {
       "steps": {
+        "type": "String"
+      }
+    }
+  },
+  "developer_label": "Developer: Andrew Cho",
+  "@developer_label": {},
+  "github_source_code": "GitHub Source Code",
+  "@github_source_code": {},
+  "version_label": "Version: {version}",
+  "@version_label": {
+    "placeholders": {
+      "version": {
         "type": "String"
       }
     }

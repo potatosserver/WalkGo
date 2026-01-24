@@ -70,7 +70,6 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // Trigger step refresh when returning to the app
     if (state == AppLifecycleState.resumed) {
-      print('[HomePageViewModel] App resumed, refreshing today steps...');
       refreshTodaySteps();
     }
   }

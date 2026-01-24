@@ -417,4 +417,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String today_steps_total(String steps) {
     return 'Today Total: $steps steps';
   }
+
+  @override
+  String get developer_label => 'Developer: Andrew Cho';
+
+  @override
+  String get github_source_code => 'GitHub Source Code';
+
+  @override
+  String version_label(String version) {
+    return 'Version: $version';
+  }
 }

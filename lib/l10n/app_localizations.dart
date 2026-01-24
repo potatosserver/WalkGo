@@ -829,6 +829,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today Total: {steps} steps'**
   String today_steps_total(String steps);
+
+  /// No description provided for @developer_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer: Andrew Cho'**
+  String get developer_label;
+
+  /// No description provided for @github_source_code.
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub Source Code'**
+  String get github_source_code;
+
+  /// No description provided for @version_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Version: {version}'**
+  String version_label(String version);
 }
 
 class _AppLocalizationsDelegate

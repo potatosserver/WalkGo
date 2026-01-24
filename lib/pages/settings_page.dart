@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
@@ -112,11 +113,52 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _showAboutDialog(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.about_walkgo),
-        content: Text(l10n.about_walkgo_content),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.about_walkgo_content),
+            const SizedBox(height: 20),
+            Text(l10n.developer_label),
+            const SizedBox(height: 8),
+            Text(l10n.version_label("1.0.1"), style: theme.textTheme.bodySmall),
+            const Divider(height: 32),
+            InkWell(
+              onTap: () async {
+                final url =
+                    Uri.parse('https://github.com/potatosserver/WalkGo');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                } else {
+                  Fluttertoast.showToast(msg: 'Could not launch GitHub');
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    const Icon(Icons.code, size: 20),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        l10n.github_source_code,
+                        style: TextStyle(
+                          color: theme.colorScheme.primary,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context), child: Text(l10n.close)),
@@ -130,15 +172,15 @@ class SettingsPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) {
-        final logService = Provider.of<LogService>(dialogContext, listen: false);
+        final logService =
+            Provider.of<LogService>(dialogContext, listen: false);
         final navigator = Navigator.of(dialogContext);
         return AlertDialog(
           title: Text(l10n.clear_data_confirm_title),
           content: Text(l10n.clear_data_confirm_content),
           actions: [
             TextButton(
-                onPressed: () => navigator.pop(),
-                child: Text(l10n.cancel)),
+                onPressed: () => navigator.pop(), child: Text(l10n.cancel)),
             TextButton(
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
@@ -151,7 +193,8 @@ class SettingsPage extends StatelessWidget {
                 router.go('/');
               },
               child: Text(l10n.confirm,
-                  style: TextStyle(color: Theme.of(dialogContext).colorScheme.error)),
+                  style: TextStyle(
+                      color: Theme.of(dialogContext).colorScheme.error)),
             ),
           ],
         );

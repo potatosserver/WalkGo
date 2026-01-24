@@ -180,6 +180,7 @@
     "notification_steps_written_title": "成功寫入步數",
     "manual_write_initiated": "手動寫入已啟動。",
     "manual_write_button_text": "手動寫入一次",
+    "@manual_write_button_text": {},
     "manual_write_success_feedback": "已手動寫入 {steps} 步",
     "@manual_write_success_feedback": {
         "placeholders": {
@@ -195,11 +196,25 @@
     "auto_mode_running_lock_warning": "自動模式運行中，無法修改參數。",
     "@auto_mode_running_lock_warning": {},
     "error_base_less_than_offset": "基礎步數必須大於隨機偏移步數。",
-    "error_threshold_too_low": "自動暫停閾值必須大於單次最大步數（基礎 + 偏移）。同步更新。",
+    "@error_base_less_than_offset": {},
+    "error_threshold_too_low": "自動暫停閾值必須大於單次最大步數（基礎 + 偏移）。",
+    "@error_threshold_too_low": {},
     "today_steps_total": "今日總計：{steps} 步",
     "@today_steps_total": {
         "placeholders": {
             "steps": {
+                "type": "String"
+            }
+        }
+    },
+    "developer_label": "開發者：卓稟鈞(Andrew)",
+    "@developer_label": {},
+    "github_source_code": "GitHub 原始碼",
+    "@github_source_code": {},
+    "version_label": "版本：{version}",
+    "@version_label": {
+        "placeholders": {
+            "version": {
                 "type": "String"
             }
         }
