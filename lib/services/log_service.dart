@@ -11,14 +11,24 @@ class LogService extends ChangeNotifier {
   LogService._internal() {
     // Load logs initially when the service is created.
     _loadLogs();
+  }
 
-    // Listen for events from the background service.
-    final service = FlutterBackgroundService();
-    service.on('log_updated').listen((event) {
-      // When a log is updated in the background, reload logs from storage
-      // and notify listeners.
-      _loadLogs();
-    });
+  /// Attaches a listener to the background service to reload logs when they are updated.
+  /// This must ONLY be called from the main UI isolate.
+  void attachToBackgroundService() {
+    try {
+      final service = FlutterBackgroundService();
+      service.on('log_updated').listen((event) {
+        // When a log is updated in the background, reload logs from storage
+        // and notify listeners.
+        _loadLogs();
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print(
+            'LogService: Failed to attach to background service. This is expected if in a secondary isolate.');
+      }
+    }
   }
 
   static const _logKey = 'activity_log';
@@ -48,37 +58,6 @@ class LogService extends ChangeNotifier {
     }
     // Notify listeners after loading, so UI can update if it was waiting.
     notifyListeners();
-  }
-
-  // A static method that can be called from a background isolate.
-  static Future<void> writeLogFromBackground(int steps,
-      {String source = 'automatic'}) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.reload(); // Critical: reload before reading in background
-
-    final logString = prefs.getString(_logKey);
-    List<dynamic> logList = [];
-    if (logString != null && logString.isNotEmpty) {
-      try {
-        logList = jsonDecode(logString);
-      } catch (e) {
-        logList = [];
-      }
-    }
-
-    final logEntry = {
-      'steps': steps,
-      'timestamp': DateTime.now().toIso8601String(),
-      'source': source,
-    };
-
-    logList.insert(0, logEntry);
-
-    if (logList.length > 100) {
-      logList.removeLast();
-    }
-
-    await prefs.setString(_logKey, jsonEncode(logList));
   }
 
   // Instance method for adding a log from the UI/foreground.

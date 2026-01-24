@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'services/background_service.dart';
 import 'constants.dart';
 import 'l10n/app_localizations.dart';
@@ -14,7 +15,8 @@ import 'theme_provider.dart';
 import 'viewmodels/advanced_settings_viewmodel.dart';
 import 'viewmodels/home_page_viewmodel.dart';
 
-Future<void> initializeService() async {
+Future<void> initializeService(
+    String initialTitle, String initialContent) async {
   final service = FlutterBackgroundService();
 
   await service.configure(
@@ -23,8 +25,8 @@ Future<void> initializeService() async {
       autoStart: false,
       isForegroundMode: true,
       notificationChannelId: foregroundChannelId,
-      initialNotificationTitle: '服務已停止',
-      initialNotificationContent: '準備就緒，等待您開啟自動模式。',
+      initialNotificationTitle: initialTitle,
+      initialNotificationContent: initialContent,
       foregroundServiceNotificationId: foregroundNotificationId,
     ),
     iosConfiguration: IosConfiguration(
@@ -38,7 +40,34 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
 
-  await initializeService();
+  // Load localization for background service initial notification
+  final prefs = await SharedPreferences.getInstance();
+  final String? languageCode = prefs.getString('languageCode');
+  Locale locale;
+  if (languageCode != null && languageCode.isNotEmpty) {
+    locale = Locale(languageCode);
+  } else {
+    locale = PlatformDispatcher.instance.locale;
+  }
+
+  // Ensure it's a supported locale or fallback to English
+  bool supported = false;
+  for (var supportedLocale in AppLocalizations.supportedLocales) {
+    if (supportedLocale.languageCode == locale.languageCode) {
+      locale = supportedLocale;
+      supported = true;
+      break;
+    }
+  }
+  if (!supported) {
+    locale = const Locale('en');
+  }
+
+  final l10n = await AppLocalizations.delegate.load(locale);
+  final initialTitle = l10n.notification_service_stopped_title;
+  final initialContent = l10n.notification_service_stopped_content;
+
+  await initializeService(initialTitle, initialContent);
 
   runApp(const WalkGoApp());
 }
@@ -67,8 +96,10 @@ class WalkGoApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LanguageService()),
         ChangeNotifierProvider(create: (_) => LogService()),
         ChangeNotifierProvider(create: (_) => HomePageViewModel()),
-        ChangeNotifierProxyProvider<HomePageViewModel, AdvancedSettingsViewModel>(
-          create: (context) => AdvancedSettingsViewModel(Provider.of<HomePageViewModel>(context, listen: false)),
+        ChangeNotifierProxyProvider<HomePageViewModel,
+            AdvancedSettingsViewModel>(
+          create: (context) => AdvancedSettingsViewModel(
+              Provider.of<HomePageViewModel>(context, listen: false)),
           update: (context, homePageViewModel, previous) =>
               AdvancedSettingsViewModel(homePageViewModel),
         ),
@@ -79,6 +110,7 @@ class WalkGoApp extends StatelessWidget {
             builder: (context, languageService, child) {
               return MaterialApp.router(
                 routerConfig: appRouter.router,
+                debugShowCheckedModeBanner: false,
                 title: 'WalkGo',
                 theme: lightTheme,
                 darkTheme: darkTheme,

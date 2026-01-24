@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/constants.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
+import 'package:walkgo/services/log_service.dart';
 
 class HomePageViewModel extends ChangeNotifier {
   final FlutterBackgroundService _service = FlutterBackgroundService();
@@ -47,6 +48,9 @@ class HomePageViewModel extends ChangeNotifier {
   }
 
   HomePageViewModel() {
+    // Attach LogService to background service listener.
+    // This is safe here because ViewModel is always created in the UI isolate.
+    LogService().attachToBackgroundService();
     _initialize();
   }
 

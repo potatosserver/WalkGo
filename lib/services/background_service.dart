@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
 import 'health_service.dart';
-import 'log_service.dart';
+import 'log_utils.dart';
 import 'error_log_service.dart';
 
 @pragma('vm:entry-point')
@@ -111,7 +111,7 @@ void onStart(ServiceInstance service) {
       }
 
       // Authoritative write to logs from background
-      await LogService.writeLogFromBackground(steps, source: source);
+      await LogUtils.writeLogFromBackground(steps, source: source);
       lastStepsWritten = steps;
 
       if (source == 'automatic') {

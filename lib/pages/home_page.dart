@@ -86,12 +86,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         body: SafeArea(
           child: Consumer<HomePageViewModel>(
             builder: (context, viewModel, child) {
-              viewModel.setL10n(l10n);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                viewModel.setL10n(l10n);
+              });
               return GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   children: [
                     const StatusCard(),
                     const SizedBox(height: 16),
