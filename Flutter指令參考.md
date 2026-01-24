@@ -161,7 +161,7 @@
     ```bash
     gh release create v1.0.0 \
     build/app/outputs/flutter-apk/*.apk \
-    build/app/outputs/flutter-apk/*.sha256 \
+    build/app/outputs/flutter-apk/*.sha1 \
     --generate-notes \
     --title "Version 1.0.0"
     ```
