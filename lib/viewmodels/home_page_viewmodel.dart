@@ -189,10 +189,12 @@ class HomePageViewModel extends ChangeNotifier {
   Future<void> toggleAutoMode() async {
     if (_l10n == null) return;
 
-    final isCurrentlyRunning = await _service.isRunning();
+    final serviceAlive = await _service.isRunning();
 
-    if (!isCurrentlyRunning) {
-      await _service.startService();
+    if (!_isAutoRunning) {
+      if (!serviceAlive) {
+        await _service.startService();
+      }
       _service.invoke('start', _getLocalizedStrings());
       Fluttertoast.showToast(msg: _l10n!.auto_service_started);
     } else {
