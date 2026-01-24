@@ -40,8 +40,12 @@ void onStart(ServiceInstance service) {
     currentInterval = prefs.getInt(prefInterval) ?? 1;
     autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
     autoPauseThreshold = prefs.getInt(prefAutoPauseThreshold) ?? 5000;
-    sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
-    lastStepsWritten = prefs.getInt(prefLastStepsWritten) ?? 0;
+
+    // Always sync memory from storage on load if we are not the master yet
+    if (!isRunning) {
+      sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
+      lastStepsWritten = prefs.getInt(prefLastStepsWritten) ?? 0;
+    }
   }
 
   void updateNotification(String title, String content) {
@@ -98,23 +102,31 @@ void onStart(ServiceInstance service) {
     try {
       final bool success = await healthService.writeSteps(steps);
       if (!success) {
-        final errorLog = localizedStrings['write_fail_check_log'] ?? 'Write failed.';
+        final errorLog =
+            localizedStrings['write_fail_check_log'] ?? 'Write failed.';
         ErrorLogService().addErrorLog('[BackgroundService] Health write failed',
             'Received failure from health service.');
         broadcastUIUpdate(statusLog: errorLog);
         return false;
       }
 
+      // Authoritative write to logs from background
       await LogService.writeLogFromBackground(steps, source: source);
-      service.invoke('log_updated');
       lastStepsWritten = steps;
 
       if (source == 'automatic') {
         sessionTotalSteps += steps;
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setInt(prefSessionTotalSteps, sessionTotalSteps);
-        await prefs.setInt(prefLastStepsWritten, lastStepsWritten);
+      }
 
+      // Persist the authoritative state to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(prefSessionTotalSteps, sessionTotalSteps);
+      await prefs.setInt(prefLastStepsWritten, lastStepsWritten);
+
+      // Notify UI that logs were updated
+      service.invoke('log_updated');
+
+      if (source == 'automatic') {
         final stopped = await checkAndStopIfNeeded();
         if (stopped) return true;
 
@@ -128,19 +140,27 @@ void onStart(ServiceInstance service) {
                 'Next run at {time}')
             .replaceAll(
                 '{time}',
-                DateFormat('HH:mm')
-                    .format(DateTime.now().add(Duration(minutes: currentInterval))));
+                DateFormat('HH:mm').format(
+                    DateTime.now().add(Duration(minutes: currentInterval))));
         updateNotification(
           localizedStrings['notification_service_running'] ?? 'Service Running',
           '$statusLog, $nextRunBody',
         );
       } else {
+        // Manual write completed
+        final statusLog = (localizedStrings['automatic_write_success'] ??
+                'Wrote {steps} steps')
+            .replaceAll('{steps}', steps.toString());
+
+        broadcastUIUpdate(statusLog: statusLog);
         service.invoke('manual_write_complete', {'steps': steps});
       }
       return false;
     } catch (e) {
-      final errorLog = localizedStrings['write_fail_check_log'] ?? 'Write failed.';
-      ErrorLogService().addErrorLog('[BackgroundService] Error writing steps', e.toString());
+      final errorLog =
+          localizedStrings['write_fail_check_log'] ?? 'Write failed.';
+      ErrorLogService()
+          .addErrorLog('[BackgroundService] Error writing steps', e.toString());
       broadcastUIUpdate(statusLog: errorLog);
       return false;
     }
@@ -155,9 +175,13 @@ void onStart(ServiceInstance service) {
     });
   }
 
+  // Initial load and broadcast
   loadSettings().then((_) => broadcastUIUpdate());
 
-  service.on('get_status').listen((event) => broadcastUIUpdate());
+  service.on('get_status').listen((event) async {
+    await loadSettings();
+    broadcastUIUpdate();
+  });
 
   service.on('start').listen((event) async {
     if (isRunning) {
@@ -165,16 +189,23 @@ void onStart(ServiceInstance service) {
       return;
     }
     if (event != null) localizedStrings = Map<String, String>.from(event);
-    await loadSettings();
+
+    // Reset session state on explicit start
     isRunning = true;
     sessionTotalSteps = 0;
     lastStepsWritten = 0;
+
+    await loadSettings(); // Reload settings just in case
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefSessionTotalSteps, 0);
     await prefs.setInt(prefLastStepsWritten, 0);
+
     service.invoke('log_updated');
-    final statusLog = localizedStrings['background_service_start'] ?? 'Service started.';
+    final statusLog =
+        localizedStrings['background_service_start'] ?? 'Service started.';
     broadcastUIUpdate(statusLog: statusLog);
+
     if (!(await writeStepsLogic())) {
       restartTimer(currentInterval);
     }
@@ -188,9 +219,16 @@ void onStart(ServiceInstance service) {
     }
     isRunning = false;
     if (event != null) localizedStrings = Map<String, String>.from(event);
+
+    // Small cleanup on stop
     lastStepsWritten = 0;
-    final title = localizedStrings['notification_service_stopped_title'] ?? 'Service Stopped';
-    final body = localizedStrings['notification_service_stopped_content'] ?? 'Ready to start.';
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(prefLastStepsWritten, 0);
+
+    final title = localizedStrings['notification_service_stopped_title'] ??
+        'Service Stopped';
+    final body = localizedStrings['notification_service_stopped_content'] ??
+        'Ready to start.';
     updateNotification(title, body);
     broadcastUIUpdate(statusLog: body);
   });
@@ -208,10 +246,12 @@ void onStart(ServiceInstance service) {
       restartTimer(currentInterval);
     }
     service.invoke('settings_updated');
+    broadcastUIUpdate();
   });
 
   service.on('update_localization').listen((event) {
     if (event != null) localizedStrings = Map<String, String>.from(event);
+    broadcastUIUpdate();
   });
 
   service.on('app_detached').listen((event) {

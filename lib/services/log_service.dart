@@ -51,10 +51,11 @@ class LogService extends ChangeNotifier {
   }
 
   // A static method that can be called from a background isolate.
-  // This is a "fire-and-forget" write operation.
-  // It returns the new total steps for the background service to keep track of.
-  static Future<int> writeLogFromBackground(int steps, {String source = 'automatic'}) async {
+  static Future<void> writeLogFromBackground(int steps,
+      {String source = 'automatic'}) async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.reload(); // Critical: reload before reading in background
+
     final logString = prefs.getString(_logKey);
     List<dynamic> logList = [];
     if (logString != null && logString.isNotEmpty) {
@@ -78,41 +79,51 @@ class LogService extends ChangeNotifier {
     }
 
     await prefs.setString(_logKey, jsonEncode(logList));
-
-    // Also update session total steps
-    final currentTotal = prefs.getInt(prefSessionTotalSteps) ?? 0;
-    final newTotal = currentTotal + steps;
-    await prefs.setInt(prefSessionTotalSteps, newTotal);
-    
-    // The background service will call service.invoke('log_updated') after this.
-    return newTotal;
   }
 
   // Instance method for adding a log from the UI/foreground.
+  // Note: For WalkGo, manual writes are usually handled by invoking the background service's 'write_now'.
+  // This method remains for general-purpose foreground logging if needed.
   Future<void> addLog(int steps, {String source = 'manual'}) async {
-    final logEntry = {
-      'steps': steps,
-      'timestamp': DateTime.now().toIso8601String(),
-      'source': source,
-    };
+    final service = FlutterBackgroundService();
+    final isRunning = await service.isRunning();
 
-    // Update in-memory list immediately
-    _logs.insert(0, logEntry);
-    if (_logs.length > 100) {
-      _logs.removeLast();
+    if (isRunning) {
+      // If service is running, we should NOT write directly to SharedPreferences
+      // because we'll likely race with the background isolate.
+      // Instead, we tell the background service to do a manual write.
+      // (The BackgroundService's 'write_now' handler will call writeLogFromBackground)
+      service.invoke('write_now', {'source': source});
+    } else {
+      // Service is not running, we are the only isolate, safe to write.
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.reload();
+
+      final logString = prefs.getString(_logKey);
+      List<dynamic> logList = [];
+      if (logString != null && logString.isNotEmpty) {
+        try {
+          logList = jsonDecode(logString);
+        } catch (e) {
+          logList = [];
+        }
+      }
+
+      final logEntry = {
+        'steps': steps,
+        'timestamp': DateTime.now().toIso8601String(),
+        'source': source,
+      };
+
+      logList.insert(0, logEntry);
+      if (logList.length > 100) {
+        logList.removeLast();
+      }
+
+      await prefs.setString(_logKey, jsonEncode(logList));
+      _logs = logList.cast<Map<String, dynamic>>().toList();
+      notifyListeners();
     }
-    
-    // Notify UI to rebuild
-    notifyListeners();
-
-    // Persist changes to SharedPreferences asynchronously
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_logKey, jsonEncode(_logs));
-
-    // Also update session total steps
-    final currentTotal = prefs.getInt(prefSessionTotalSteps) ?? 0;
-    final newTotal = currentTotal + steps;
-    await prefs.setInt(prefSessionTotalSteps, newTotal);
   }
 
   Future<void> clearLogs() async {
@@ -125,11 +136,23 @@ class LogService extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_logKey);
     await prefs.setInt(prefSessionTotalSteps, 0);
+
+    // Also notify background if it's running
+    final service = FlutterBackgroundService();
+    if (await service.isRunning()) {
+      service.invoke('get_status'); // Force a refresh
+    }
   }
-  
+
   Future<void> resetLogs() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefSessionTotalSteps, 0);
+
+    final service = FlutterBackgroundService();
+    if (await service.isRunning()) {
+      service.invoke('get_status');
+    }
+
     notifyListeners();
   }
 }

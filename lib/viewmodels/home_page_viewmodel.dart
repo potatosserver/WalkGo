@@ -34,7 +34,7 @@ class HomePageViewModel extends ChangeNotifier {
   void setL10n(AppLocalizations l10n) {
     if (_l10n == null) {
       _l10n = l10n;
-      
+
       // Fix for first launch: checks if we have a status, if not, set to ready.
       if (_statusLog.isEmpty) {
         _statusLog = _l10n!.status_ready_to_start;
@@ -51,8 +51,8 @@ class HomePageViewModel extends ChangeNotifier {
   }
 
   Future<void> _initialize() async {
-    await _loadNonStateSettings(); // Load settings that don't depend on service state
     _setupServiceListeners();
+    await _loadNonStateSettings();
 
     // Request initial status from the service.
     // The service will respond with an 'update_ui' event.
@@ -67,12 +67,10 @@ class HomePageViewModel extends ChangeNotifier {
     _service.invoke("app_detached");
   }
 
-
   void _setupServiceListeners() {
     _service.on('update_ui').listen((event) async {
       if (event == null) return;
 
-      final prefs = await SharedPreferences.getInstance();
       _isAutoRunning = event['is_running'] as bool? ?? _isAutoRunning;
       _sessionTotalSteps =
           (event['session_total_steps'] as num?)?.toInt() ?? _sessionTotalSteps;
@@ -81,16 +79,18 @@ class HomePageViewModel extends ChangeNotifier {
       _nextRunTime = event['next_run_time'] as String?;
 
       if (_l10n != null) {
-         if (_isAutoRunning) {
-          _statusLog = event['status_log'] as String? ?? _l10n!.status_running;
+        // Use the status log from the event, fallback to generalized terms only if missing
+        final receivedStatus = event['status_log'] as String?;
+        if (receivedStatus != null) {
+          _statusLog = receivedStatus;
         } else {
-          _statusLog = event['status_log'] as String? ?? _l10n!.status_ready_to_start;
+          _statusLog = _isAutoRunning
+              ? _l10n!.status_running
+              : _l10n!.status_ready_to_start;
         }
       }
 
-      await prefs.setString(prefStatusLog, _statusLog);
       await _updateRemainingSteps();
-
       notifyListeners();
     });
 
@@ -101,13 +101,23 @@ class HomePageViewModel extends ChangeNotifier {
 
   Future<void> _loadNonStateSettings() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
+
     _baseSteps = (prefs.getInt(prefBaseSteps) ?? 500).toString();
     _interval = (prefs.getInt(prefInterval) ?? 1).toString();
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
-    final savedStatus = prefs.getString(prefStatusLog);
-    if (savedStatus != null) {
-      _statusLog = savedStatus;
+
+    // Only load session data from prefs if service is NOT running.
+    // Otherwise, let the 'update_ui' event handle it.
+    if (!(await _service.isRunning())) {
+      _sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
+      _lastStepsWritten = prefs.getInt(prefLastStepsWritten) ?? 0;
+
+      if (_l10n != null) {
+        _statusLog = _l10n!.status_ready_to_start;
+      }
     }
+
     await _updateRemainingSteps();
     notifyListeners();
   }
@@ -175,13 +185,10 @@ class HomePageViewModel extends ChangeNotifier {
   Future<void> toggleAutoMode() async {
     if (_l10n == null) return;
 
-    final isCurrentlyRunning = _isAutoRunning;
+    final isCurrentlyRunning = await _service.isRunning();
 
     if (!isCurrentlyRunning) {
-      final isServiceProcessRunning = await _service.isRunning();
-      if (!isServiceProcessRunning) {
-        await _service.startService();
-      }
+      await _service.startService();
       _service.invoke('start', _getLocalizedStrings());
       Fluttertoast.showToast(msg: _l10n!.auto_service_started);
     } else {
