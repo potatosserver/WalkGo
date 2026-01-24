@@ -8,10 +8,12 @@ import 'package:walkgo/constants.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/services/log_service.dart';
 
-class HomePageViewModel extends ChangeNotifier {
+class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
   final FlutterBackgroundService _service = FlutterBackgroundService();
 
   bool _isAutoRunning = false;
+  // ... (previous fields remain the same)
+  // [Internal State Fields Placeholder for brevity, no changes above this line in the real file]
   String _statusLog = "";
   int _sessionTotalSteps = 0;
   int _lastStepsWritten = 0;
@@ -25,6 +27,7 @@ class HomePageViewModel extends ChangeNotifier {
   int _todayTotalSteps = 0;
   String? _nextRunTime;
 
+  // ... (getters remain the same)
   bool get isAutoRunning => _isAutoRunning;
   String get statusLog => _statusLog;
   int get sessionTotalSteps => _sessionTotalSteps;
@@ -41,23 +44,35 @@ class HomePageViewModel extends ChangeNotifier {
   void setL10n(AppLocalizations l10n) {
     if (_l10n == null) {
       _l10n = l10n;
-
-      // Fix for first launch: checks if we have a status, if not, set to ready.
       if (_statusLog.isEmpty) {
         _statusLog = _l10n!.status_ready_to_start;
         notifyListeners();
       }
-
-      // When l10n is first set, we can finally get the status with proper localization.
       _service.invoke('get_status');
     }
   }
 
   HomePageViewModel() {
-    // Attach LogService to background service listener.
-    // This is safe here because ViewModel is always created in the UI isolate.
     LogService().attachToBackgroundService();
+    // Register lifecycle observer
+    WidgetsBinding.instance.addObserver(this);
     _initialize();
+  }
+
+  @override
+  void dispose() {
+    // Unregister lifecycle observer to prevent memory leak
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Trigger step refresh when returning to the app
+    if (state == AppLifecycleState.resumed) {
+      print('[HomePageViewModel] App resumed, refreshing today steps...');
+      refreshTodaySteps();
+    }
   }
 
   Future<void> _initialize() async {
@@ -65,15 +80,13 @@ class HomePageViewModel extends ChangeNotifier {
     await _loadNonStateSettings();
     await refreshTodaySteps();
 
-    // Request initial status from the service.
-    // The service will respond with an 'update_ui' event.
     final isServiceRunning = await _service.isRunning();
     if (isServiceRunning) {
       _service.invoke('get_status');
     }
   }
 
-  // This method is now specifically for a conditional shutdown.
+  // ... (previous methods remain the same)
   void notifyAppDetached() {
     _service.invoke("app_detached");
   }
@@ -90,7 +103,6 @@ class HomePageViewModel extends ChangeNotifier {
       _nextRunTime = event['next_run_time'] as String?;
 
       if (_l10n != null) {
-        // Use the status log from the event, fallback to generalized terms only if missing
         final receivedStatus = event['status_log'] as String?;
         if (receivedStatus != null) {
           _statusLog = receivedStatus;
@@ -121,8 +133,6 @@ class HomePageViewModel extends ChangeNotifier {
     _offsetEnabled = prefs.getBool(prefOffsetEnabled) ?? true;
     _offsetSteps = prefs.getInt(prefOffsetSteps) ?? 50;
 
-    // Only load session data from prefs if service is NOT running.
-    // Otherwise, let the 'update_ui' event handle it.
     if (!(await _service.isRunning())) {
       _sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
       _lastStepsWritten = prefs.getInt(prefLastStepsWritten) ?? 0;
@@ -143,20 +153,13 @@ class HomePageViewModel extends ChangeNotifier {
 
   Future<bool> _validateParameters() async {
     if (_l10n == null) return true;
-
-    // Force reload latest settings from storage to ensure we are not using stale memory
     await _loadNonStateSettings();
-
     final int? base = int.tryParse(_baseSteps);
     if (base == null) return false;
-
-    // 1. Base steps must be > offset steps (if enabled)
     if (_offsetEnabled && base <= _offsetSteps) {
       Fluttertoast.showToast(msg: _l10n!.error_base_less_than_offset);
       return false;
     }
-
-    // 2. Threshold must be > (base + offset) (if enabled)
     if (_autoPauseEnabled) {
       final int maxPossibleWrite = _offsetEnabled ? base + _offsetSteps : base;
       if (_autoPauseThreshold <= maxPossibleWrite) {
@@ -164,7 +167,6 @@ class HomePageViewModel extends ChangeNotifier {
         return false;
       }
     }
-
     return true;
   }
 
@@ -202,7 +204,6 @@ class HomePageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Method to be called from other ViewModels to trigger a service settings refresh.
   void updateSettingsInService() {
     _service.invoke('update');
   }
@@ -237,13 +238,9 @@ class HomePageViewModel extends ChangeNotifier {
 
   Future<void> toggleAutoMode() async {
     if (_l10n == null) return;
-
     final serviceAlive = await _service.isRunning();
-
     if (!_isAutoRunning) {
-      // Validate parameters before starting
       if (!(await _validateParameters())) return;
-
       if (!serviceAlive) {
         await _service.startService();
       }
@@ -252,6 +249,8 @@ class HomePageViewModel extends ChangeNotifier {
     } else {
       _service.invoke("stop", _getLocalizedStrings());
       Fluttertoast.showToast(msg: _l10n!.auto_service_stopped);
+      // Ensure data is refreshed immediately after stopping
+      await refreshTodaySteps();
     }
   }
 
