@@ -139,17 +139,23 @@ class HomePageViewModel extends ChangeNotifier {
 
   Future<void> saveBaseSteps(String value) async {
     _baseSteps = value;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(prefBaseSteps, int.tryParse(value) ?? 500);
-    updateSettingsInService();
+    final intValue = int.tryParse(value);
+    if (intValue != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(prefBaseSteps, intValue);
+      updateSettingsInService();
+    }
     notifyListeners();
   }
 
   Future<void> saveInterval(String value) async {
     _interval = value;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(prefInterval, int.tryParse(value) ?? 1);
-    updateSettingsInService();
+    final intValue = int.tryParse(value);
+    if (intValue != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(prefInterval, intValue);
+      updateSettingsInService();
+    }
     notifyListeners();
   }
 
