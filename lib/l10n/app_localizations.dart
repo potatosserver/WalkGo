@@ -833,7 +833,7 @@ abstract class AppLocalizations {
   /// No description provided for @developer_label.
   ///
   /// In en, this message translates to:
-  /// **'Developer: Andrew Cho'**
+  /// **'Author: Andrew Cho'**
   String get developer_label;
 
   /// No description provided for @github_source_code.

@@ -419,7 +419,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get developer_label => 'Developer: Andrew Cho';
+  String get developer_label => 'Author: Andrew Cho';
 
   @override
   String get github_source_code => 'GitHub Source Code';

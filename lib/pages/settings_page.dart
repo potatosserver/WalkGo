@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
@@ -113,7 +114,6 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _showAboutDialog(BuildContext context, AppLocalizations l10n) {
-    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -123,12 +123,12 @@ class SettingsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(l10n.about_walkgo_content),
-            const SizedBox(height: 20),
-            Text(l10n.developer_label),
-            const SizedBox(height: 8),
-            Text(l10n.version_label("1.0.1"), style: theme.textTheme.bodySmall),
-            const Divider(height: 32),
-            InkWell(
+            const SizedBox(height: 24),
+            _buildAboutRow(
+              context,
+              icon: FontAwesomeIcons.github,
+              text: l10n.github_source_code,
+              trailing: const Icon(Icons.open_in_new, size: 20),
               onTap: () async {
                 final url =
                     Uri.parse('https://github.com/potatosserver/WalkGo');
@@ -138,31 +138,63 @@ class SettingsPage extends StatelessWidget {
                   Fluttertoast.showToast(msg: 'Could not launch GitHub');
                 }
               },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Row(
-                  children: [
-                    const Icon(Icons.code, size: 20),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        l10n.github_source_code,
-                        style: TextStyle(
-                          color: theme.colorScheme.primary,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            ),
+            const SizedBox(height: 12),
+            _buildAboutRow(
+              context,
+              icon: Icons.badge_outlined,
+              text: l10n.developer_label,
+            ),
+            const SizedBox(height: 12),
+            _buildAboutRow(
+              context,
+              icon: Icons.info_outline,
+              text: l10n.version_label("1.0.1"),
             ),
           ],
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context), child: Text(l10n.close)),
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.close),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAboutRow(BuildContext context,
+      {required IconData icon,
+      required String text,
+      Widget? trailing,
+      VoidCallback? onTap}) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+        child: Row(
+          children: [
+            Icon(icon, size: 24, color: theme.colorScheme.onSurfaceVariant),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                text,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+            ),
+            if (trailing != null) ...[
+              const SizedBox(width: 8),
+              IconTheme(
+                data: IconThemeData(color: theme.colorScheme.onSurfaceVariant),
+                child: trailing,
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

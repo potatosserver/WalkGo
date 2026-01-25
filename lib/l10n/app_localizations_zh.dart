@@ -401,7 +401,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get developer_label => '開發者：卓稟鈞(Andrew)';
+  String get developer_label => '作者 : 卓稟鈞 (Andrew)';
 
   @override
   String get github_source_code => 'GitHub 原始碼';
