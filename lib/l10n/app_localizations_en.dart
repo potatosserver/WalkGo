@@ -428,4 +428,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String version_label(String version) {
     return 'Version: $version';
   }
+
+  @override
+  String get check_for_updates => 'Check for updates';
+
+  @override
+  String get update_available => 'Update Available';
+
+  @override
+  String update_available_desc(String version) {
+    return 'A new version $version is available. Would you like to update now?';
+  }
+
+  @override
+  String get updating => 'Updating...';
+
+  @override
+  String get downloading_apk => 'Downloading APK...';
+
+  @override
+  String get verifying_integrity => 'Verifying file integrity...';
+
+  @override
+  String update_failed(String error) {
+    return 'Update failed: $error';
+  }
+
+  @override
+  String get latest_version_installed =>
+      'You are already using the latest version.';
+
+  @override
+  String get invalid_architecture =>
+      'Could not find a suitable update for your device\'s architecture.';
+
+  @override
+  String get hash_mismatch =>
+      'Hash verification failed. The download might be corrupted.';
 }

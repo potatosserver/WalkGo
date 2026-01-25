@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/log_service.dart';
 import '../l10n/app_localizations.dart';
+import '../services/update_service.dart';
+import '../widgets/update_dialog.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -151,6 +153,13 @@ class SettingsPage extends StatelessWidget {
               icon: Icons.info_outline,
               text: l10n.version_label("1.0.1"),
             ),
+            const Divider(height: 32),
+            _buildAboutRow(
+              context,
+              icon: Icons.system_update_outlined,
+              text: l10n.check_for_updates,
+              onTap: () => _checkUpdate(context, l10n, manual: true),
+            ),
           ],
         ),
         actions: [
@@ -197,6 +206,23 @@ class SettingsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _checkUpdate(BuildContext context, AppLocalizations l10n,
+      {bool manual = false}) async {
+    final updateService = UpdateService();
+    if (manual) {
+      Fluttertoast.showToast(msg: l10n.updating);
+    }
+
+    final release = await updateService.checkForUpdate();
+    if (release != null) {
+      if (!context.mounted) return;
+      UpdateDialog.show(context, release);
+    } else if (manual) {
+      if (!context.mounted) return;
+      Fluttertoast.showToast(msg: l10n.latest_version_installed);
+    }
   }
 
   void _showClearDataDialog(BuildContext context, AppLocalizations l10n) {

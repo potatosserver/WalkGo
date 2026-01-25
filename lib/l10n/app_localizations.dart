@@ -847,6 +847,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version: {version}'**
   String version_label(String version);
+
+  /// No description provided for @check_for_updates.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for updates'**
+  String get check_for_updates;
+
+  /// No description provided for @update_available.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Available'**
+  String get update_available;
+
+  /// No description provided for @update_available_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'A new version {version} is available. Would you like to update now?'**
+  String update_available_desc(String version);
+
+  /// No description provided for @updating.
+  ///
+  /// In en, this message translates to:
+  /// **'Updating...'**
+  String get updating;
+
+  /// No description provided for @downloading_apk.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading APK...'**
+  String get downloading_apk;
+
+  /// No description provided for @verifying_integrity.
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying file integrity...'**
+  String get verifying_integrity;
+
+  /// No description provided for @update_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Update failed: {error}'**
+  String update_failed(String error);
+
+  /// No description provided for @latest_version_installed.
+  ///
+  /// In en, this message translates to:
+  /// **'You are already using the latest version.'**
+  String get latest_version_installed;
+
+  /// No description provided for @invalid_architecture.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not find a suitable update for your device\'s architecture.'**
+  String get invalid_architecture;
+
+  /// No description provided for @hash_mismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Hash verification failed. The download might be corrupted.'**
+  String get hash_mismatch;
 }
 
 class _AppLocalizationsDelegate

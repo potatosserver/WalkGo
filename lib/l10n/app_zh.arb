@@ -218,5 +218,37 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "check_for_updates": "檢查更新",
+    "@check_for_updates": {},
+    "update_available": "發現新版本",
+    "@update_available": {},
+    "update_available_desc": "新版本 {version} 已發佈。您要現在更新嗎？",
+    "@update_available_desc": {
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "updating": "正在更新...",
+    "@updating": {},
+    "downloading_apk": "正在下載 APK...",
+    "@downloading_apk": {},
+    "verifying_integrity": "正在核對檔案完整性...",
+    "@verifying_integrity": {},
+    "update_failed": "更新失敗：{error}",
+    "@update_failed": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "latest_version_installed": "目前已是最新版本。",
+    "@latest_version_installed": {},
+    "invalid_architecture": "找不到適合您裝置架構的更新檔。",
+    "@invalid_architecture": {},
+    "hash_mismatch": "檔案完整性校驗失敗，下載可能已損壞。",
+    "@hash_mismatch": {}
 }

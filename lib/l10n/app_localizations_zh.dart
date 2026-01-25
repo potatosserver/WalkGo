@@ -410,4 +410,38 @@ class AppLocalizationsZh extends AppLocalizations {
   String version_label(String version) {
     return '版本：$version';
   }
+
+  @override
+  String get check_for_updates => '檢查更新';
+
+  @override
+  String get update_available => '發現新版本';
+
+  @override
+  String update_available_desc(String version) {
+    return '新版本 $version 已發佈。您要現在更新嗎？';
+  }
+
+  @override
+  String get updating => '正在更新...';
+
+  @override
+  String get downloading_apk => '正在下載 APK...';
+
+  @override
+  String get verifying_integrity => '正在核對檔案完整性...';
+
+  @override
+  String update_failed(String error) {
+    return '更新失敗：$error';
+  }
+
+  @override
+  String get latest_version_installed => '目前已是最新版本。';
+
+  @override
+  String get invalid_architecture => '找不到適合您裝置架構的更新檔。';
+
+  @override
+  String get hash_mismatch => '檔案完整性校驗失敗，下載可能已損壞。';
 }
