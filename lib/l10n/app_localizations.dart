@@ -626,23 +626,11 @@ abstract class AppLocalizations {
   /// **'Activity Recognition Permission'**
   String get permission_activity_title;
 
-  /// No description provided for @permission_activity_desc.
-  ///
-  /// In en, this message translates to:
-  /// **'This permission is required to monitor your activity and write steps.'**
-  String get permission_activity_desc;
-
   /// No description provided for @permission_notification_title.
   ///
   /// In en, this message translates to:
   /// **'Notification Permission'**
   String get permission_notification_title;
-
-  /// No description provided for @permission_notification_desc.
-  ///
-  /// In en, this message translates to:
-  /// **'This permission is required to show notifications about the service status.'**
-  String get permission_notification_desc;
 
   /// No description provided for @permission_battery_title.
   ///
@@ -971,13 +959,13 @@ abstract class AppLocalizations {
   /// No description provided for @view_release_notes.
   ///
   /// In en, this message translates to:
-  /// **'View Release Notes'**
+  /// **'View Version Information'**
   String get view_release_notes;
 
   /// No description provided for @release_notes.
   ///
   /// In en, this message translates to:
-  /// **'Release Notes'**
+  /// **'Version Information'**
   String get release_notes;
 }
 

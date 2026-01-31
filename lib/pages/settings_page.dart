@@ -247,16 +247,23 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void _showReleaseNotes(BuildContext context, AppLocalizations l10n) async {
     final updateService = UpdateService();
-    Fluttertoast.showToast(msg: l10n.checking_for_updates);
 
-    final release = await updateService.getLatestRelease();
+    try {
+      final release = await updateService.getLatestRelease();
 
-    if (release != null) {
+      if (release != null) {
+        if (!context.mounted) return;
+        showDialog(
+          context: context,
+          builder: (context) => ReleaseNotesDialog(release: release),
+        );
+      } else {
+        if (!context.mounted) return;
+        Fluttertoast.showToast(msg: l10n.update_failed('Could not fetch release notes'));
+      }
+    } catch (e) {
       if (!context.mounted) return;
-      ReleaseNotesDialog.show(context, release);
-    } else {
-      if (!context.mounted) return;
-      Fluttertoast.showToast(msg: l10n.update_failed('Could not fetch release notes'));
+      Fluttertoast.showToast(msg: l10n.update_check_failed);
     }
   }
 

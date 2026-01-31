@@ -8,13 +8,6 @@ class ReleaseNotesDialog extends StatelessWidget {
 
   const ReleaseNotesDialog({super.key, required this.release});
 
-  static void show(BuildContext context, ReleaseInfo release) {
-    showDialog(
-      context: context,
-      builder: (context) => ReleaseNotesDialog(release: release),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;

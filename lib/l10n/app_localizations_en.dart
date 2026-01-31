@@ -298,15 +298,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get permission_activity_title => 'Activity Recognition Permission';
 
   @override
-  String get permission_activity_desc =>
-      'This permission is required to monitor your activity and write steps.';
-
-  @override
   String get permission_notification_title => 'Notification Permission';
-
-  @override
-  String get permission_notification_desc =>
-      'This permission is required to show notifications about the service status.';
 
   @override
   String get permission_battery_title => 'Battery Optimization Permission';
@@ -502,8 +494,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get link_copied => 'Link copied to clipboard';
 
   @override
-  String get view_release_notes => 'View Release Notes';
+  String get view_release_notes => 'View Version Information';
 
   @override
-  String get release_notes => 'Release Notes';
+  String get release_notes => 'Version Information';
 }

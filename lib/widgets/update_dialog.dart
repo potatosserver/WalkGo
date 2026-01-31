@@ -68,7 +68,10 @@ class _UpdateDialogState extends State<UpdateDialog> {
         if (!downloading && error == null)
           TextButton(
             onPressed: () {
-              ReleaseNotesDialog.show(context, widget.release);
+              showDialog(
+                context: context,
+                builder: (context) => ReleaseNotesDialog(release: widget.release),
+              );
             },
             child: Text(l10n.release_notes),
           ),

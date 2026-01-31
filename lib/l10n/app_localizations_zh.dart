@@ -289,13 +289,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get permission_activity_title => '活動識別權限';
 
   @override
-  String get permission_activity_desc => '需要此權限才能監控您的活動並寫入步數。';
-
-  @override
   String get permission_notification_title => '通知權限';
-
-  @override
-  String get permission_notification_desc => '需要此權限才能顯示有關服務狀態的通知。';
 
   @override
   String get permission_battery_title => '電池優化權限';
@@ -480,8 +474,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get link_copied => '連結已複製到剪貼簿';
 
   @override
-  String get view_release_notes => '查看發行說明';
+  String get view_release_notes => '查看版本資訊';
 
   @override
-  String get release_notes => '發行說明';
+  String get release_notes => '版本資訊';
 }
