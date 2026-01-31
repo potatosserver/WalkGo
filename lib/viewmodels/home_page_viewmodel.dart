@@ -75,14 +75,24 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<void> _initialize() async {
+    // 1. Setup listeners to catch any events from the service.
     _setupServiceListeners();
+
+    // 2. Ensure the background service is running.
+    final isServiceRunning = await _service.isRunning();
+    if (!isServiceRunning) {
+      await _service.startService();
+    }
+
+    // 3. Load user settings from SharedPreferences.
     await _loadNonStateSettings();
+
+    // 4. Get the current step count from the health service.
     await refreshTodaySteps();
 
-    final isServiceRunning = await _service.isRunning();
-    if (isServiceRunning) {
-      _service.invoke('get_status');
-    }
+    // 5. Now that the service is running and listeners are attached,
+    //    request the initial state from the service.
+    _service.invoke('get_status');
   }
 
   // ... (previous methods remain the same)
@@ -236,16 +246,17 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<void> toggleAutoMode() async {
-    if (_l10n == null) return;
     final serviceAlive = await _service.isRunning();
     if (!_isAutoRunning) {
       if (!(await _validateParameters())) return;
       if (!serviceAlive) {
         await _service.startService();
       }
+       if (_l10n == null) return;
       _service.invoke('start', _getLocalizedStrings());
       Fluttertoast.showToast(msg: _l10n!.auto_service_started);
     } else {
+       if (_l10n == null) return;
       _service.invoke("stop", _getLocalizedStrings());
       Fluttertoast.showToast(msg: _l10n!.auto_service_stopped);
       // Ensure data is refreshed immediately after stopping
@@ -254,7 +265,6 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   void manualWriteSteps() {
-    if (_l10n == null) return;
     _service.invoke('write_now', {
       ..._getLocalizedStrings(),
       'source': 'manual',
