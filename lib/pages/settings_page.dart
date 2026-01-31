@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart'; // Import the package
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -11,8 +12,40 @@ import '../l10n/app_localizations.dart';
 import '../services/update_service.dart';
 import '../widgets/update_dialog.dart';
 
-class SettingsPage extends StatelessWidget {
+// 1. Convert to StatefulWidget
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  String _version = '...'; // 2. Add state variable for version
+
+  // 3. Initialize version in initState
+  @override
+  void initState() {
+    super.initState();
+    _initVersion();
+  }
+
+  Future<void> _initVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      if (mounted) {
+        setState(() {
+          _version = '${packageInfo.version}+${packageInfo.buildNumber}';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _version = 'Error';
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,10 +181,11 @@ class SettingsPage extends StatelessWidget {
               text: l10n.developer_label,
             ),
             const SizedBox(height: 12),
+            // 4. Use the state variable
             _buildAboutRow(
               context,
               icon: Icons.info_outline,
-              text: l10n.version_label("1.0.1"),
+              text: l10n.version_label(_version),
             ),
             const Divider(height: 32),
             _buildAboutRow(
