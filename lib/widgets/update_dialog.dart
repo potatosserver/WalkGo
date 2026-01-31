@@ -3,11 +3,11 @@ import '../l10n/app_localizations.dart';
 import '../services/update_service.dart';
 
 class UpdateDialog extends StatefulWidget {
-  final Map<String, dynamic> release;
+  final ReleaseInfo release;
 
   const UpdateDialog({super.key, required this.release});
 
-  static void show(BuildContext context, Map<String, dynamic> release) {
+  static void show(BuildContext context, ReleaseInfo release) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -28,7 +28,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final version = widget.release['tag_name'];
+    final version = widget.release.tagName;
 
     return AlertDialog(
       title: Text(l10n.update_available),

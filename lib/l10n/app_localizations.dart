@@ -907,6 +907,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hash verification failed. The download might be corrupted.'**
   String get hash_mismatch;
+
+  /// No description provided for @checking_for_updates.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking for updates...'**
+  String get checking_for_updates;
+
+  /// No description provided for @manual_download.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual Download'**
+  String get manual_download;
+
+  /// No description provided for @auto_update.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Update'**
+  String get auto_update;
+
+  /// No description provided for @manual_download_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual Download Instructions'**
+  String get manual_download_title;
+
+  /// No description provided for @manual_download_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Your device architecture is: {architecture}. Please download the file named:'**
+  String manual_download_description(String architecture);
+
+  /// No description provided for @manual_download_filename.
+  ///
+  /// In en, this message translates to:
+  /// **'Filename: {filename}'**
+  String manual_download_filename(String filename);
+
+  /// No description provided for @copy_link.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Link'**
+  String get copy_link;
+
+  /// No description provided for @go_to_download.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Download Page'**
+  String get go_to_download;
+
+  /// No description provided for @link_copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied to clipboard'**
+  String get link_copied;
 }
 
 class _AppLocalizationsDelegate

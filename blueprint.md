@@ -111,29 +111,21 @@ lib
 
 ## 本次變更計畫
 
-**目標：** 修正「進階參數」頁面中，設定值儲存機制的潛在風險與效能問題。
+**目標：** 修正「檢查更新」對話框中，載入中動畫未置中且包含多餘元件的 UI 問題。
 
 ### 發現的問題
 
-1.  **UI 未即時更新：** 在 `AdvancedSettingsViewModel` 中，部分儲存設定的方法（`saveOffsetSteps` 等）在寫入 `SharedPreferences` 後，未呼叫 `notifyListeners()`。這會導致即使資料已儲存，UI 介面上的顯示仍是舊的數值，造成使用者困惑。
-2.  **儲存機制不穩健且效率低下：**
-    *   最初的實作是在使用者每次輸入 (`onChanged`) 時都觸發儲存，這會造成頻繁的磁碟 I/O，影響效能。
-    *   後來嘗試改用 `onFieldSubmitted`，但這個方法無法涵蓋所有「完成編輯」的情境，例如使用者點擊空白處關閉鍵盤，或使用實體鍵盤轉移焦點，這些情況下設定值將不會被儲存。
+在 `lib/widgets/update_flow_dialog.dart` 中，「檢查更新」時的 `AlertDialog` 存在以下兩個 UI 瑕疵：
+
+1.  **未置中：** `CircularProgressIndicator`（載入中動畫）被放在一個 `Row` 元件中，導致它沒有在對話框中水平置中。
+2.  **多餘元件：** `Row` 中包含了一個不必要的 `Text("...")` 元件，與載入中動畫一同顯示，造成視覺上的干擾。
 
 ### 解決方案
 
-為了徹底解決以上問題，進行了以下修改：
+為了提供更乾淨、專業的使用者體驗，進行了以下修改：
 
-1.  **確保 UI 同步：**
-    *   **檔案：** `lib/viewmodels/advanced_settings_viewmodel.dart`
-    *   **操作：** 在 `saveOffsetSteps`, `saveManualSteps`, 和 `saveAutoPauseThreshold` 方法中，都加入了 `notifyListeners()` 的呼叫。
-    *   **結果：** 現在每當設定值被儲存，相關的 UI 元件都會被通知並即時更新，確保畫面上顯示的永遠是最新資料。
-
-2.  **實作穩健的儲存機制：**
-    *   **檔案：** `lib/pages/advanced_parameters_page.dart`
-    *   **操作：**
-        1.  為頁面上的每個文字輸入框（`TextFormField`）建立並關聯一個 `FocusNode`。
-        2.  為每個 `FocusNode` 新增監聽器，監聽其焦點變化。
-        3.  當 `FocusNode` 失去焦點時（代表使用者已完成編輯），觸發對應的儲存方法。
-        4.  使用 `GestureDetector` 包裹頁面，讓使用者點擊空白處時能自動移除焦點，同樣觸發儲存。
-    *   **結果：** 新的機制確保了只有在使用者完成編輯時，才會執行一次儲存操作。它涵蓋了所有可能的情境（點擊鍵盤「完成」、點擊空白處、切換焦點等），在提升效能的同時，也保證了資料儲存的可靠性。
+1.  **移除多餘的 `Text` 元件：** 刪除了 `AlertDialog` 內容中的 `Text("...")`。
+2.  **置中載入中動畫：**
+    *   **檔案：** `lib/widgets/update_flow_dialog.dart`
+    *   **操作：** 將原本的 `Row` 替換為 `SizedBox` 和 `Center` 元件，將 `CircularProgressIndicator` 包裹其中。
+    *   **結果：** 現在「檢查更新」的對話框只會顯示一個乾淨、置中的載入中動畫，符合使用者對現代化 App 的期待。

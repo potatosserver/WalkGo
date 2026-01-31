@@ -444,4 +444,35 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get hash_mismatch => '檔案完整性校驗失敗，下載可能已損壞。';
+
+  @override
+  String get checking_for_updates => '正在檢查更新...';
+
+  @override
+  String get manual_download => '手動下載';
+
+  @override
+  String get auto_update => '自動更新';
+
+  @override
+  String get manual_download_title => '手動下載說明';
+
+  @override
+  String manual_download_description(String architecture) {
+    return '您的裝置架構為：$architecture。請下載名為：';
+  }
+
+  @override
+  String manual_download_filename(String filename) {
+    return '檔案名稱：$filename';
+  }
+
+  @override
+  String get copy_link => '複製連結';
+
+  @override
+  String get go_to_download => '前往下載頁面';
+
+  @override
+  String get link_copied => '連結已複製到剪貼簿';
 }

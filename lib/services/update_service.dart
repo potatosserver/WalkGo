@@ -7,23 +7,43 @@ import 'package:open_filex/open_filex.dart';
 import 'package:crypto/crypto.dart';
 import 'package:pub_semver/pub_semver.dart';
 
+class ReleaseInfo {
+  final String tagName;
+  final String htmlUrl;
+  final List<dynamic> assets;
+
+  ReleaseInfo({
+    required this.tagName,
+    required this.htmlUrl,
+    required this.assets,
+  });
+
+  factory ReleaseInfo.fromJson(Map<String, dynamic> json) {
+    return ReleaseInfo(
+      tagName: json['tag_name'] as String? ?? '',
+      htmlUrl: json['html_url'] as String? ?? '',
+      assets: json['assets'] as List<dynamic>? ?? [],
+    );
+  }
+}
+
 class UpdateService {
   static const String githubApiUrl =
       'https://api.github.com/repos/potatosserver/WalkGo/releases/latest';
 
-  Future<Map<String, dynamic>?> checkForUpdate() async {
+  Future<ReleaseInfo?> checkForUpdate() async {
     try {
       final response = await Dio().get(githubApiUrl);
       if (response.statusCode == 200) {
-        final latestRelease = response.data;
+        final latestReleaseData = response.data;
         final String latestVersion =
-            latestRelease['tag_name'].replaceAll('v', '');
+            latestReleaseData['tag_name'].replaceAll('v', '');
 
         final packageInfo = await PackageInfo.fromPlatform();
         final String currentVersion = packageInfo.version;
 
         if (Version.parse(latestVersion) > Version.parse(currentVersion)) {
-          return latestRelease;
+          return ReleaseInfo.fromJson(latestReleaseData);
         }
       }
     } catch (e) {
@@ -45,19 +65,17 @@ class UpdateService {
     return null;
   }
 
-  Future<void> downloadAndInstall(Map<String, dynamic> release, String arch,
+  Future<void> downloadAndInstall(ReleaseInfo release, String arch,
       {Function(double)? onProgress,
       Function(String)? onError,
       Function(String)? onStatus}) async {
     try {
-      final assets = release['assets'] as List;
+      final assets = release.assets;
       final apkName = 'app-$arch-release.apk';
       final sha1Name = '$apkName.sha1';
 
-      final apkAsset =
-          assets.firstWhere((a) => a['name'] == apkName, orElse: () => null);
-      final sha1Asset =
-          assets.firstWhere((a) => a['name'] == sha1Name, orElse: () => null);
+      final apkAsset = assets.firstWhere((a) => a['name'] == apkName, orElse: () => null);
+      final sha1Asset = assets.firstWhere((a) => a['name'] == sha1Name, orElse: () => null);
 
       if (apkAsset == null) {
         onError?.call('APK not found for $arch');
@@ -84,8 +102,7 @@ class UpdateService {
       if (sha1Asset != null) {
         onStatus?.call('Verifying integrity...');
         await Dio().download(sha1Asset['browser_download_url'], sha1Path);
-        final expectedHash =
-            (await File(sha1Path).readAsString()).trim().split(' ').first;
+        final expectedHash = (await File(sha1Path).readAsString()).trim().split(' ').first;
         final actualHash = await _calculateSHA1(apkPath);
 
         if (actualHash != expectedHash) {

@@ -465,4 +465,35 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get hash_mismatch =>
       'Hash verification failed. The download might be corrupted.';
+
+  @override
+  String get checking_for_updates => 'Checking for updates...';
+
+  @override
+  String get manual_download => 'Manual Download';
+
+  @override
+  String get auto_update => 'Auto Update';
+
+  @override
+  String get manual_download_title => 'Manual Download Instructions';
+
+  @override
+  String manual_download_description(String architecture) {
+    return 'Your device architecture is: $architecture. Please download the file named:';
+  }
+
+  @override
+  String manual_download_filename(String filename) {
+    return 'Filename: $filename';
+  }
+
+  @override
+  String get copy_link => 'Copy Link';
+
+  @override
+  String get go_to_download => 'Go to Download Page';
+
+  @override
+  String get link_copied => 'Link copied to clipboard';
 }

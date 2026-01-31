@@ -349,5 +349,36 @@
   },
   "latest_version_installed": "You are already using the latest version.",
   "invalid_architecture": "Could not find a suitable update for your device's architecture.",
-  "hash_mismatch": "Hash verification failed. The download might be corrupted."
+  "hash_mismatch": "Hash verification failed. The download might be corrupted.",
+
+  "checking_for_updates": "Checking for updates...",
+  "@checking_for_updates": {},
+  "manual_download": "Manual Download",
+  "@manual_download": {},
+  "auto_update": "Auto Update",
+  "@auto_update": {},
+  "manual_download_title": "Manual Download Instructions",
+  "@manual_download_title": {},
+  "manual_download_description": "Your device architecture is: {architecture}. Please download the file named:",
+  "@manual_download_description": {
+    "placeholders": {
+      "architecture": {
+        "type": "String"
+      }
+    }
+  },
+  "manual_download_filename": "Filename: {filename}",
+  "@manual_download_filename": {
+    "placeholders": {
+      "filename": {
+        "type": "String"
+      }
+    }
+  },
+  "copy_link": "Copy Link",
+  "@copy_link": {},
+  "go_to_download": "Go to Download Page",
+  "@go_to_download": {},
+  "link_copied": "Link copied to clipboard",
+  "@link_copied": {}
 }

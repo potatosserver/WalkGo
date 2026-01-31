@@ -8,8 +8,7 @@ import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
 import 'package:walkgo/widgets/status_card.dart';
 import 'package:walkgo/widgets/parameter_settings_card.dart';
-import 'package:walkgo/services/update_service.dart';
-import 'package:walkgo/widgets/update_dialog.dart';
+import 'package:walkgo/widgets/update_flow_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -36,20 +35,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       );
     });
 
-    // Automatic update check on start
-    _checkUpdate();
-  }
-
-  void _checkUpdate() async {
-    // Delay slightly to not block initial frame and ensure context is ready
-    await Future.delayed(const Duration(seconds: 3));
-    if (!mounted) return;
-
-    final updateService = UpdateService();
-    final release = await updateService.checkForUpdate();
-    if (release != null && mounted) {
-      UpdateDialog.show(context, release);
-    }
+    // Use the new update flow
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UpdateFlowDialog.run(context);
+    });
   }
 
   @override

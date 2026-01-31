@@ -250,5 +250,35 @@
     "invalid_architecture": "找不到適合您裝置架構的更新檔。",
     "@invalid_architecture": {},
     "hash_mismatch": "檔案完整性校驗失敗，下載可能已損壞。",
-    "@hash_mismatch": {}
+    "@hash_mismatch": {},
+    "checking_for_updates": "正在檢查更新...",
+    "@checking_for_updates": {},
+    "manual_download": "手動下載",
+    "@manual_download": {},
+    "auto_update": "自動更新",
+    "@auto_update": {},
+    "manual_download_title": "手動下載說明",
+    "@manual_download_title": {},
+    "manual_download_description": "您的裝置架構為：{architecture}。請下載名為：",
+    "@manual_download_description": {
+      "placeholders": {
+        "architecture": {
+          "type": "String"
+        }
+      }
+    },
+    "manual_download_filename": "檔案名稱：{filename}",
+    "@manual_download_filename": {
+      "placeholders": {
+        "filename": {
+          "type": "String"
+        }
+      }
+    },
+    "copy_link": "複製連結",
+    "@copy_link": {},
+    "go_to_download": "前往下載頁面",
+    "@go_to_download": {},
+    "link_copied": "連結已複製到剪貼簿",
+    "@link_copied": {}
 }

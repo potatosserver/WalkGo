@@ -35,7 +35,7 @@ class _SettingsPageState extends State<SettingsPage> {
       final packageInfo = await PackageInfo.fromPlatform();
       if (mounted) {
         setState(() {
-          _version = '${packageInfo.version}+${packageInfo.buildNumber}';
+          _version = packageInfo.version;
         });
       }
     } catch (e) {
