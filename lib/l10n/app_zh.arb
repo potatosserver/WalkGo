@@ -253,6 +253,8 @@
     "@hash_mismatch": {},
     "checking_for_updates": "正在檢查更新...",
     "@checking_for_updates": {},
+    "update_check_failed": "檢查更新失敗，請檢查您的網路連線。",
+    "@update_check_failed": {},
     "manual_download": "手動下載",
     "@manual_download": {},
     "auto_update": "自動更新",
@@ -280,5 +282,9 @@
     "go_to_download": "前往下載頁面",
     "@go_to_download": {},
     "link_copied": "連結已複製到剪貼簿",
-    "@link_copied": {}
+    "@link_copied": {},
+    "view_release_notes": "查看發行說明",
+    "@view_release_notes": {},
+    "release_notes": "發行說明",
+    "@release_notes": {}
 }

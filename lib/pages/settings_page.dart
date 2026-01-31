@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart'; // Import the package
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -10,9 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/log_service.dart';
 import '../l10n/app_localizations.dart';
 import '../services/update_service.dart';
-import '../widgets/update_dialog.dart';
+import '../widgets/release_notes_dialog.dart';
+import '../widgets/update_flow_dialog.dart';
 
-// 1. Convert to StatefulWidget
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -21,9 +21,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  String _version = '...'; // 2. Add state variable for version
+  String _version = '...';
 
-  // 3. Initialize version in initState
   @override
   void initState() {
     super.initState();
@@ -92,6 +91,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: Text(l10n.about_walkgo),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () => _showAboutDialog(context, l10n),
+              ),
+              ListTile(
+                leading: const Icon(Icons.system_update_outlined),
+                title: Text(l10n.check_for_updates),
+                onTap: () => UpdateFlowDialog.run(context, manual: true),
               ),
             ],
           ),
@@ -181,7 +185,6 @@ class _SettingsPageState extends State<SettingsPage> {
               text: l10n.developer_label,
             ),
             const SizedBox(height: 12),
-            // 4. Use the state variable
             _buildAboutRow(
               context,
               icon: Icons.info_outline,
@@ -190,9 +193,9 @@ class _SettingsPageState extends State<SettingsPage> {
             const Divider(height: 32),
             _buildAboutRow(
               context,
-              icon: Icons.system_update_outlined,
-              text: l10n.check_for_updates,
-              onTap: () => _checkUpdate(context, l10n, manual: true),
+              icon: Icons.article_outlined,
+              text: l10n.view_release_notes,
+              onTap: () => _showReleaseNotes(context, l10n),
             ),
           ],
         ),
@@ -242,20 +245,18 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _checkUpdate(BuildContext context, AppLocalizations l10n,
-      {bool manual = false}) async {
+  void _showReleaseNotes(BuildContext context, AppLocalizations l10n) async {
     final updateService = UpdateService();
-    if (manual) {
-      Fluttertoast.showToast(msg: l10n.updating);
-    }
+    Fluttertoast.showToast(msg: l10n.checking_for_updates);
 
-    final release = await updateService.checkForUpdate();
+    final release = await updateService.getLatestRelease();
+
     if (release != null) {
       if (!context.mounted) return;
-      UpdateDialog.show(context, release);
-    } else if (manual) {
+      ReleaseNotesDialog.show(context, release);
+    } else {
       if (!context.mounted) return;
-      Fluttertoast.showToast(msg: l10n.latest_version_installed);
+      Fluttertoast.showToast(msg: l10n.update_failed('Could not fetch release notes'));
     }
   }
 

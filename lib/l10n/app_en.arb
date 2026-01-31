@@ -353,6 +353,8 @@
 
   "checking_for_updates": "Checking for updates...",
   "@checking_for_updates": {},
+  "update_check_failed": "Failed to check for updates. Please check your network connection.",
+  "@update_check_failed": {},
   "manual_download": "Manual Download",
   "@manual_download": {},
   "auto_update": "Auto Update",
@@ -380,5 +382,9 @@
   "go_to_download": "Go to Download Page",
   "@go_to_download": {},
   "link_copied": "Link copied to clipboard",
-  "@link_copied": {}
+  "@link_copied": {},
+  "view_release_notes": "View Release Notes",
+  "@view_release_notes": {},
+  "release_notes": "Release Notes",
+  "@release_notes": {}
 }

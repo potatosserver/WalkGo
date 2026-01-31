@@ -449,6 +449,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get checking_for_updates => '正在檢查更新...';
 
   @override
+  String get update_check_failed => '檢查更新失敗，請檢查您的網路連線。';
+
+  @override
   String get manual_download => '手動下載';
 
   @override
@@ -475,4 +478,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get link_copied => '連結已複製到剪貼簿';
+
+  @override
+  String get view_release_notes => '查看發行說明';
+
+  @override
+  String get release_notes => '發行說明';
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../l10n/app_localizations.dart';
-import '../services/update_service.dart';
+import 'package:walkgo/l10n/app_localizations.dart';
+import 'package:walkgo/services/update_service.dart';
+import 'package:walkgo/widgets/release_notes_dialog.dart';
 
 class UpdateDialog extends StatefulWidget {
   final ReleaseInfo release;
@@ -28,31 +29,48 @@ class _UpdateDialogState extends State<UpdateDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     final version = widget.release.tagName;
 
     return AlertDialog(
       title: Text(l10n.update_available),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (!downloading && error == null)
-            Text(l10n.update_available_desc(version)),
-          if (downloading) ...[
-            Text(status ?? l10n.updating),
-            const SizedBox(height: 16),
-            LinearProgressIndicator(value: progress),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 500,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (error != null)
+              Text(
+                l10n.update_failed(error!),
+                style: TextStyle(color: theme.colorScheme.error),
+              )
+            else if (downloading)
+              ...
+            [
+              Text(status ?? l10n.updating),
+              const SizedBox(height: 16),
+              LinearProgressIndicator(value: progress),
+            ]
+            else
+              Text(l10n.update_available_desc(version)),
           ],
-          if (error != null)
-            Text(l10n.update_failed(error!),
-                style: const TextStyle(color: Colors.red)),
-        ],
+        ),
       ),
       actions: [
         if (!downloading)
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(l10n.cancel),
+          ),
+        if (!downloading && error == null)
+          TextButton(
+            onPressed: () {
+              ReleaseNotesDialog.show(context, widget.release);
+            },
+            child: Text(l10n.release_notes),
           ),
         if (!downloading && error == null)
           ElevatedButton(

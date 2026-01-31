@@ -914,6 +914,12 @@ abstract class AppLocalizations {
   /// **'Checking for updates...'**
   String get checking_for_updates;
 
+  /// No description provided for @update_check_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to check for updates. Please check your network connection.'**
+  String get update_check_failed;
+
   /// No description provided for @manual_download.
   ///
   /// In en, this message translates to:
@@ -961,6 +967,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Link copied to clipboard'**
   String get link_copied;
+
+  /// No description provided for @view_release_notes.
+  ///
+  /// In en, this message translates to:
+  /// **'View Release Notes'**
+  String get view_release_notes;
+
+  /// No description provided for @release_notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Release Notes'**
+  String get release_notes;
 }
 
 class _AppLocalizationsDelegate

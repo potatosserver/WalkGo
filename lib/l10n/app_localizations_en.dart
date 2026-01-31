@@ -470,6 +470,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checking_for_updates => 'Checking for updates...';
 
   @override
+  String get update_check_failed =>
+      'Failed to check for updates. Please check your network connection.';
+
+  @override
   String get manual_download => 'Manual Download';
 
   @override
@@ -496,4 +500,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get link_copied => 'Link copied to clipboard';
+
+  @override
+  String get view_release_notes => 'View Release Notes';
+
+  @override
+  String get release_notes => 'Release Notes';
 }
