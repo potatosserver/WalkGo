@@ -626,11 +626,23 @@ abstract class AppLocalizations {
   /// **'Activity Recognition Permission'**
   String get permission_activity_title;
 
+  /// No description provided for @permission_activity_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'This permission is required to recognize your physical activity and accurately record steps.'**
+  String get permission_activity_desc;
+
   /// No description provided for @permission_notification_title.
   ///
   /// In en, this message translates to:
   /// **'Notification Permission'**
   String get permission_notification_title;
+
+  /// No description provided for @permission_notification_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'This permission is required to send you notifications about your progress and app status.'**
+  String get permission_notification_desc;
 
   /// No description provided for @permission_battery_title.
   ///

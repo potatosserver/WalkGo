@@ -289,7 +289,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get permission_activity_title => '活動識別權限';
 
   @override
+  String get permission_activity_desc => '需要此權限才能識別您的身體活動並準確記錄步數。';
+
+  @override
   String get permission_notification_title => '通知權限';
+
+  @override
+  String get permission_notification_desc => '需要此權限才能向您傳送有關您的進度和應用程式狀態的通知。';
 
   @override
   String get permission_battery_title => '電池優化權限';

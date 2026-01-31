@@ -298,7 +298,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get permission_activity_title => 'Activity Recognition Permission';
 
   @override
+  String get permission_activity_desc =>
+      'This permission is required to recognize your physical activity and accurately record steps.';
+
+  @override
   String get permission_notification_title => 'Notification Permission';
+
+  @override
+  String get permission_notification_desc =>
+      'This permission is required to send you notifications about your progress and app status.';
 
   @override
   String get permission_battery_title => 'Battery Optimization Permission';
