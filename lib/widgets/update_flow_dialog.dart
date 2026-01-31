@@ -5,7 +5,7 @@ import 'package:walkgo/services/update_service.dart';
 import 'package:walkgo/widgets/update_dialog.dart';
 
 class UpdateFlowDialog {
-  static Future<void> run(BuildContext context, {bool manual = false}) async {
+  static Future<void> run(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
 
     Fluttertoast.showToast(msg: l10n.checking_for_updates);

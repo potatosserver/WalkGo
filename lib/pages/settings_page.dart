@@ -95,7 +95,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ListTile(
                 leading: const Icon(Icons.system_update_outlined),
                 title: Text(l10n.check_for_updates),
-                onTap: () => UpdateFlowDialog.run(context, manual: true),
+                onTap: () => UpdateFlowDialog.run(context),
               ),
             ],
           ),
