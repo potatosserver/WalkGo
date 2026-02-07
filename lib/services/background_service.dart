@@ -250,7 +250,29 @@ void onStart(ServiceInstance service) {
   });
 
   service.on('update_localization').listen((event) {
-    if (event != null) localizedStrings = Map<String, String>.from(event);
+    if (event != null) {
+      localizedStrings = Map<String, String>.from(event);
+      if (isRunning) {
+        final nextRun = DateTime.now().add(Duration(minutes: currentInterval));
+        final nextRunTime = DateFormat('HH:mm').format(nextRun);
+        final statusLog = (localizedStrings['automatic_write_success'] ??
+                'Wrote {steps} steps')
+            .replaceAll('{steps}', lastStepsWritten.toString());
+        final nextRunBody = (localizedStrings['notification_next_run'] ??
+                'Next run at {time}')
+            .replaceAll('{time}', nextRunTime);
+        updateNotification(
+          localizedStrings['notification_service_running'] ?? 'Service Running',
+          lastStepsWritten > 0 ? '$statusLog, $nextRunBody' : nextRunBody,
+        );
+      } else {
+        final title = localizedStrings['notification_service_stopped_title'] ??
+            'Service Stopped';
+        final body = localizedStrings['notification_service_stopped_content'] ??
+            'Ready to start.';
+        updateNotification(title, body);
+      }
+    }
     broadcastUIUpdate();
   });
 
