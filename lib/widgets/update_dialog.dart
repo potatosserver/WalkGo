@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/services/update_service.dart';
-import 'package:walkgo/widgets/release_notes_dialog.dart';
 
 class UpdateDialog extends StatefulWidget {
   final ReleaseInfo release;
@@ -38,25 +38,31 @@ class _UpdateDialogState extends State<UpdateDialog> {
         constraints: const BoxConstraints(
           maxWidth: 500,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (error != null)
-              Text(
-                l10n.update_failed(error!),
-                style: TextStyle(color: theme.colorScheme.error),
-              )
-            else if (downloading)
-              ...
-            [
-              Text(status ?? l10n.updating),
-              const SizedBox(height: 16),
-              LinearProgressIndicator(value: progress),
-            ]
-            else
-              Text(l10n.update_available_desc(version)),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (error != null)
+                Text(
+                  l10n.update_failed(error!),
+                  style: TextStyle(color: theme.colorScheme.error),
+                )
+              else if (downloading)
+                ...[
+                Text(status ?? l10n.updating),
+                const SizedBox(height: 16),
+                LinearProgressIndicator(value: progress),
+              ] else ...[
+                Text(l10n.update_available_desc(version)),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 300,
+                  child: Markdown(data: widget.release.body),
+                ),
+              ]
+            ],
+          ),
         ),
       ),
       actions: [
@@ -64,16 +70,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(l10n.cancel),
-          ),
-        if (!downloading && error == null)
-          TextButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => ReleaseNotesDialog(release: widget.release),
-              );
-            },
-            child: Text(l10n.release_notes),
           ),
         if (!downloading && error == null)
           ElevatedButton(
