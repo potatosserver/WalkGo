@@ -15,12 +15,13 @@ class UpdateFlowDialog {
 
     try {
       final updateService = UpdateService();
-      final release =
-          forceUpdate ? await updateService.getLatestRelease() : await updateService.checkForUpdate();
+      final release = forceUpdate
+          ? await updateService.getLatestRelease()
+          : await updateService.checkForUpdate();
 
       if (release != null) {
         if (!context.mounted) return;
-        UpdateDialog.show(context, release);
+        UpdateDialog.show(context, release, showManualDownloadOnly: forceUpdate);
       } else {
         if (!context.mounted) return;
         Fluttertoast.showToast(msg: l10n.latest_version_installed);

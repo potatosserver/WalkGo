@@ -400,7 +400,7 @@
     },
   "reinstall_app": "Reinstall App",
   "@reinstall_app": {},
-  "reinstall_app_desc": "Download and reinstall the latest version of the app.",
+  "reinstall_app_desc": "Manual installation: Please uninstall the app first, then download and install the latest version.",
   "@reinstall_app_desc": {},
   "getting_latest_version_info": "Getting latest version information...",
   "@getting_latest_version_info": {},

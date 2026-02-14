@@ -523,7 +523,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reinstall_app_desc =>
-      'Download and reinstall the latest version of the app.';
+      'Manual installation: Please uninstall the app first, then download and install the latest version.';
 
   @override
   String get getting_latest_version_info =>

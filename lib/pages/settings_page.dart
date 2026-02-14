@@ -111,7 +111,6 @@ class _SettingsPageState extends State<SettingsPage> {
               ListTile(
                 leading: const Icon(Icons.install_mobile_outlined),
                 title: Text(l10n.reinstall_app),
-                subtitle: Text(l10n.reinstall_app_desc),
                 onTap: () => UpdateFlowDialog.run(context, forceUpdate: true),
               ),
               ListTile(

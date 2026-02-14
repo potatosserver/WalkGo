@@ -1007,7 +1007,7 @@ abstract class AppLocalizations {
   /// No description provided for @reinstall_app_desc.
   ///
   /// In en, this message translates to:
-  /// **'Download and reinstall the latest version of the app.'**
+  /// **'Manual installation: Please uninstall the app first, then download and install the latest version.'**
   String get reinstall_app_desc;
 
   /// No description provided for @getting_latest_version_info.

@@ -500,7 +500,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reinstall_app => '重新安裝應用程式';
 
   @override
-  String get reinstall_app_desc => '下載並重新安裝最新版本的應用程式。';
+  String get reinstall_app_desc => '請先解除安裝應用程式，然後再下載並安裝最新版本。';
 
   @override
   String get getting_latest_version_info => '正在獲取最新版本資訊...';

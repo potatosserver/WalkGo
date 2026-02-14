@@ -9,14 +9,23 @@ enum UpdateState { idle, downloading, downloaded, failed }
 
 class UpdateDialog extends StatefulWidget {
   final ReleaseInfo release;
+  final bool showManualDownloadOnly;
 
-  const UpdateDialog({super.key, required this.release});
+  const UpdateDialog({
+    super.key,
+    required this.release,
+    this.showManualDownloadOnly = false,
+  });
 
-  static void show(BuildContext context, ReleaseInfo release) {
+  static void show(BuildContext context, ReleaseInfo release,
+      {bool showManualDownloadOnly = false}) {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => UpdateDialog(release: release),
+      builder: (context) => UpdateDialog(
+        release: release,
+        showManualDownloadOnly: showManualDownloadOnly,
+      ),
     );
   }
 
@@ -37,6 +46,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
   @override
   void initState() {
     super.initState();
+    _showManualDownload = widget.showManualDownloadOnly;
     _updateService.getArchitecture().then((arch) {
       if (mounted) {
         setState(() {
@@ -126,7 +136,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text(l10n.copy_link), // "Done"
+              child: Text(l10n.close),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -217,6 +227,10 @@ class _UpdateDialogState extends State<UpdateDialog> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (widget.showManualDownloadOnly) ... [
+            Text(l10n.reinstall_app_desc),
+            const SizedBox(height: 16),
+        ],
         if (_architecture == null)
           const Center(child: CircularProgressIndicator())
         else
