@@ -5,14 +5,18 @@ import 'package:walkgo/services/update_service.dart';
 import 'package:walkgo/widgets/update_dialog.dart';
 
 class UpdateFlowDialog {
-  static Future<void> run(BuildContext context) async {
+  static Future<void> run(BuildContext context, {bool forceUpdate = false}) async {
     final l10n = AppLocalizations.of(context)!;
 
-    Fluttertoast.showToast(msg: l10n.checking_for_updates);
+    Fluttertoast.showToast(
+        msg: forceUpdate
+            ? l10n.getting_latest_version_info
+            : l10n.checking_for_updates);
 
     try {
       final updateService = UpdateService();
-      final release = await updateService.checkForUpdate();
+      final release =
+          forceUpdate ? await updateService.getLatestRelease() : await updateService.checkForUpdate();
 
       if (release != null) {
         if (!context.mounted) return;

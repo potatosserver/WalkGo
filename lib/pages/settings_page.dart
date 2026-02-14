@@ -109,6 +109,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 onTap: () => context.push('/welcome'),
               ),
               ListTile(
+                leading: const Icon(Icons.install_mobile_outlined),
+                title: Text(l10n.reinstall_app),
+                subtitle: Text(l10n.reinstall_app_desc),
+                onTap: () => UpdateFlowDialog.run(context, forceUpdate: true),
+              ),
+              ListTile(
                 leading: Icon(Icons.delete_forever_outlined,
                     color: theme.colorScheme.error),
                 title: Text(l10n.clear_data_button,

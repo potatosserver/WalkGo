@@ -959,7 +959,7 @@ abstract class AppLocalizations {
   /// No description provided for @copy_link.
   ///
   /// In en, this message translates to:
-  /// **'Copy Link'**
+  /// **'Done'**
   String get copy_link;
 
   /// No description provided for @go_to_download.
@@ -997,6 +997,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to launch installer: {error}'**
   String install_failed(String error);
+
+  /// No description provided for @reinstall_app.
+  ///
+  /// In en, this message translates to:
+  /// **'Reinstall App'**
+  String get reinstall_app;
+
+  /// No description provided for @reinstall_app_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Download and reinstall the latest version of the app.'**
+  String get reinstall_app_desc;
+
+  /// No description provided for @getting_latest_version_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting latest version information...'**
+  String get getting_latest_version_info;
+
+  /// No description provided for @manual_download_prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Please download the file named: {filename}'**
+  String manual_download_prompt(String filename);
+
+  /// No description provided for @apk_not_found_for_arch.
+  ///
+  /// In en, this message translates to:
+  /// **'No APK found for your device architecture: {architecture}'**
+  String apk_not_found_for_arch(String architecture);
 }
 
 class _AppLocalizationsDelegate

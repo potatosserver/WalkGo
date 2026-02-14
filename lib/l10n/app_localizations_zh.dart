@@ -209,7 +209,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get permission_denied_content =>
-      '您已永久刪絕一項必要權限。請前往您裝置上此應用程式的設定頁面，並手動授予權限以確保其正常運作。';
+      '您已永久-絕一項必要權限。請前往您裝置上此應用程式的設定頁面，並手動授予權限以確保其正常運作。';
 
   @override
   String get open_settings => '開啟設定';
@@ -455,10 +455,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get update_check_failed => '檢查更新失敗，請檢查您的網路連線。';
 
   @override
-  String get manual_download => '手動下載';
+  String get manual_download => '手動';
 
   @override
-  String get auto_update => '自動更新';
+  String get auto_update => '更新';
 
   @override
   String get manual_download_title => '手動下載說明';
@@ -474,10 +474,10 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get copy_link => '複製連結';
+  String get copy_link => '完成';
 
   @override
-  String get go_to_download => '前往下載頁面';
+  String get go_to_download => '下載頁面';
 
   @override
   String get link_copied => '連結已複製到剪貼簿';
@@ -494,5 +494,24 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String install_failed(String error) {
     return '無法啟動安裝程式：$error';
+  }
+
+  @override
+  String get reinstall_app => '重新安裝應用程式';
+
+  @override
+  String get reinstall_app_desc => '下載並重新安裝最新版本的應用程式。';
+
+  @override
+  String get getting_latest_version_info => '正在獲取最新版本資訊...';
+
+  @override
+  String manual_download_prompt(String filename) {
+    return '請下載名為：$filename 的檔案';
+  }
+
+  @override
+  String apk_not_found_for_arch(String architecture) {
+    return '找不到適合您裝置架構 $architecture 的 APK。';
   }
 }

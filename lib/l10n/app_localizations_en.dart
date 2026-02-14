@@ -496,7 +496,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get copy_link => 'Copy Link';
+  String get copy_link => 'Done';
 
   @override
   String get go_to_download => 'Go to Download Page';
@@ -516,5 +516,26 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String install_failed(String error) {
     return 'Failed to launch installer: $error';
+  }
+
+  @override
+  String get reinstall_app => 'Reinstall App';
+
+  @override
+  String get reinstall_app_desc =>
+      'Download and reinstall the latest version of the app.';
+
+  @override
+  String get getting_latest_version_info =>
+      'Getting latest version information...';
+
+  @override
+  String manual_download_prompt(String filename) {
+    return 'Please download the file named: $filename';
+  }
+
+  @override
+  String apk_not_found_for_arch(String architecture) {
+    return 'No APK found for your device architecture: $architecture';
   }
 }

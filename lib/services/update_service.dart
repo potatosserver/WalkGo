@@ -9,11 +9,25 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pub_semver/pub_semver.dart';
 
+class ReleaseAsset {
+  final String name;
+  final String browserDownloadUrl;
+
+  ReleaseAsset({required this.name, required this.browserDownloadUrl});
+
+  factory ReleaseAsset.fromJson(Map<String, dynamic> json) {
+    return ReleaseAsset(
+      name: json['name'] as String? ?? '',
+      browserDownloadUrl: json['browser_download_url'] as String? ?? '',
+    );
+  }
+}
+
 class ReleaseInfo {
   final String tagName;
   final String htmlUrl;
   final String body;
-  final List<dynamic> assets;
+  final List<ReleaseAsset> assets;
 
   ReleaseInfo({
     required this.tagName,
@@ -23,11 +37,15 @@ class ReleaseInfo {
   });
 
   factory ReleaseInfo.fromJson(Map<String, dynamic> json) {
+    var assetsFromJson = json['assets'] as List? ?? [];
+    List<ReleaseAsset> assetList =
+        assetsFromJson.map((i) => ReleaseAsset.fromJson(i)).toList();
+
     return ReleaseInfo(
       tagName: json['tag_name'] as String? ?? '',
       htmlUrl: json['html_url'] as String? ?? '',
       body: json['body'] as String? ?? '',
-      assets: json['assets'] as List<dynamic>? ?? [],
+      assets: assetList,
     );
   }
 }
@@ -83,9 +101,13 @@ class UpdateService {
       final androidInfo = await deviceInfo.androidInfo;
       final abis = androidInfo.supportedAbis;
 
-      if (abis.contains('arm64-v8a')) return 'arm64-v8a';
-      if (abis.contains('armeabi-v7a')) return 'armeabi-v7a';
-      if (abis.contains('x86_64')) return 'x86_64';
+      const supportedArchitectures = ['arm64-v8a', 'armeabi-v7a', 'x86_64'];
+
+      for (final abi in abis) {
+        if (supportedArchitectures.contains(abi)) {
+          return abi;
+        }
+      }
     }
     return null;
   }
@@ -93,18 +115,13 @@ class UpdateService {
   Future<String> downloadApk(ReleaseInfo release, String arch,
       {Function(double)? onProgress,
       Function(String)? onStatus}) async {
-    final assets = release.assets;
     final apkName = 'app-$arch-release.apk';
     final sha1Name = '$apkName.sha1';
 
-    final apkAsset =
-        assets.firstWhere((a) => a['name'] == apkName, orElse: () => null);
-    final sha1Asset = assets.firstWhere((a) => a['name'] == sha1Name,
-        orElse: () => null);
-
-    if (apkAsset == null) {
-      throw Exception('APK not found for $arch');
-    }
+    final apkAsset = release.assets.firstWhere((a) => a.name == apkName,
+        orElse: () => throw Exception('APK not found for $arch'));
+    final sha1Asset = release.assets.firstWhere((a) => a.name == sha1Name,
+        orElse: () => throw Exception('SHA1 not found for $arch'));
 
     final tempDir = await getTemporaryDirectory();
     _apkPath = '${tempDir.path}/$apkName';
@@ -112,7 +129,7 @@ class UpdateService {
 
     onStatus?.call('Downloading APK...');
     await Dio().download(
-      apkAsset['browser_download_url'],
+      apkAsset.browserDownloadUrl,
       _apkPath,
       onReceiveProgress: (count, total) {
         if (total > 0) {
@@ -121,17 +138,16 @@ class UpdateService {
       },
     );
 
-    if (sha1Asset != null) {
-      onStatus?.call('Verifying integrity...');
-      await Dio().download(sha1Asset['browser_download_url'], sha1Path);
-      final expectedHash =
-          (await File(sha1Path).readAsString()).trim().split(' ').first;
-      final actualHash = await _calculateSHA1(_apkPath!);
+    onStatus?.call('Verifying integrity...');
+    await Dio().download(sha1Asset.browserDownloadUrl, sha1Path);
+    final expectedHash =
+        (await File(sha1Path).readAsString()).trim().split(' ').first;
+    final actualHash = await _calculateSHA1(_apkPath!);
 
-      if (actualHash != expectedHash) {
-        throw Exception('Hash mismatch');
-      }
+    if (actualHash != expectedHash) {
+      throw Exception('Hash mismatch');
     }
+
     return _apkPath!;
   }
 

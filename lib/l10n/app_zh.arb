@@ -55,7 +55,7 @@
     "app_reset_desc": "此操作將清除所有應用程式資料和設定，將應用程式還原至初始狀態。",
     "offset_steps_hint": "步數將會在此值的正負範圍內隨機化。",
     "permission_denied_title": "權限已被永久拒絕",
-    "permission_denied_content": "您已永久刪絕一項必要權限。請前往您裝置上此應用程式的設定頁面，並手動授予權限以確保其正常運作。",
+    "permission_denied_content": "您已永久-絕一項必要權限。請前往您裝置上此應用程式的設定頁面，並手動授予權限以確保其正常運作。",
     "open_settings": "開啟設定",
     "auto_pause_notification_title": "服務已自動暫停",
     "auto_pause_notification_content_with_steps": "因為已達成 {steps} 步的階段性目標，服務已自動暫停。",
@@ -257,9 +257,9 @@
     "@checking_for_updates": {},
     "update_check_failed": "檢查更新失敗，請檢查您的網路連線。",
     "@update_check_failed": {},
-    "manual_download": "手動下載",
+    "manual_download": "手動",
     "@manual_download": {},
-    "auto_update": "自動更新",
+    "auto_update": "更新",
     "@auto_update": {},
     "manual_download_title": "手動下載說明",
     "@manual_download_title": {},
@@ -279,9 +279,9 @@
         }
       }
     },
-    "copy_link": "複製連結",
+    "copy_link": "完成",
     "@copy_link": {},
-    "go_to_download": "前往下載頁面",
+    "go_to_download": "下載頁面",
     "@go_to_download": {},
     "link_copied": "連結已複製到剪貼簿",
     "@link_copied": {},
@@ -298,5 +298,27 @@
                 "type": "String"
             }
         }
+    },
+    "reinstall_app": "重新安裝應用程式",
+    "@reinstall_app": {},
+    "reinstall_app_desc": "下載並重新安裝最新版本的應用程式。",
+    "@reinstall_app_desc": {},
+    "getting_latest_version_info": "正在獲取最新版本資訊...",
+    "@getting_latest_version_info": {},
+    "manual_download_prompt": "請下載名為：{filename} 的檔案",
+    "@manual_download_prompt": {
+      "placeholders": {
+        "filename": {
+          "type": "String"
+        }
+      }
+    },
+    "apk_not_found_for_arch": "找不到適合您裝置架構 {architecture} 的 APK。",
+    "@apk_not_found_for_arch": {
+      "placeholders": {
+        "architecture": {
+          "type": "String"
+        }
+      }
     }
 }

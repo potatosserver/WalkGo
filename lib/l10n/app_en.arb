@@ -378,7 +378,7 @@
       }
     }
   },
-  "copy_link": "Copy Link",
+  "copy_link": "Done",
   "@copy_link": {},
   "go_to_download": "Go to Download Page",
   "@go_to_download": {},
@@ -397,5 +397,27 @@
                 "type": "String"
             }
         }
+    },
+  "reinstall_app": "Reinstall App",
+  "@reinstall_app": {},
+  "reinstall_app_desc": "Download and reinstall the latest version of the app.",
+  "@reinstall_app_desc": {},
+  "getting_latest_version_info": "Getting latest version information...",
+  "@getting_latest_version_info": {},
+   "manual_download_prompt": "Please download the file named: {filename}",
+    "@manual_download_prompt": {
+      "placeholders": {
+        "filename": {
+          "type": "String"
+        }
+      }
+    },
+    "apk_not_found_for_arch": "No APK found for your device architecture: {architecture}",
+    "@apk_not_found_for_arch": {
+      "placeholders": {
+        "architecture": {
+          "type": "String"
+        }
+      }
     }
 }
