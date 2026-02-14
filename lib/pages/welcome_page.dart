@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../l10n/app_localizations.dart';
 
@@ -35,7 +36,7 @@ class WelcomePage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset('assets/images/icon.png', height: 300),
+                  SvgPicture.asset('assets/images/icon.svg', height: 300),
                   const SizedBox(height: 24),
                   Text(
                     l10n.welcome_to_walkgo,
