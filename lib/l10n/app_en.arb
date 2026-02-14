@@ -339,6 +339,7 @@
   "updating": "Updating...",
   "downloading_apk": "Downloading APK...",
   "verifying_integrity": "Verifying file integrity...",
+  "installing": "Installing...",
   "update_failed": "Update failed: {error}",
   "@update_failed": {
     "placeholders": {
@@ -386,5 +387,15 @@
   "view_release_notes": "View Version Information",
   "@view_release_notes": {},
   "release_notes": "Version Information",
-  "@release_notes": {}
+  "@release_notes": {},
+  "retry": "Retry",
+  "@retry": {},
+    "install_failed": "Failed to launch installer: {error}",
+    "@install_failed": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    }
 }

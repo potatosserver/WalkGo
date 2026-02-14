@@ -432,6 +432,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get verifying_integrity => '正在核對檔案完整性...';
 
   @override
+  String get installing => '安裝中...';
+
+  @override
   String update_failed(String error) {
     return '更新失敗：$error';
   }
@@ -484,4 +487,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get release_notes => '版本資訊';
+
+  @override
+  String get retry => '重試';
+
+  @override
+  String install_failed(String error) {
+    return '無法啟動安裝程式：$error';
+  }
 }

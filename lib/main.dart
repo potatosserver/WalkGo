@@ -5,6 +5,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:walkgo/services/update_service.dart';
 import 'services/background_service.dart';
 import 'constants.dart';
 import 'l10n/app_localizations.dart';
@@ -39,6 +40,8 @@ Future<void> initializeService(
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
+
+  await UpdateService().cleanupOldApk();
 
   // Load localization for background service initial notification
   final prefs = await SharedPreferences.getInstance();

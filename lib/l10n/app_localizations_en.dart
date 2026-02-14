@@ -450,6 +450,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verifying_integrity => 'Verifying file integrity...';
 
   @override
+  String get installing => 'Installing...';
+
+  @override
   String update_failed(String error) {
     return 'Update failed: $error';
   }
@@ -506,4 +509,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get release_notes => 'Version Information';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String install_failed(String error) {
+    return 'Failed to launch installer: $error';
+  }
 }

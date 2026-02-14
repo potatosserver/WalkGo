@@ -3,6 +3,8 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/services/update_service.dart';
 
+enum UpdateState { idle, downloading, downloaded, failed }
+
 class UpdateDialog extends StatefulWidget {
   final ReleaseInfo release;
 
@@ -21,10 +23,12 @@ class UpdateDialog extends StatefulWidget {
 }
 
 class _UpdateDialogState extends State<UpdateDialog> {
-  double? progress;
-  String? status;
-  String? error;
-  bool downloading = false;
+  final UpdateService _updateService = UpdateService();
+  UpdateState _state = UpdateState.idle;
+  double? _progress;
+  String? _status;
+  String? _error;
+  String? _apkPath;
 
   @override
   Widget build(BuildContext context) {
@@ -32,96 +36,171 @@ class _UpdateDialogState extends State<UpdateDialog> {
     final theme = Theme.of(context);
     final version = widget.release.tagName;
 
-    return AlertDialog(
-      title: Text(l10n.update_available),
-      content: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: 500,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (error != null)
-                Text(
-                  l10n.update_failed(error!),
-                  style: TextStyle(color: theme.colorScheme.error),
-                )
-              else if (downloading)
-                ...[
-                Text(status ?? l10n.updating),
-                const SizedBox(height: 16),
-                LinearProgressIndicator(value: progress),
-              ] else ...[
-                Text(l10n.update_available_desc(version)),
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 300,
-                  child: Markdown(data: widget.release.body),
-                ),
-              ]
-            ],
+    return PopScope(
+      canPop: _state != UpdateState.downloading,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) {
+          _updateService.deleteApk();
+        }
+      },
+      child: AlertDialog(
+        title: Text(l10n.update_available),
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_state == UpdateState.failed)
+                  Text(
+                    _error!,
+                    style: TextStyle(color: theme.colorScheme.error),
+                  )
+                else if (_state == UpdateState.downloading)
+                  ...[
+                  Text(_status ?? l10n.updating),
+                  const SizedBox(height: 16),
+                  LinearProgressIndicator(value: _progress),
+                ] else if (_state == UpdateState.downloaded) ...[
+                  Text(l10n.update_available_desc(version)),
+                  const SizedBox(height: 16),
+                  Text(l10n.installing),
+                ] else ...[
+                  Text(l10n.update_available_desc(version)),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 300,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Scrollbar(
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: MarkdownBody(data: widget.release.body),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ]
+              ],
+            ),
           ),
         ),
+        actions: _buildActions(context, l10n),
       ),
-      actions: [
-        if (!downloading)
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-        if (!downloading && error == null)
-          ElevatedButton(
-            onPressed: _startUpdate,
-            child: Text(l10n.confirm),
-          ),
-        if (error != null)
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.close),
-          ),
-      ],
     );
   }
 
-  Future<void> _startUpdate() async {
+  List<Widget> _buildActions(BuildContext context, AppLocalizations l10n) {
+    switch (_state) {
+      case UpdateState.idle:
+        return [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(l10n.cancel),
+          ),
+          ElevatedButton(
+            onPressed: _startDownload,
+            child: Text(l10n.confirm),
+          ),
+        ];
+      case UpdateState.downloading:
+        return [];
+      case UpdateState.downloaded:
+        return [
+          ElevatedButton(
+            onPressed: _install,
+            child: Text(l10n.installing),
+          ),
+        ];
+      case UpdateState.failed:
+        return [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _updateService.deleteApk();
+            },
+            child: Text(l10n.close),
+          ),
+          if (_apkPath != null)
+            ElevatedButton(
+              onPressed: _install,
+              child: Text(l10n.retry),
+            )
+          else
+            ElevatedButton(
+              onPressed: _startDownload,
+              child: Text(l10n.retry),
+            ),
+        ];
+    }
+  }
+
+  Future<void> _startDownload() async {
     final l10n = AppLocalizations.of(context)!;
     setState(() {
-      downloading = true;
-      error = null;
+      _state = UpdateState.downloading;
+      _error = null;
+      _progress = null;
     });
 
-    final updateService = UpdateService();
-    final arch = await updateService.getArchitecture();
-    if (arch == null) {
-      if (!mounted) return;
-      setState(() {
-        downloading = false;
-        error = l10n.invalid_architecture;
-      });
-      return;
-    }
+    try {
+      final arch = await _updateService.getArchitecture();
+      if (arch == null) {
+        throw Exception(l10n.invalid_architecture);
+      }
 
-    await updateService.downloadAndInstall(
-      widget.release,
-      arch,
-      onProgress: (p) => setState(() => progress = p),
-      onStatus: (s) {
-        setState(() {
+      _apkPath = await _updateService.downloadApk(
+        widget.release,
+        arch,
+        onProgress: (p) => setState(() => _progress = p),
+        onStatus: (s) => setState(() {
           if (s == 'Downloading APK...') {
-            status = l10n.downloading_apk;
+            _status = l10n.downloading_apk;
           } else if (s == 'Verifying integrity...') {
-            status = l10n.verifying_integrity;
+            _status = l10n.verifying_integrity;
           } else {
-            status = s;
+            _status = s;
           }
+        }),
+      );
+      setState(() {
+        _state = UpdateState.downloaded;
+      });
+      _install();
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _state = UpdateState.failed;
+          _error = e.toString();
         });
-      },
-      onError: (e) => setState(() {
-        downloading = false;
-        error = e;
-      }),
-    );
+      }
+    }
+  }
+
+  Future<void> _install() async {
+    final l10n = AppLocalizations.of(context)!;
+    if (_apkPath == null) return;
+    try {
+      await _updateService.installApk(_apkPath!);
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _state = UpdateState.failed;
+          _error = l10n.install_failed(e.toString());
+        });
+      }
+    }
   }
 }

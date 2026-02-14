@@ -35,6 +35,7 @@ class ReleaseInfo {
 class UpdateService {
   static const String githubApiUrl =
       'https://api.github.com/repos/potatosserver/WalkGo/releases/latest';
+  String? _apkPath;
 
   Future<ReleaseInfo?> getLatestRelease() async {
     try {
@@ -69,6 +70,7 @@ class UpdateService {
           return latestRelease;
         }
       }
+      await cleanupOldApk();
     } catch (e) {
       rethrow;
     }
@@ -88,57 +90,79 @@ class UpdateService {
     return null;
   }
 
-  Future<void> downloadAndInstall(ReleaseInfo release, String arch,
+  Future<String> downloadApk(ReleaseInfo release, String arch,
       {Function(double)? onProgress,
-      Function(String)? onError,
       Function(String)? onStatus}) async {
-    try {
-      final assets = release.assets;
-      final apkName = 'app-$arch-release.apk';
-      final sha1Name = '$apkName.sha1';
+    final assets = release.assets;
+    final apkName = 'app-$arch-release.apk';
+    final sha1Name = '$apkName.sha1';
 
-      final apkAsset =
-          assets.firstWhere((a) => a['name'] == apkName, orElse: () => null);
-      final sha1Asset = assets.firstWhere((a) => a['name'] == sha1Name,
-          orElse: () => null);
+    final apkAsset =
+        assets.firstWhere((a) => a['name'] == apkName, orElse: () => null);
+    final sha1Asset = assets.firstWhere((a) => a['name'] == sha1Name,
+        orElse: () => null);
 
-      if (apkAsset == null) {
-        onError?.call('APK not found for $arch');
-        return;
+    if (apkAsset == null) {
+      throw Exception('APK not found for $arch');
+    }
+
+    final tempDir = await getTemporaryDirectory();
+    _apkPath = '${tempDir.path}/$apkName';
+    final sha1Path = '${tempDir.path}/$sha1Name';
+
+    onStatus?.call('Downloading APK...');
+    await Dio().download(
+      apkAsset['browser_download_url'],
+      _apkPath,
+      onReceiveProgress: (count, total) {
+        if (total > 0) {
+          onProgress?.call(count / total);
+        }
+      },
+    );
+
+    if (sha1Asset != null) {
+      onStatus?.call('Verifying integrity...');
+      await Dio().download(sha1Asset['browser_download_url'], sha1Path);
+      final expectedHash =
+          (await File(sha1Path).readAsString()).trim().split(' ').first;
+      final actualHash = await _calculateSHA1(_apkPath!);
+
+      if (actualHash != expectedHash) {
+        throw Exception('Hash mismatch');
       }
+    }
+    return _apkPath!;
+  }
 
-      final tempDir = await getTemporaryDirectory();
-      final apkPath = '${tempDir.path}/$apkName';
-      final sha1Path = '${tempDir.path}/$sha1Name';
+  Future<void> installApk(String apkPath) async {
+    final result = await OpenFilex.open(apkPath);
+    if (result.type != ResultType.done) {
+      throw Exception('Failed to open installer: ${result.message}');
+    }
+  }
 
-      onStatus?.call('Downloading APK...');
-      await Dio().download(
-        apkAsset['browser_download_url'],
-        apkPath,
-        onReceiveProgress: (count, total) {
-          if (total > 0) {
-            onProgress?.call(count / total);
+  Future<void> deleteApk() async {
+    if (_apkPath != null && await File(_apkPath!).exists()) {
+      await File(_apkPath!).delete();
+      _apkPath = null;
+    }
+  }
+
+  Future<void> cleanupOldApk() async {
+    final tempDir = await getTemporaryDirectory();
+    final directory = Directory(tempDir.path);
+    if (await directory.exists()) {
+      final files = await directory.list().toList();
+      for (final file in files) {
+        if (file.path.endsWith('.apk') || file.path.endsWith('.sha1')) {
+          try {
+            await file.delete();
+          } catch (e) {
+            // ignore
           }
-        },
-      );
-
-      if (sha1Asset != null) {
-        onStatus?.call('Verifying integrity...');
-        await Dio().download(sha1Asset['browser_download_url'], sha1Path);
-        final expectedHash =
-            (await File(sha1Path).readAsString()).trim().split(' ').first;
-        final actualHash = await _calculateSHA1(apkPath);
-
-        if (actualHash != expectedHash) {
-          onError?.call('Hash mismatch');
-          return;
         }
       }
-
-      onStatus?.call('Installing...');
-      await OpenFilex.open(apkPath);
-    } catch (e) {
-      onError?.call(e.toString());
     }
   }
 

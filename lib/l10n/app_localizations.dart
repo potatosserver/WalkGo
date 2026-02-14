@@ -884,6 +884,12 @@ abstract class AppLocalizations {
   /// **'Verifying file integrity...'**
   String get verifying_integrity;
 
+  /// No description provided for @installing.
+  ///
+  /// In en, this message translates to:
+  /// **'Installing...'**
+  String get installing;
+
   /// No description provided for @update_failed.
   ///
   /// In en, this message translates to:
@@ -979,6 +985,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version Information'**
   String get release_notes;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @install_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to launch installer: {error}'**
+  String install_failed(String error);
 }
 
 class _AppLocalizationsDelegate

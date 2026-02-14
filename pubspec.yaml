@@ -2,7 +2,7 @@
 name: walkgo
 description: "A new Flutter project."
 publish_to: 'none'
-version: 1.0.7+1
+version: 1.0.8+1
 
 environment:
   sdk: '>=3.5.0-188.0.dev <4.0.0'
