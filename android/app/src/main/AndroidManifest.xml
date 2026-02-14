@@ -78,5 +78,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        
+        <meta-data
+            android:name="com.google.android.material.color.harmonize"
+            android:value="true" />
     </application>
 </manifest>
