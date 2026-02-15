@@ -506,4 +506,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get release_notes => 'Version Information';
+
+  @override
+  String get download_latest_version => 'Reinstall App';
+
+  @override
+  String get unknown_error => 'An unknown error occurred.';
+
+  @override
+  String get update_ready_to_install => 'Update is ready to install.';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get install => 'Install';
+
+  @override
+  String get download => 'Download';
 }

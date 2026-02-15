@@ -1,1 +1,9 @@
-{}
+{
+  "zh": [
+    "unknown_error",
+    "update_ready_to_install",
+    "retry",
+    "install",
+    "download"
+  ]
+}

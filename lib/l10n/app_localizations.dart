@@ -979,6 +979,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version Information'**
   String get release_notes;
+
+  /// No description provided for @download_latest_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Reinstall App'**
+  String get download_latest_version;
+
+  /// No description provided for @unknown_error.
+  ///
+  /// In en, this message translates to:
+  /// **'An unknown error occurred.'**
+  String get unknown_error;
+
+  /// No description provided for @update_ready_to_install.
+  ///
+  /// In en, this message translates to:
+  /// **'Update is ready to install.'**
+  String get update_ready_to_install;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @install.
+  ///
+  /// In en, this message translates to:
+  /// **'Install'**
+  String get install;
+
+  /// No description provided for @download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get download;
 }
 
 class _AppLocalizationsDelegate

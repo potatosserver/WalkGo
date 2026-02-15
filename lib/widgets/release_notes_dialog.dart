@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/services/update_service.dart';
 
@@ -11,21 +11,21 @@ class ReleaseNotesDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
     return AlertDialog(
       title: Text(l10n.release_notes),
       content: ConstrainedBox(
         constraints: const BoxConstraints(
-          maxHeight: 400,
+          maxHeight: 300, // Changed from 400 to 300
           maxWidth: 500,
         ),
         child: Scrollbar(
           child: SingleChildScrollView(
-            child: MarkdownBody(
+            child: Markdown(
               data: release.body,
               selectable: true,
-              styleSheet: MarkdownStyleSheet.fromTheme(theme),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
             ),
           ),
         ),

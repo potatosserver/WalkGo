@@ -350,7 +350,6 @@
   "latest_version_installed": "You are already using the latest version.",
   "invalid_architecture": "Could not find a suitable update for your device's architecture.",
   "hash_mismatch": "Hash verification failed. The download might be corrupted.",
-
   "checking_for_updates": "Checking for updates...",
   "@checking_for_updates": {},
   "update_check_failed": "Failed to check for updates. Please check your network connection.",
@@ -386,5 +385,17 @@
   "view_release_notes": "View Version Information",
   "@view_release_notes": {},
   "release_notes": "Version Information",
-  "@release_notes": {}
+  "@release_notes": {},
+  "download_latest_version": "Reinstall App",
+  "@download_latest_version": {},
+  "unknown_error": "An unknown error occurred.",
+  "@unknown_error": {},
+  "update_ready_to_install": "Update is ready to install.",
+  "@update_ready_to_install": {},
+  "retry": "Retry",
+  "@retry": {},
+  "install": "Install",
+  "@install": {},
+  "download": "Download",
+  "@download": {}
 }

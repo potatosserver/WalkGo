@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:developer' as developer;
 
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -76,42 +77,86 @@ class UpdateService {
   }
 
   Future<String?> getArchitecture() async {
-    if (Platform.isAndroid) {
+    if (!Platform.isAndroid) {
+      return null;
+    }
+
+    const availableApkAbis = {
+      'arm64-v8a',
+      'armeabi-v7a',
+      'x86_64',
+    };
+
+    try {
       final deviceInfo = DeviceInfoPlugin();
       final androidInfo = await deviceInfo.androidInfo;
-      final abis = androidInfo.supportedAbis;
+      final supportedAbis = androidInfo.supportedAbis;
 
-      if (abis.contains('arm64-v8a')) return 'arm64-v8a';
-      if (abis.contains('armeabi-v7a')) return 'armeabi-v7a';
-      if (abis.contains('x86_64')) return 'x86_64';
+      developer.log(
+        'Device supported ABIs (ordered by preference): $supportedAbis',
+        name: 'walkgo.updateservice',
+      );
+      developer.log(
+        'APKs available for ABIs: $availableApkAbis',
+        name: 'walkgo.updateservice',
+      );
+
+      for (final String abi in supportedAbis) {
+        if (availableApkAbis.contains(abi)) {
+          developer.log('Found best matching ABI: $abi', name: 'walkgo.updateservice');
+          return abi;
+        }
+      }
+
+      developer.log(
+        'This device does not support any of the available APK ABIs.',
+        name: 'walkgo.updateservice',
+      );
+      return null;
+    } catch (e, s) {
+      developer.log(
+        'Failed to get device architecture',
+        name: 'walkgo.updateservice',
+        error: e,
+        stackTrace: s,
+      );
+      return null;
     }
-    return null;
   }
 
-  Future<void> downloadAndInstall(ReleaseInfo release, String arch,
-      {Function(double)? onProgress,
-      Function(String)? onError,
-      Function(String)? onStatus}) async {
+  Future<void> installFromPath(String apkPath) async {
+    final result = await OpenFilex.open(apkPath);
+    developer.log(
+      'OpenFilex result: ${result.type} - ${result.message}',
+      name: 'walkgo.updateservice',
+    );
+  }
+
+  Future<String?> downloadUpdate(ReleaseInfo release, String arch, {
+    Function(double)? onProgress,
+    Function(String)? onError,
+    Function(String)? onStatus,
+  }) async {
     try {
       final assets = release.assets;
       final apkName = 'app-$arch-release.apk';
       final sha1Name = '$apkName.sha1';
 
-      final apkAsset =
-          assets.firstWhere((a) => a['name'] == apkName, orElse: () => null);
-      final sha1Asset = assets.firstWhere((a) => a['name'] == sha1Name,
-          orElse: () => null);
+      final apkAsset = assets.firstWhere((a) => a['name'] == apkName, orElse: () => null);
+      final sha1Asset = assets.firstWhere((a) => a['name'] == sha1Name, orElse: () => null);
 
       if (apkAsset == null) {
-        onError?.call('APK not found for $arch');
-        return;
+        final errorMessage = 'APK not found for your device architecture ($arch).';
+        onError?.call(errorMessage);
+        developer.log(errorMessage, name: 'walkgo.updateservice', level: 1000);
+        return null;
       }
 
       final tempDir = await getTemporaryDirectory();
       final apkPath = '${tempDir.path}/$apkName';
       final sha1Path = '${tempDir.path}/$sha1Name';
 
-      onStatus?.call('Downloading APK...');
+      onStatus?.call('Downloading: $apkName');
       await Dio().download(
         apkAsset['browser_download_url'],
         apkPath,
@@ -125,20 +170,29 @@ class UpdateService {
       if (sha1Asset != null) {
         onStatus?.call('Verifying integrity...');
         await Dio().download(sha1Asset['browser_download_url'], sha1Path);
-        final expectedHash =
-            (await File(sha1Path).readAsString()).trim().split(' ').first;
+        final expectedHash = (await File(sha1Path).readAsString()).trim().split(' ').first;
         final actualHash = await _calculateSHA1(apkPath);
 
         if (actualHash != expectedHash) {
-          onError?.call('Hash mismatch');
-          return;
+          final errorMessage = 'File integrity check failed (SHA1 mismatch).';
+          onError?.call(errorMessage);
+          developer.log(errorMessage, name: 'walkgo.updateservice', level: 1000);
+          return null;
         }
       }
 
-      onStatus?.call('Installing...');
-      await OpenFilex.open(apkPath);
-    } catch (e) {
-      onError?.call(e.toString());
+      onStatus?.call('Download complete.');
+      return apkPath;
+    } on DioException catch (e) {
+      final errorMessage = 'A network error occurred during download: ${e.message}';
+      onError?.call(errorMessage);
+      developer.log(errorMessage, name: 'walkgo.updateservice', error: e, level: 1000);
+      return null;
+    } catch (e, s) {
+      final errorMessage = 'An unexpected error occurred: $e';
+      onError?.call(errorMessage);
+      developer.log(errorMessage, name: 'walkgo.updateservice', error: e, stackTrace: s, level: 1000);
+      return null;
     }
   }
 

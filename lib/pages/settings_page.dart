@@ -109,6 +109,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 onTap: () => context.push('/welcome'),
               ),
               ListTile(
+                leading: const Icon(Icons.download_outlined),
+                title: Text(l10n.download_latest_version),
+                onTap: () => UpdateFlowDialog.run(context, force: true),
+              ),
+              ListTile(
                 leading: Icon(Icons.delete_forever_outlined,
                     color: theme.colorScheme.error),
                 title: Text(l10n.clear_data_button,

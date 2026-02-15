@@ -5,7 +5,7 @@ import 'package:walkgo/services/update_service.dart';
 import 'package:walkgo/widgets/update_dialog.dart';
 
 class UpdateFlowDialog {
-  static Future<void> run(BuildContext context) async {
+  static Future<void> run(BuildContext context, {bool force = false}) async {
     final l10n = AppLocalizations.of(context)!;
 
     Fluttertoast.showToast(msg: l10n.checking_for_updates);
@@ -18,8 +18,19 @@ class UpdateFlowDialog {
         if (!context.mounted) return;
         UpdateDialog.show(context, release);
       } else {
-        if (!context.mounted) return;
-        Fluttertoast.showToast(msg: l10n.latest_version_installed);
+        if(force) {
+          final latestRelease = await updateService.getLatestRelease();
+          if(latestRelease != null) {
+            if (!context.mounted) return;
+            UpdateDialog.show(context, latestRelease);
+          } else {
+            if (!context.mounted) return;
+            Fluttertoast.showToast(msg: l10n.update_check_failed);
+          }
+        } else {
+          if (!context.mounted) return;
+          Fluttertoast.showToast(msg: l10n.latest_version_installed);
+        }
       }
     } catch (e) {
       if (!context.mounted) return;

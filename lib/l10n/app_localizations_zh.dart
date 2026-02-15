@@ -484,4 +484,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get release_notes => '版本資訊';
+
+  @override
+  String get download_latest_version => '重新安裝應用程式';
+
+  @override
+  String get unknown_error => 'An unknown error occurred.';
+
+  @override
+  String get update_ready_to_install => 'Update is ready to install.';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get install => 'Install';
+
+  @override
+  String get download => 'Download';
 }
