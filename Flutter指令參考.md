@@ -141,14 +141,14 @@
     按照螢幕指示，在瀏覽器中完成授權。
 
 2.  **建立版本標籤 (Tag)**
-    為您的 Release 建立一個獨一無二的 Git 標籤，例如 `v1.0.8`。
+    為您的 Release 建立一個獨一無二的 Git 標籤，例如 `v1.0.9`。
     ```bash
-    git tag v1.0.8
+    git tag v1.0.9
     ```
 
 3.  **將標籤推送到 GitHub**
     ```bash
-    git push origin v1.0.8
+    git push origin v1.0.9
     ```
 
 ### 步驟 2: 產生校驗和並發布
@@ -159,11 +159,11 @@
     這個指令會找到您剛剛推送的標籤，建立一個 Release 頁面，並上傳所有 `.apk` 和 `.sha256` 檔案。
     `--generate-notes` 參數會自動幫您產生版本說明。
     ```bash
-    gh release create v1.0.8 \
+    gh release create v1.0.9 \
     build/app/outputs/flutter-apk/*.apk \
     build/app/outputs/flutter-apk/*.sha1 \
     --generate-notes \
-    --title "Version 1.0.8"
+    --title "Version 1.0.9"
     ```
 
 完成後，您就可以在 GitHub 專案的 "Releases" 頁面看到您發布的新版本了。

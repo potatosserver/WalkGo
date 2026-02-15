@@ -33,6 +33,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         msg: l10n.manual_write_success_feedback(steps.toString()),
         toastLength: Toast.LENGTH_SHORT,
       );
+      // After manual writing, refresh the total steps of the day immediately
+      Provider.of<HomePageViewModel>(context, listen: false).refreshTodaySteps();
     });
 
     // Use the new update flow
