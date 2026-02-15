@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/services/update_service.dart';
 
@@ -21,10 +22,11 @@ class UpdateDialog extends StatefulWidget {
 }
 
 enum UpdateStep {
-  details, // Show release notes and download button
-  downloading, // Show progress bar
-  readyToInstall, // Show install button (and retry install)
-  error, // Show error message and retry download button
+  details,
+  downloading,
+  readyToInstall,
+  error,
+  manualDownload,
 }
 
 class _UpdateDialogState extends State<UpdateDialog> {
@@ -33,18 +35,43 @@ class _UpdateDialogState extends State<UpdateDialog> {
   String? _statusText;
   String? _errorText;
   String? _apkPath;
+  String? _architecture;
 
   final _updateService = UpdateService();
 
   @override
+  void initState() {
+    super.initState();
+    _determineArchitecture();
+  }
+
+  Future<void> _determineArchitecture() async {
+    final arch = await _updateService.getArchitecture();
+    if (mounted) {
+      setState(() {
+        _architecture = arch;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
     return AlertDialog(
-      title: Text(l10n.update_available),
+      title: Text(_getTitle(l10n)),
       content: _buildContent(context, l10n),
       actions: _buildActions(context, l10n),
     );
+  }
+
+  String _getTitle(AppLocalizations l10n) {
+    switch (_step) {
+      case UpdateStep.manualDownload:
+        return l10n.manual_download_title;
+      case UpdateStep.details:
+      default:
+        return l10n.update_available;
+    }
   }
 
   Widget _buildContent(BuildContext context, AppLocalizations l10n) {
@@ -71,13 +98,30 @@ class _UpdateDialogState extends State<UpdateDialog> {
       case UpdateStep.readyToInstall:
         return Text(l10n.update_ready_to_install);
 
+      case UpdateStep.manualDownload:
+        final arch = _architecture;
+        if (arch == null) {
+          return Text(l10n.invalid_architecture);
+        }
+        final apkName = 'app-$arch-release.apk';
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.manual_download_prompt),
+            const SizedBox(height: 10),
+            SelectableText(
+              apkName,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        );
+
       case UpdateStep.details:
         return SizedBox(
-          width: 500, // Give it a reasonable width for readability
+          width: 500,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxHeight: 300, // Max height, but can be shorter
-            ),
+            constraints: const BoxConstraints(maxHeight: 300),
             child: Scrollbar(
               child: SingleChildScrollView(
                 child: Column(
@@ -88,7 +132,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     const SizedBox(height: 16),
                     Markdown(
                       data: widget.release.body,
-                      shrinkWrap: true, // Important for fitting content
+                      shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                     ),
                   ],
@@ -102,7 +146,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
   List<Widget> _buildActions(BuildContext context, AppLocalizations l10n) {
     if (_step == UpdateStep.downloading) {
-      return []; // No actions while downloading
+      return [];
     }
 
     switch (_step) {
@@ -117,6 +161,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
             child: Text(l10n.retry),
           ),
         ];
+
       case UpdateStep.readyToInstall:
         return [
           TextButton(
@@ -128,12 +173,38 @@ class _UpdateDialogState extends State<UpdateDialog> {
             child: Text(l10n.install),
           ),
         ];
+
+      case UpdateStep.manualDownload:
+        return [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(l10n.complete),
+          ),
+          ElevatedButton(
+            onPressed: () => launchUrl(
+              Uri.parse(widget.release.htmlUrl),
+              mode: LaunchMode.externalApplication,
+            ),
+            child: Text(l10n.go_to_download),
+          ),
+        ];
+
       case UpdateStep.details:
       default:
         return [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _step = UpdateStep.manualDownload;
+              });
+            },
+            child: Text(l10n.manual_download),
           ),
           ElevatedButton(
             onPressed: _startDownload,
@@ -145,15 +216,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
   Future<void> _startDownload() async {
     final l10n = AppLocalizations.of(context)!;
-    setState(() {
-      _step = UpdateStep.downloading;
-      _errorText = null;
-      _progress = null;
-    });
-
-    final arch = await _updateService.getArchitecture();
-    if (arch == null) {
-      if (!mounted) return;
+    if (_architecture == null) {
       setState(() {
         _step = UpdateStep.error;
         _errorText = l10n.invalid_architecture;
@@ -161,24 +224,29 @@ class _UpdateDialogState extends State<UpdateDialog> {
       return;
     }
 
+    setState(() {
+      _step = UpdateStep.downloading;
+      _errorText = null;
+      _progress = null;
+    });
+
     final String? downloadedPath = await _updateService.downloadUpdate(
       widget.release,
-      arch,
+      _architecture!,
       l10n,
       onProgress: (p) {
-        if (!mounted) return;
-        setState(() => _progress = p);
+        if (mounted) setState(() => _progress = p);
       },
       onStatus: (s) {
-        if (!mounted) return;
-        setState(() => _statusText = s);
+        if (mounted) setState(() => _statusText = s);
       },
       onError: (e) {
-        if (!mounted) return;
-        setState(() {
-          _step = UpdateStep.error;
-          _errorText = e;
-        });
+        if (mounted) {
+          setState(() {
+            _step = UpdateStep.error;
+            _errorText = e;
+          });
+        }
       },
     );
 

@@ -322,6 +322,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get confirm => '確認';
 
   @override
+  String get complete => '完成';
+
+  @override
   String session_total_steps_template(Object steps) {
     return '本次工作階段總步數：$steps';
   }
@@ -460,7 +463,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get auto_update => '自動更新';
 
   @override
-  String get manual_download_title => '手動下載說明';
+  String get manual_download_title => '手動下載';
+
+  @override
+  String get manual_download_prompt => '請下載名為：';
 
   @override
   String manual_download_description(String architecture) {

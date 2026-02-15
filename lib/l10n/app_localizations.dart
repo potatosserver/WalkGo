@@ -692,6 +692,12 @@ abstract class AppLocalizations {
   /// **'Confirm'**
   String get confirm;
 
+  /// No description provided for @complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get complete;
+
   /// No description provided for @session_total_steps_template.
   ///
   /// In en, this message translates to:
@@ -935,8 +941,14 @@ abstract class AppLocalizations {
   /// No description provided for @manual_download_title.
   ///
   /// In en, this message translates to:
-  /// **'Manual Download Instructions'**
+  /// **'Manual Download'**
   String get manual_download_title;
+
+  /// No description provided for @manual_download_prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Please download the file named:'**
+  String get manual_download_prompt;
 
   /// No description provided for @manual_download_description.
   ///

@@ -240,6 +240,8 @@
   "@close": {},
   "confirm": "Confirm",
   "@confirm": {},
+  "complete": "Complete",
+  "@complete": {},
   "session_total_steps_template": "Total steps this session: {steps}",
   "@session_total_steps_template": {
     "placeholders": {
@@ -327,6 +329,7 @@
     }
   },
   "check_for_updates": "Check for updates",
+  "@check_for_updates": {},
   "update_available": "Update Available",
   "update_available_desc": "A new version {version} is available. Would you like to update now?",
   "@update_available_desc": {
@@ -337,15 +340,17 @@
     }
   },
   "updating": "Updating...",
+  "@updating": {},
   "downloading_apk": "Downloading: {apkName}",
-    "@downloading_apk": {
-        "placeholders": {
-            "apkName": {
-                "type": "String"
-            }
-        }
-    },
+  "@downloading_apk": {
+    "placeholders": {
+      "apkName": {
+        "type": "String"
+      }
+    }
+  },
   "verifying_integrity": "Verifying integrity...",
+  "@verifying_integrity": {},
   "update_failed": "Update failed: {error}",
   "@update_failed": {
     "placeholders": {
@@ -365,8 +370,10 @@
   "@manual_download": {},
   "auto_update": "Auto Update",
   "@auto_update": {},
-  "manual_download_title": "Manual Download Instructions",
+  "manual_download_title": "Manual Download",
   "@manual_download_title": {},
+  "manual_download_prompt": "Please download the file named:",
+  "@manual_download_prompt": {},
   "manual_download_description": "Your device architecture is: {architecture}. Please download the file named:",
   "@manual_download_description": {
     "placeholders": {

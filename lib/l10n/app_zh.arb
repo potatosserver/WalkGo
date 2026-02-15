@@ -111,6 +111,8 @@
     "rerun_setup": "查看歡迎頁面",
     "close": "關閉",
     "confirm": "確認",
+    "complete": "完成",
+    "@complete": {},
     "session_total_steps_template": "本次工作階段總步數：{steps}",
     "log_write_success": "寫入後的總步數：{totalSteps}",
     "@log_write_success": {
@@ -265,8 +267,10 @@
     "@manual_download": {},
     "auto_update": "自動更新",
     "@auto_update": {},
-    "manual_download_title": "手動下載說明",
+    "manual_download_title": "手動下載",
     "@manual_download_title": {},
+    "manual_download_prompt": "請下載名為：",
+    "@manual_download_prompt": {},
     "manual_download_description": "您的裝置架構為：{architecture}。請下載名為：",
     "@manual_download_description": {
       "placeholders": {

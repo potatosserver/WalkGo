@@ -334,6 +334,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirm => 'Confirm';
 
   @override
+  String get complete => 'Complete';
+
+  @override
   String session_total_steps_template(Object steps) {
     return 'Total steps this session: $steps';
   }
@@ -482,7 +485,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get auto_update => 'Auto Update';
 
   @override
-  String get manual_download_title => 'Manual Download Instructions';
+  String get manual_download_title => 'Manual Download';
+
+  @override
+  String get manual_download_prompt => 'Please download the file named:';
 
   @override
   String manual_download_description(String architecture) {
