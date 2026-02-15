@@ -164,6 +164,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
     final String? downloadedPath = await _updateService.downloadUpdate(
       widget.release,
       arch,
+      l10n,
       onProgress: (p) {
         if (!mounted) return;
         setState(() => _progress = p);

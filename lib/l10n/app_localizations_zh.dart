@@ -426,7 +426,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get updating => '正在更新...';
 
   @override
-  String get downloading_apk => '正在下載 APK...';
+  String downloading_apk(String apkName) {
+    return '正在下載: $apkName';
+  }
 
   @override
   String get verifying_integrity => '正在核對檔案完整性...';
@@ -489,17 +491,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String get download_latest_version => '重新安裝應用程式';
 
   @override
-  String get unknown_error => 'An unknown error occurred.';
+  String get unknown_error => '發生未知錯誤。';
 
   @override
-  String get update_ready_to_install => 'Update is ready to install.';
+  String get update_ready_to_install => '更新已準備好安裝。';
 
   @override
-  String get retry => 'Retry';
+  String get retry => '重試';
 
   @override
-  String get install => 'Install';
+  String get install => '安裝';
 
   @override
-  String get download => 'Download';
+  String get download => '下載';
+
+  @override
+  String get starting_installation => '正在開始安裝...';
 }

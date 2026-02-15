@@ -444,10 +444,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updating => 'Updating...';
 
   @override
-  String get downloading_apk => 'Downloading APK...';
+  String downloading_apk(String apkName) {
+    return 'Downloading: $apkName';
+  }
 
   @override
-  String get verifying_integrity => 'Verifying file integrity...';
+  String get verifying_integrity => 'Verifying integrity...';
 
   @override
   String update_failed(String error) {
@@ -524,4 +526,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get download => 'Download';
+
+  @override
+  String get starting_installation => 'Starting installation...';
 }

@@ -233,8 +233,14 @@
     },
     "updating": "正在更新...",
     "@updating": {},
-    "downloading_apk": "正在下載 APK...",
-    "@downloading_apk": {},
+    "downloading_apk": "正在下載: {apkName}",
+    "@downloading_apk": {
+        "placeholders": {
+            "apkName": {
+                "type": "String"
+            }
+        }
+    },
     "verifying_integrity": "正在核對檔案完整性...",
     "@verifying_integrity": {},
     "update_failed": "更新失敗：{error}",
@@ -288,5 +294,17 @@
     "release_notes": "版本資訊",
     "@release_notes": {},
     "download_latest_version": "重新安裝應用程式",
-    "@download_latest_version": {}
+    "@download_latest_version": {},
+    "unknown_error": "發生未知錯誤。",
+    "@unknown_error": {},
+    "update_ready_to_install": "更新已準備好安裝。",
+    "@update_ready_to_install": {},
+    "retry": "重試",
+    "@retry": {},
+    "install": "安裝",
+    "@install": {},
+    "download": "下載",
+    "@download": {},
+    "starting_installation": "正在開始安裝...",
+    "@starting_installation": {}
 }

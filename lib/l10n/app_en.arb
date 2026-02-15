@@ -337,8 +337,15 @@
     }
   },
   "updating": "Updating...",
-  "downloading_apk": "Downloading APK...",
-  "verifying_integrity": "Verifying file integrity...",
+  "downloading_apk": "Downloading: {apkName}",
+    "@downloading_apk": {
+        "placeholders": {
+            "apkName": {
+                "type": "String"
+            }
+        }
+    },
+  "verifying_integrity": "Verifying integrity...",
   "update_failed": "Update failed: {error}",
   "@update_failed": {
     "placeholders": {
@@ -397,5 +404,7 @@
   "install": "Install",
   "@install": {},
   "download": "Download",
-  "@download": {}
+  "@download": {},
+  "starting_installation": "Starting installation...",
+  "@starting_installation": {}
 }

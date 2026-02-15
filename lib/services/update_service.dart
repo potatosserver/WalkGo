@@ -9,6 +9,7 @@ import 'package:open_filex/open_filex.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:walkgo/l10n/app_localizations.dart';
 
 class ReleaseInfo {
   final String tagName;
@@ -132,7 +133,7 @@ class UpdateService {
     );
   }
 
-  Future<String?> downloadUpdate(ReleaseInfo release, String arch, {
+  Future<String?> downloadUpdate(ReleaseInfo release, String arch, AppLocalizations l10n, {
     Function(double)? onProgress,
     Function(String)? onError,
     Function(String)? onStatus,
@@ -146,7 +147,7 @@ class UpdateService {
       final sha1Asset = assets.firstWhere((a) => a['name'] == sha1Name, orElse: () => null);
 
       if (apkAsset == null) {
-        final errorMessage = 'APK not found for your device architecture ($arch).';
+        final errorMessage = l10n.invalid_architecture;
         onError?.call(errorMessage);
         developer.log(errorMessage, name: 'walkgo.updateservice', level: 1000);
         return null;
@@ -156,7 +157,7 @@ class UpdateService {
       final apkPath = '${tempDir.path}/$apkName';
       final sha1Path = '${tempDir.path}/$sha1Name';
 
-      onStatus?.call('Downloading: $apkName');
+      onStatus?.call(l10n.downloading_apk(apkName));
       await Dio().download(
         apkAsset['browser_download_url'],
         apkPath,
@@ -168,28 +169,30 @@ class UpdateService {
       );
 
       if (sha1Asset != null) {
-        onStatus?.call('Verifying integrity...');
+        onStatus?.call(l10n.verifying_integrity);
         await Dio().download(sha1Asset['browser_download_url'], sha1Path);
         final expectedHash = (await File(sha1Path).readAsString()).trim().split(' ').first;
         final actualHash = await _calculateSHA1(apkPath);
 
         if (actualHash != expectedHash) {
-          final errorMessage = 'File integrity check failed (SHA1 mismatch).';
+          final errorMessage = l10n.hash_mismatch;
           onError?.call(errorMessage);
           developer.log(errorMessage, name: 'walkgo.updateservice', level: 1000);
           return null;
         }
       }
 
-      onStatus?.call('Download complete.');
+      onStatus?.call(l10n.update_ready_to_install);
+      onStatus?.call(l10n.starting_installation);
+      await installFromPath(apkPath);
       return apkPath;
     } on DioException catch (e) {
-      final errorMessage = 'A network error occurred during download: ${e.message}';
+      final errorMessage = l10n.update_check_failed;
       onError?.call(errorMessage);
       developer.log(errorMessage, name: 'walkgo.updateservice', error: e, level: 1000);
       return null;
     } catch (e, s) {
-      final errorMessage = 'An unexpected error occurred: $e';
+      final errorMessage = l10n.unknown_error;
       onError?.call(errorMessage);
       developer.log(errorMessage, name: 'walkgo.updateservice', error: e, stackTrace: s, level: 1000);
       return null;

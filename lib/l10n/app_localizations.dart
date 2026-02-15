@@ -875,13 +875,13 @@ abstract class AppLocalizations {
   /// No description provided for @downloading_apk.
   ///
   /// In en, this message translates to:
-  /// **'Downloading APK...'**
-  String get downloading_apk;
+  /// **'Downloading: {apkName}'**
+  String downloading_apk(String apkName);
 
   /// No description provided for @verifying_integrity.
   ///
   /// In en, this message translates to:
-  /// **'Verifying file integrity...'**
+  /// **'Verifying integrity...'**
   String get verifying_integrity;
 
   /// No description provided for @update_failed.
@@ -1015,6 +1015,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download'**
   String get download;
+
+  /// No description provided for @starting_installation.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting installation...'**
+  String get starting_installation;
 }
 
 class _AppLocalizationsDelegate
