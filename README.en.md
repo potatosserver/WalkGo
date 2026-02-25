@@ -1,6 +1,8 @@
 [繁體中文](./README.md)
 
 # WalkGo
+<img src="https://github.com/user-attachments/assets/61655618-1b5b-48d0-bf8e-d708ef74fd60" width="30%" alt="icon">
+
 
 WalkGo is a Flutter application designed to solve the problem of "not being able to accurately record steps during exercise." When you are engaged in activities that are not easily detected by your phone, or when you simply forget to carry it, WalkGo can help you log these missed steps. It provides a powerful and easy-to-use solution to make your health data more complete.
 
