@@ -1,6 +1,7 @@
 [English](./README.en.md)
 
 # WalkGo
+<img src="https://github.com/user-attachments/assets/61655618-1b5b-48d0-bf8e-d708ef74fd60" width="30%" alt="icon">
 
 WalkGo 是一款專為了解決「運動時無法準確記錄步數」問題而設計的 Flutter 應用。當您進行的運動不易被手機偵測，或單純忘記攜帶手機時，WalkGo 可以幫助您補登這些遺漏的步數。它提供了一個強大且易於使用的解決方案，讓您的健康數據更完整。
 
