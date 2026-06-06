@@ -104,11 +104,17 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
     _service.on('update_ui').listen((event) async {
       if (event == null) return;
 
+      final source = event['source'] as String?;
+
       _isAutoRunning = event['is_running'] as bool? ?? _isAutoRunning;
       _sessionTotalSteps =
           (event['session_total_steps'] as num?)?.toInt() ?? _sessionTotalSteps;
-      _lastStepsWritten =
-          (event['last_steps_written'] as num?)?.toInt() ?? _lastStepsWritten;
+
+      if (source != 'manual') {
+        _lastStepsWritten =
+            (event['last_steps_written'] as num?)?.toInt() ?? _lastStepsWritten;
+      }
+      
       _nextRunTime = event['next_run_time'] as String?;
 
       if (_l10n != null) {
