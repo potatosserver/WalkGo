@@ -54,3 +54,4 @@ flutter:
   generate: true
   assets:
     - assets/images/
+    - assets/adi-registration.properties
