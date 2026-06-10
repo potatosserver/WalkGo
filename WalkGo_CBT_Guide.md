@@ -30,7 +30,8 @@
 1. 點選下方連結進入 Google Play 測試計劃頁面：
    👉 [點我成為測試人員並下載《Walk Go》](https://play.google.com/apps/testing/com.potatosserver.walkgo)
 2. 進入頁面後，點擊 **「成為測試人員 (Become a Tester)」** 按鈕。
-3. 畫面顯示成功後，點選頁面底部的 **「[在 Google Play 下載它](https://play.google.com/store/apps/details?id=com.potatosserver.walkgo)」**，即可跳轉至商店下載並安裝《Walk Go》！
+3. 畫面顯示成功後，點選頁面上方的 **「[在 Google Play 下載它（download it on Google Play）](https://play.google.com/store/apps/details?id=com.potatosserver.walkgo)」**，即可跳轉至商店下載並安裝《Walk Go》！
+4. 進到在 Google Play 下載時如果出現。**  We're sorry, the requested URL was not found on this server.  **  請稍待一段時間，幾個小時候再次查看即可。
 
 ---
 
