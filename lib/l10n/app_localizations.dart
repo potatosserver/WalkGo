@@ -1033,6 +1033,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Starting installation...'**
   String get starting_installation;
+
+  /// No description provided for @notification_start_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get notification_start_button;
+
+  /// No description provided for @notification_stop_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get notification_stop_button;
 }
 
 class _AppLocalizationsDelegate

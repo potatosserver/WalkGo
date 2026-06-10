@@ -535,4 +535,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get starting_installation => 'Starting installation...';
+
+  @override
+  String get notification_start_button => 'Start';
+
+  @override
+  String get notification_stop_button => 'Stop';
 }

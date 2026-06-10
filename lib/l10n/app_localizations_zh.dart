@@ -513,4 +513,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get starting_installation => '正在開始安裝...';
+
+  @override
+  String get notification_start_button => '啟動';
+
+  @override
+  String get notification_stop_button => '停止';
 }

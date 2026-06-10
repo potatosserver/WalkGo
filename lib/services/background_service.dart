@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
+import '../main.dart'; // For flutterLocalNotificationsPlugin
 import 'health_service.dart';
 import 'log_utils.dart';
 import 'error_log_service.dart';
@@ -20,10 +23,8 @@ void onStart(ServiceInstance service) {
   Map<String, String> localizedStrings = {};
   int sessionTotalSteps = 0;
   int lastStepsWritten = 0;
-  // Authoritative state for the service, IN-MEMORY ONLY.
   bool isRunning = false;
 
-  // Service-isolate specific cache for all settings
   bool offsetEnabled = true;
   int offsetSteps = 50;
   int baseSteps = 500;
@@ -41,20 +42,44 @@ void onStart(ServiceInstance service) {
     autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
     autoPauseThreshold = prefs.getInt(prefAutoPauseThreshold) ?? 5000;
 
-    // Always sync memory from storage on load if we are not the master yet
     if (!isRunning) {
       sessionTotalSteps = prefs.getInt(prefSessionTotalSteps) ?? 0;
       lastStepsWritten = prefs.getInt(prefLastStepsWritten) ?? 0;
     }
   }
 
-  void updateNotification(String title, String content) {
-    if (service is AndroidServiceInstance) {
-      service.setForegroundNotificationInfo(
-        title: title,
-        content: content,
-      );
-    }
+  Future<void> showCustomNotification(String title, String content,
+      {required bool isRunning}) async {
+    final buttonLabel = isRunning
+        ? (localizedStrings['notification_stop_button'] ?? 'Stop')
+        : (localizedStrings['notification_start_button'] ?? 'Start');
+
+    final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      foregroundChannelId,
+      'WalkGo Service',
+      channelDescription: 'This channel is used for the WalkGo service.',
+      importance: Importance.low,
+      priority: Priority.low,
+      ongoing: true,
+      autoCancel: false,
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction(
+          'toggle_service', // Positional argument 1: id
+          buttonLabel,      // Positional argument 2: title
+          showsUserInterface: true,
+        ),
+      ],
+    );
+
+    final NotificationDetails platformDetails =
+        NotificationDetails(android: androidDetails);
+
+    await flutterLocalNotificationsPlugin.show(
+      id: foregroundNotificationId,
+      title: title,
+      body: content,
+      notificationDetails: platformDetails,
+    );
   }
 
   void broadcastUIUpdate({String? statusLog}) {
@@ -85,7 +110,7 @@ void onStart(ServiceInstance service) {
                   'Paused after reaching {steps} steps.')
               .replaceAll('{steps}', sessionTotalSteps.toString());
 
-      updateNotification(title, body);
+      showCustomNotification(title, body, isRunning: isRunning);
       broadcastUIUpdate(statusLog: title);
 
       return true;
@@ -110,7 +135,6 @@ void onStart(ServiceInstance service) {
         return false;
       }
 
-      // Authoritative write to logs from background
       await LogUtils.writeLogFromBackground(steps, source: source);
       lastStepsWritten = steps;
 
@@ -118,12 +142,10 @@ void onStart(ServiceInstance service) {
         sessionTotalSteps += steps;
       }
 
-      // Persist the authoritative state to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt(prefSessionTotalSteps, sessionTotalSteps);
       await prefs.setInt(prefLastStepsWritten, lastStepsWritten);
 
-      // Notify UI that logs were updated
       service.invoke('log_updated');
 
       if (source == 'automatic') {
@@ -142,12 +164,12 @@ void onStart(ServiceInstance service) {
                 '{time}',
                 DateFormat('HH:mm').format(
                     DateTime.now().add(Duration(minutes: currentInterval))));
-        updateNotification(
+        showCustomNotification(
           localizedStrings['notification_service_running'] ?? 'Service Running',
           '$statusLog, $nextRunBody',
+          isRunning: isRunning,
         );
       } else {
-        // Manual write completed
         final statusLog = (localizedStrings['automatic_write_success'] ??
                 'Wrote {steps} steps')
             .replaceAll('{steps}', steps.toString());
@@ -175,27 +197,29 @@ void onStart(ServiceInstance service) {
     });
   }
 
-  // Initial load and broadcast
   loadSettings().then((_) => broadcastUIUpdate());
 
   service.on('get_status').listen((event) async {
+    developer.log('Received get_status event', name: 'WalkGo.Background');
     await loadSettings();
     broadcastUIUpdate();
   });
 
   service.on('start').listen((event) async {
+    developer.log('Received start event', name: 'WalkGo.Background');
     if (isRunning) {
+      developer.log('Service is already running, returning.', name: 'WalkGo.Background');
       broadcastUIUpdate();
       return;
     }
     if (event != null) localizedStrings = Map<String, String>.from(event);
 
-    // Reset session state on explicit start
     isRunning = true;
     sessionTotalSteps = 0;
     lastStepsWritten = 0;
+    developer.log('Set isRunning to true', name: 'WalkGo.Background');
 
-    await loadSettings(); // Reload settings just in case
+    await loadSettings();
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefSessionTotalSteps, 0);
@@ -212,15 +236,17 @@ void onStart(ServiceInstance service) {
   });
 
   service.on('stop').listen((event) async {
+    developer.log('Received stop event', name: 'WalkGo.Background');
     timer?.cancel();
     if (!isRunning) {
+      developer.log('Service is not running, returning.', name: 'WalkGo.Background');
       broadcastUIUpdate();
       return;
     }
     isRunning = false;
+    developer.log('Set isRunning to false', name: 'WalkGo.Background');
     if (event != null) localizedStrings = Map<String, String>.from(event);
 
-    // Small cleanup on stop
     lastStepsWritten = 0;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefLastStepsWritten, 0);
@@ -229,17 +255,28 @@ void onStart(ServiceInstance service) {
         'Service Stopped';
     final body = localizedStrings['notification_service_stopped_content'] ??
         'Ready to start.';
-    updateNotification(title, body);
+    showCustomNotification(title, body, isRunning: isRunning);
     broadcastUIUpdate(statusLog: body);
   });
 
+  service.on('toggle_service').listen((event) {
+    developer.log('Received toggle_service event, isRunning: $isRunning', name: 'WalkGo.Background');
+    if (isRunning) {
+      service.invoke('stop', event);
+    } else {
+      service.invoke('start', event);
+    }
+  });
+
   service.on('write_now').listen((event) async {
+    developer.log('Received write_now event', name: 'WalkGo.Background');
     if (event != null) localizedStrings = Map<String, String>.from(event);
     await loadSettings();
     await writeStepsLogic(source: 'manual');
   });
 
   service.on('update').listen((event) async {
+    developer.log('Received update event', name: 'WalkGo.Background');
     final int oldInterval = currentInterval;
     await loadSettings();
     if (isRunning && oldInterval != currentInterval) {
@@ -250,6 +287,7 @@ void onStart(ServiceInstance service) {
   });
 
   service.on('update_localization').listen((event) {
+    developer.log('Received update_localization event', name: 'WalkGo.Background');
     if (event != null) {
       localizedStrings = Map<String, String>.from(event);
       if (isRunning) {
@@ -261,24 +299,24 @@ void onStart(ServiceInstance service) {
         final nextRunBody = (localizedStrings['notification_next_run'] ??
                 'Next run at {time}')
             .replaceAll('{time}', nextRunTime);
-        updateNotification(
+        showCustomNotification(
           localizedStrings['notification_service_running'] ?? 'Service Running',
           lastStepsWritten > 0 ? '$statusLog, $nextRunBody' : nextRunBody,
+          isRunning: isRunning,
         );
       } else {
         final title = localizedStrings['notification_service_stopped_title'] ??
             'Service Stopped';
         final body = localizedStrings['notification_service_stopped_content'] ??
             'Ready to start.';
-        updateNotification(title, body);
+        showCustomNotification(title, body, isRunning: isRunning);
       }
     }
     broadcastUIUpdate();
   });
 
   service.on('app_detached').listen((event) {
-    // The UI is informing us that the app is closing.
-    // We only stop the service if it's not actively running.
+    developer.log('Received app_detached event', name: 'WalkGo.Background');
     if (!isRunning) {
       service.stopSelf();
     }

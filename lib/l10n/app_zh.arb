@@ -310,5 +310,9 @@
     "download": "下載",
     "@download": {},
     "starting_installation": "正在開始安裝...",
-    "@starting_installation": {}
+    "@starting_installation": {},
+    "notification_start_button": "啟動",
+    "@notification_start_button": {},
+    "notification_stop_button": "停止",
+    "@notification_stop_button": {}
 }

@@ -413,5 +413,9 @@
   "download": "Download",
   "@download": {},
   "starting_installation": "Starting installation...",
-  "@starting_installation": {}
+  "@starting_installation": {},
+  "notification_start_button": "Start",
+  "@notification_start_button": {},
+  "notification_stop_button": "Stop",
+  "@notification_stop_button": {}
 }
