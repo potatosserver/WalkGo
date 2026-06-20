@@ -1,0 +1,43 @@
+name: Build Flutter APK (Manual)
+
+# 關鍵就在這裡：改為 workflow_dispatch，代表「只接受手動戳它」
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 複製並簽出你的專案程式碼
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. 設置 Java 環境（Android 編譯必備）
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # 3. 設置穩定版 Flutter 環境
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          # 如果你有特定 Flutter 版本需求，可以在這指定，沒寫預設就是最新穩定版
+
+      # 4. 抓取專案所有的套件（pub get）
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 5. 執行 Release 打包
+      - name: Build APK
+        run: flutter build apk --release
+
+      # 6. 將編譯好的 APK 上傳到 GitHub 介面供你下載
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WalkGo-Release-APK # 下載時的壓縮檔名稱
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 7 # 為了省空間，這個測試 APK 留 7 天就好
