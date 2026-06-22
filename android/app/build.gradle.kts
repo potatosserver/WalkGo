@@ -53,18 +53,19 @@ android {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
+            
+            // 保持 NONE，讓 Android 系統不要為你的 Dart 邏輯額外產生冗餘的符號檔
             ndk {
                 debugSymbolLevel = "NONE"
             }
-            
-            // 【第一重防禦】在 Release 編譯管線中，主動清空原生庫的偵錯符號保留設定
-            packaging.jniLibs.keepDebugSymbols.clear()
         }
     }
 
-    // 【第二重防禦】在最終打包壓縮 APK 時，全域排除並剔除符合條件的原生函式庫符號
-    packagingOptions {
-        exclude("**/lib*.so")
+    // 採用最安全的相容性設定，不強制過濾 .so 檔案，確保 AAB 封裝管線正常運作
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
