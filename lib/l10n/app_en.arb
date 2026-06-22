@@ -419,6 +419,6 @@
   "@notification_start_button": {},
   "notification_stop_button": "Stop",
   "@notification_stop_button": {},
-  "find_on_google_play": "Find on Google Play",
-  "@find_on_google_play": {}
+  "view_on_google_play": "View on Google Play",
+  "@view_on_google_play": {}
 }

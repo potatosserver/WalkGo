@@ -546,5 +546,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notification_stop_button => 'Stop';
 
   @override
-  String get find_on_google_play => 'Find on Google Play';
+  String get view_on_google_play => 'View on Google Play';
 }

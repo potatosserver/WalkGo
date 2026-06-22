@@ -316,6 +316,6 @@
     "@notification_start_button": {},
     "notification_stop_button": "停止",
     "@notification_stop_button": {},
-    "find_on_google_play": "在 Google Play 上尋找",
-    "@find_on_google_play": {}
+    "view_on_google_play": "在 Google Play 上查看",
+    "@view_on_google_play": {}
 }

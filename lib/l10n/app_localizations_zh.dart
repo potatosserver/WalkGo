@@ -524,5 +524,5 @@ class AppLocalizationsZh extends AppLocalizations {
   String get notification_stop_button => '停止';
 
   @override
-  String get find_on_google_play => '在 Google Play 上尋找';
+  String get view_on_google_play => '在 Google Play 上查看';
 }

@@ -1052,11 +1052,11 @@ abstract class AppLocalizations {
   /// **'Stop'**
   String get notification_stop_button;
 
-  /// No description provided for @find_on_google_play.
+  /// No description provided for @view_on_google_play.
   ///
   /// In en, this message translates to:
-  /// **'Find on Google Play'**
-  String get find_on_google_play;
+  /// **'View on Google Play'**
+  String get view_on_google_play;
 }
 
 class _AppLocalizationsDelegate
