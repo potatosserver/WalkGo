@@ -119,7 +119,7 @@ class _SettingsPageState extends State<SettingsPage> {
               if (isGooglePlay)
                 ListTile(
                   leading: const FaIcon(FontAwesomeIcons.googlePlay),
-                  title: Text(l10n.find_on_google_play),
+                  title: Text(l10n.view_on_google_play),
                   trailing: const Icon(Icons.open_in_new),
                   onTap: () async {
                     final url = Uri.parse(
@@ -226,7 +226,7 @@ class _SettingsPageState extends State<SettingsPage> {
             _buildAboutRow(
               context,
               icon: const FaIcon(FontAwesomeIcons.googlePlay, size: 24),
-              text: l10n.find_on_google_play,
+              text: l10n.view_on_google_play,
               trailing: const Icon(Icons.open_in_new, size: 20),
               onTap: () async {
                 final url = Uri.parse(
