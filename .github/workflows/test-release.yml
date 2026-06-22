@@ -1,0 +1,31 @@
+name: Test Changelog Extraction
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '要測試讀取的版本號 (例如: v1.2.0)'
+        required: true
+        type: string
+
+jobs:
+  test-extraction:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Extract Release Notes from CHANGELOG
+        run: |
+          RAW_VERSION="${{ github.event.inputs.version }}"
+          VERSION_NAME=$(echo "$RAW_VERSION" | sed 's/^[vV]//')
+          
+          # 使用精確欄位比對以避開正則表達式轉義問題
+          awk -v ver="[$VERSION_NAME]" '/^## / { if (p) { exit }; if ($2 == ver) { p=1; next } } p' CHANGELOG.md > current_release_notes.txt
+
+      - name: Display Extracted Release Notes
+        run: |
+          echo "=== 測試輸入版本: ${{ github.event.inputs.version }} ==="
+          echo "=== 擷取出的更新日誌內容 ==="
+          cat current_release_notes.txt
+          echo "====================================="
