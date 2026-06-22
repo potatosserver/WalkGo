@@ -114,7 +114,7 @@ jobs:
           echo "storeFile=upload-keystore.jks" > android/key.properties
           echo "keyAlias=${KEY_ALIAS}" >> android/key.properties
           echo "keyPassword=${KEY_PASSWORD}" >> android/key.properties
-          echo "storePassword=${STORE_PASSWORD}" >> android.key.properties
+          echo "storePassword=${STORE_PASSWORD}" >> android/key.properties
 
       - name: Build APK and App Bundle
         run: |
