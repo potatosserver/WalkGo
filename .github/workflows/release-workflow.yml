@@ -35,7 +35,7 @@ jobs:
             TODAY=$(date +'%Y-%m-%d')
             
             # Create a temporary file with the new content
-            echo -e "## [$VERSION_NAME] - $TODAY\n\n- 更新功能並修復了一些錯誤\n\n---\n" > new_entry.txt
+            echo -e "## [$VERSION_NAME] - $TODAY\\n\\n- 更新功能並修復了一些錯誤\\n\\n---\\n" > new_entry.txt
             
             # Split the existing changelog
             head -n 5 CHANGELOG.md > header.txt
@@ -110,7 +110,9 @@ jobs:
           echo "keyAlias=${KEY_ALIAS}" >> android/key.properties
           echo "keyPassword=${KEY_PASSWORD}" >> android/key.properties
           echo "storePassword=${STORE_PASSWORD}" >> android/key.properties
-
+          
+      - name: Verify Flutter Version
+        run: flutter --version
 
       - name: Build APK and App Bundle
         run: |
@@ -130,7 +132,7 @@ jobs:
           VERSION_NAME=${{ github.event.inputs.version#v }}
           # Extract content between the correct version header and the next header or end of file
           # and save it to a file for the release body.
-          awk -v ver="## [$VERSION_NAME]" 'BEGIN{p=0} $0~ver{p=1; next} p && /^## / {p=0} p' CHANGELOG.md > current_release_notes.txt
+          awk -v ver="## \[$VERSION_NAME\]" 'BEGIN{p=0} $0~ver{p=1; next} p && /^## / {p=0} p' CHANGELOG.md > current_release_notes.txt
 
       - name: Create GitHub Release and Upload APKs
         uses: softprops/action-gh-release@v3
