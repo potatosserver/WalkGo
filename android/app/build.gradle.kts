@@ -1,4 +1,3 @@
-
 import java.util.Properties
 import java.io.FileInputStream
 import java.io.File
@@ -57,6 +56,14 @@ android {
             ndk {
                 debugSymbolLevel = "NONE"
             }
+        }
+    }
+
+    // 解決 DWARF 警告的配置區塊
+    packaging {
+        jniLibs {
+            // 剔除所有原生函式庫 (.so 檔案) 中的 DWARF 偵錯符號
+            keepDebugSymbols.clear()
         }
     }
 }
