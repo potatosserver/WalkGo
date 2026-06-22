@@ -50,9 +50,6 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             
-            ndk {
-                debugSymbolLevel = "NONE"
-            }
         }
     }
 
