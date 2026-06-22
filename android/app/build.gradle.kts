@@ -1,3 +1,4 @@
+
 import java.util.Properties
 import java.io.FileInputStream
 import java.io.File
@@ -53,6 +54,9 @@ android {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
+            ndk {
+                debugSymbolLevel = "NONE"
+            }
         }
     }
 }
