@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../services/log_service.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '../l10n/app_localizations.dart';
+import '../services/log_service.dart';
 import '../services/update_service.dart';
 import '../widgets/release_notes_dialog.dart';
 import '../widgets/update_flow_dialog.dart';
@@ -170,7 +169,7 @@ class _SettingsPageState extends State<SettingsPage> {
             const SizedBox(height: 24),
             _buildAboutRow(
               context,
-              icon: FontAwesomeIcons.github,
+              icon: const FaIcon(FontAwesomeIcons.github, size: 24),
               text: l10n.github_source_code,
               trailing: const Icon(Icons.open_in_new, size: 20),
               onTap: () async {
@@ -178,27 +177,25 @@ class _SettingsPageState extends State<SettingsPage> {
                     Uri.parse('https://github.com/potatosserver/WalkGo');
                 if (await canLaunchUrl(url)) {
                   await launchUrl(url, mode: LaunchMode.externalApplication);
-                } else {
-                  Fluttertoast.showToast(msg: 'Could not launch GitHub');
                 }
               },
             ),
             const SizedBox(height: 12),
             _buildAboutRow(
               context,
-              icon: Icons.badge_outlined,
+              icon: const Icon(Icons.badge_outlined, size: 24),
               text: l10n.developer_label,
             ),
             const SizedBox(height: 12),
             _buildAboutRow(
               context,
-              icon: Icons.info_outline,
+              icon: const Icon(Icons.info_outline, size: 24),
               text: l10n.version_label(_version),
             ),
             const Divider(height: 32),
             _buildAboutRow(
               context,
-              icon: Icons.article_outlined,
+              icon: const Icon(Icons.article_outlined, size: 24),
               text: l10n.view_release_notes,
               onTap: () => _showReleaseNotes(context, l10n),
             ),
@@ -215,7 +212,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _buildAboutRow(BuildContext context,
-      {required IconData icon,
+      {required Widget icon,
       required String text,
       Widget? trailing,
       VoidCallback? onTap}) {
@@ -227,7 +224,11 @@ class _SettingsPageState extends State<SettingsPage> {
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
         child: Row(
           children: [
-            Icon(icon, size: 24, color: theme.colorScheme.onSurfaceVariant),
+            IconTheme(
+              data: IconThemeData(
+                  size: 24, color: theme.colorScheme.onSurfaceVariant),
+              child: icon,
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: Text(
@@ -264,11 +265,15 @@ class _SettingsPageState extends State<SettingsPage> {
         );
       } else {
         if (!context.mounted) return;
-        Fluttertoast.showToast(msg: l10n.update_failed('Could not fetch release notes'));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(l10n.update_failed('Could not fetch release notes')),
+        ));
       }
     } catch (e) {
       if (!context.mounted) return;
-      Fluttertoast.showToast(msg: l10n.update_check_failed);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(l10n.update_check_failed),
+      ));
     }
   }
 
@@ -289,13 +294,15 @@ class _SettingsPageState extends State<SettingsPage> {
             TextButton(
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
-                // Stop the service before clearing data
-                FlutterBackgroundService().invoke("stopService");
                 await prefs.clear();
                 await logService.clearLogs();
-                Fluttertoast.showToast(msg: l10n.data_cleared_success);
-                navigator.pop();
-                router.go('/');
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(l10n.data_cleared_success),
+                  ));
+                  navigator.pop();
+                  router.go('/');
+                }
               },
               child: Text(l10n.confirm,
                   style: TextStyle(
