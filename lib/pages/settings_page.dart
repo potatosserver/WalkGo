@@ -116,6 +116,19 @@ class _SettingsPageState extends State<SettingsPage> {
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () => _showAboutDialog(context, l10n),
               ),
+              if (isGooglePlay)
+                ListTile(
+                  leading: const FaIcon(FontAwesomeIcons.googlePlay),
+                  title: Text(l10n.find_on_google_play),
+                  trailing: const Icon(Icons.open_in_new),
+                  onTap: () async {
+                    final url = Uri.parse(
+                        'https://play.google.com/store/apps/details?id=com.potatosserver.walkgo');
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url, mode: LaunchMode.externalApplication);
+                    }
+                  },
+                ),
               ListTile(
                 leading: const Icon(Icons.system_update_outlined),
                 title: Text(l10n.check_for_updates),
@@ -213,7 +226,7 @@ class _SettingsPageState extends State<SettingsPage> {
             _buildAboutRow(
               context,
               icon: const FaIcon(FontAwesomeIcons.googlePlay, size: 24),
-              text: l10n.view_on_google_play,
+              text: l10n.find_on_google_play,
               trailing: const Icon(Icons.open_in_new, size: 20),
               onTap: () async {
                 final url = Uri.parse(
