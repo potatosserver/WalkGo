@@ -5,7 +5,9 @@
 ---
 ## [1.1.0] - 2026-06-22
 
-- 更新功能並修復了一些錯誤
+- 在通知加入啟動、暫停快速按鈕
+- 在未來的版本中將會為Google Play做相容性優化，使用Github版本的使用者可以轉向Google Play作為更新來源
+- Google Play封閉測試進行中，歡迎加入https://github.com/potatosserver/WalkGo/blob/main/WalkGo_CBT_Guide.md
 
 
 ---
