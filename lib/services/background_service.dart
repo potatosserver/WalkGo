@@ -54,7 +54,8 @@ void onStart(ServiceInstance service) {
         ? (localizedStrings['notification_stop_button'] ?? 'Stop')
         : (localizedStrings['notification_start_button'] ?? 'Start');
 
-    final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+    final AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
       foregroundChannelId,
       'WalkGo Service',
       channelDescription: 'This channel is used for the WalkGo service.',
@@ -64,8 +65,8 @@ void onStart(ServiceInstance service) {
       autoCancel: false,
       actions: <AndroidNotificationAction>[
         AndroidNotificationAction(
-          'toggle_service', // Positional argument 1: id
-          buttonLabel,      // Positional argument 2: title
+          'notification_toggled', // Action ID
+          buttonLabel, // Button title
           showsUserInterface: true,
         ),
       ],
@@ -197,15 +198,7 @@ void onStart(ServiceInstance service) {
     });
   }
 
-  loadSettings().then((_) => broadcastUIUpdate());
-
-  service.on('get_status').listen((event) async {
-    developer.log('Received get_status event', name: 'WalkGo.Background');
-    await loadSettings();
-    broadcastUIUpdate();
-  });
-
-  service.on('start').listen((event) async {
+  Future<void> startService(Map<String, String>? event) async {
     developer.log('Received start event', name: 'WalkGo.Background');
     if (isRunning) {
       developer.log('Service is already running, returning.', name: 'WalkGo.Background');
@@ -233,9 +226,9 @@ void onStart(ServiceInstance service) {
     if (!(await writeStepsLogic())) {
       restartTimer(currentInterval);
     }
-  });
+  }
 
-  service.on('stop').listen((event) async {
+  Future<void> stopService(Map<String, String>? event) async {
     developer.log('Received stop event', name: 'WalkGo.Background');
     timer?.cancel();
     if (!isRunning) {
@@ -257,14 +250,34 @@ void onStart(ServiceInstance service) {
         'Ready to start.';
     showCustomNotification(title, body, isRunning: isRunning);
     broadcastUIUpdate(statusLog: body);
+  }
+
+  loadSettings().then((_) => broadcastUIUpdate());
+
+  service.on('get_status').listen((event) async {
+    developer.log('Received get_status event', name: 'WalkGo.Background');
+    await loadSettings();
+    broadcastUIUpdate();
   });
 
-  service.on('toggle_service').listen((event) {
-    developer.log('Received toggle_service event, isRunning: $isRunning', name: 'WalkGo.Background');
+  service.on('start').listen((event) async {
+    await startService(event != null ? Map<String, String>.from(event) : null);
+  });
+
+  service.on('stop').listen((event) async {
+    await stopService(event != null ? Map<String, String>.from(event) : null);
+  });
+
+  service.on('notification_toggled').listen((event) {
+    developer.log('Received notification_toggled event, isRunning: $isRunning', name: 'WalkGo.Background');
+    Map<String, String>? strings;
+    if (event != null) {
+      strings = (event as Map).map((key, value) => MapEntry(key.toString(), value.toString()));
+    }
     if (isRunning) {
-      service.invoke('stop', event);
+      stopService(strings);
     } else {
-      service.invoke('start', event);
+      startService(strings);
     }
   });
 

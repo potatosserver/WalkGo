@@ -22,7 +22,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 @pragma('vm:entry-point')
 void onDidReceiveNotificationResponse(
     NotificationResponse notificationResponse) async {
-  if (notificationResponse.actionId == 'toggle_service') {
+  if (notificationResponse.actionId == 'notification_toggled') {
     final service = FlutterBackgroundService();
     final prefs = await SharedPreferences.getInstance();
     final String? languageCode = prefs.getString('languageCode');
@@ -63,7 +63,7 @@ void onDidReceiveNotificationResponse(
       'notification_service_stopped_content':
           l10n.notification_service_stopped_content,
     };
-    service.invoke('toggle_service', localizedStrings);
+    service.invoke('notification_toggled', localizedStrings);
   }
 }
 
