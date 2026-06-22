@@ -119,7 +119,8 @@ jobs:
         run: |
           RAW_VERSION="${{ github.event.inputs.version }}"
           VERSION_NAME=$(echo "$RAW_VERSION" | sed 's/^[vV]//')
-          awk -v ver="## \[$VERSION_NAME\]" 'BEGIN{p=0} $0~ver{p=1; next} p && /^## / {p=0} p' CHANGELOG.md > current_release_notes.txt
+          # 修正處：精確比對並自動過濾掉含有 --- 的行
+          awk -v ver="[$VERSION_NAME]" '/^## / { if (p) { exit }; if ($2 == ver) { p=1; next } } p && !/^---/' CHANGELOG.md > current_release_notes.txt
 
       - name: Create GitHub Release and Upload APKs
         uses: softprops/action-gh-release@v3
