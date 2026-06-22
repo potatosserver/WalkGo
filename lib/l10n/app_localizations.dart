@@ -902,6 +902,12 @@ abstract class AppLocalizations {
   /// **'You are already using the latest version.'**
   String get latest_version_installed;
 
+  /// No description provided for @no_updates_available.
+  ///
+  /// In en, this message translates to:
+  /// **'No updates available.'**
+  String get no_updates_available;
+
   /// No description provided for @invalid_architecture.
   ///
   /// In en, this message translates to:
@@ -1045,6 +1051,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stop'**
   String get notification_stop_button;
+
+  /// No description provided for @find_on_google_play.
+  ///
+  /// In en, this message translates to:
+  /// **'Find on Google Play'**
+  String get find_on_google_play;
 }
 
 class _AppLocalizationsDelegate

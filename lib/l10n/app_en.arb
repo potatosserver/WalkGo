@@ -360,6 +360,7 @@
     }
   },
   "latest_version_installed": "You are already using the latest version.",
+  "no_updates_available": "No updates available.",
   "invalid_architecture": "Could not find a suitable update for your device's architecture.",
   "hash_mismatch": "Hash verification failed. The download might be corrupted.",
   "checking_for_updates": "Checking for updates...",
@@ -417,5 +418,7 @@
   "notification_start_button": "Start",
   "@notification_start_button": {},
   "notification_stop_button": "Stop",
-  "@notification_stop_button": {}
+  "@notification_stop_button": {},
+  "find_on_google_play": "Find on Google Play",
+  "@find_on_google_play": {}
 }

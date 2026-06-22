@@ -464,6 +464,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'You are already using the latest version.';
 
   @override
+  String get no_updates_available => 'No updates available.';
+
+  @override
   String get invalid_architecture =>
       'Could not find a suitable update for your device\'s architecture.';
 
@@ -541,4 +544,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notification_stop_button => 'Stop';
+
+  @override
+  String get find_on_google_play => 'Find on Google Play';
 }

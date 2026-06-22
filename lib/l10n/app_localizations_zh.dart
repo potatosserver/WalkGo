@@ -445,6 +445,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get latest_version_installed => '目前已是最新版本。';
 
   @override
+  String get no_updates_available => '沒有可用的更新。';
+
+  @override
   String get invalid_architecture => '找不到適合您裝置架構的更新檔。';
 
   @override
@@ -519,4 +522,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notification_stop_button => '停止';
+
+  @override
+  String get find_on_google_play => '在 Google Play 上尋找';
 }

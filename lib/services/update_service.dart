@@ -5,11 +5,13 @@ import 'dart:developer' as developer;
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
+import 'package:walkgo/constants.dart';
 
 class ReleaseInfo {
   final String tagName;
@@ -38,7 +40,7 @@ class UpdateService {
   static const String githubApiUrl =
       'https://api.github.com/repos/potatosserver/WalkGo/releases/latest';
 
-  Future<ReleaseInfo?> getLatestRelease() async {
+  Future<ReleaseInfo?> getLatestGithubRelease() async {
     try {
       final options = BaseOptions(
         connectTimeout: const Duration(seconds: 15),
@@ -59,23 +61,41 @@ class UpdateService {
     }
   }
 
-  Future<ReleaseInfo?> checkForUpdate() async {
-    try {
-      final latestRelease = await getLatestRelease();
-      if (latestRelease != null) {
-        final String latestVersion = latestRelease.tagName.replaceAll('v', '');
-        final packageInfo = await PackageInfo.fromPlatform();
-        final String currentVersion = packageInfo.version;
-
-        if (Version.parse(latestVersion) > Version.parse(currentVersion)) {
-          return latestRelease;
+  Future<dynamic> checkForUpdate() async {
+    if (updateChannel == 'google_play') {
+      try {
+        final AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
+        if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+          return updateInfo;
         }
+      } catch (e) {
+        developer.log('Error checking for Google Play update: $e', name: 'walkgo.updateservice');
       }
-    } catch (e) {
-      rethrow;
+    } else {
+      try {
+        final latestRelease = await getLatestGithubRelease();
+        if (latestRelease != null) {
+          final String latestVersion = latestRelease.tagName.replaceAll('v', '');
+          final packageInfo = await PackageInfo.fromPlatform();
+          final String currentVersion = packageInfo.version;
+
+          if (Version.parse(latestVersion) > Version.parse(currentVersion)) {
+            return latestRelease;
+          }
+        }
+      } catch (e) {
+        rethrow;
+      }
     }
     return null;
   }
+
+  Future<void> startGooglePlayUpdate(AppUpdateInfo info) async {
+    if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+      await InAppUpdate.performImmediateUpdate();
+    }
+  }
+
 
   Future<String?> getArchitecture() async {
     if (!Platform.isAndroid) {

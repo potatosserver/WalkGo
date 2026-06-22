@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../constants.dart';
 import '../l10n/app_localizations.dart';
 import '../services/log_service.dart';
 import '../services/update_service.dart';
@@ -45,10 +47,33 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  void _checkForGooglePlayUpdate(AppLocalizations l10n) async {
+    try {
+      final updateInfo = await UpdateService().checkForUpdate();
+      if (updateInfo is AppUpdateInfo &&
+          updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+        await UpdateService().startGooglePlayUpdate(updateInfo);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.no_updates_available)),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.update_check_failed)),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final isGooglePlay = updateChannel == 'google_play';
 
     return Scaffold(
       appBar: AppBar(
@@ -94,7 +119,9 @@ class _SettingsPageState extends State<SettingsPage> {
               ListTile(
                 leading: const Icon(Icons.system_update_outlined),
                 title: Text(l10n.check_for_updates),
-                onTap: () => UpdateFlowDialog.run(context),
+                onTap: () => isGooglePlay
+                    ? _checkForGooglePlayUpdate(l10n)
+                    : UpdateFlowDialog.run(context),
               ),
             ],
           ),
@@ -107,11 +134,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: Text(l10n.rerun_setup),
                 onTap: () => context.push('/welcome'),
               ),
-              ListTile(
-                leading: const Icon(Icons.download_outlined),
-                title: Text(l10n.download_latest_version),
-                onTap: () => UpdateFlowDialog.run(context, force: true),
-              ),
+              if (!isGooglePlay)
+                ListTile(
+                  leading: const Icon(Icons.download_outlined),
+                  title: Text(l10n.download_latest_version),
+                  onTap: () => UpdateFlowDialog.run(context, force: true),
+                ),
               ListTile(
                 leading: Icon(Icons.delete_forever_outlined,
                     color: theme.colorScheme.error),
@@ -157,6 +185,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _showAboutDialog(BuildContext context, AppLocalizations l10n) {
+    final isGooglePlay = updateChannel == 'google_play';
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -183,6 +212,20 @@ class _SettingsPageState extends State<SettingsPage> {
             const SizedBox(height: 12),
             _buildAboutRow(
               context,
+              icon: const FaIcon(FontAwesomeIcons.googlePlay, size: 24),
+              text: l10n.find_on_google_play,
+              trailing: const Icon(Icons.open_in_new, size: 20),
+              onTap: () async {
+                final url = Uri.parse(
+                    'https://play.google.com/store/apps/details?id=com.potatosserver.walkgo');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                }
+              },
+            ),
+            const SizedBox(height: 12),
+            _buildAboutRow(
+              context,
               icon: const Icon(Icons.badge_outlined, size: 24),
               text: l10n.developer_label,
             ),
@@ -192,13 +235,15 @@ class _SettingsPageState extends State<SettingsPage> {
               icon: const Icon(Icons.info_outline, size: 24),
               text: l10n.version_label(_version),
             ),
-            const Divider(height: 32),
-            _buildAboutRow(
-              context,
-              icon: const Icon(Icons.article_outlined, size: 24),
-              text: l10n.view_release_notes,
-              onTap: () => _showReleaseNotes(context, l10n),
-            ),
+            if (!isGooglePlay) ...[
+              const Divider(height: 32),
+              _buildAboutRow(
+                context,
+                icon: const Icon(Icons.article_outlined, size: 24),
+                text: l10n.view_release_notes,
+                onTap: () => _showReleaseNotes(context, l10n),
+              ),
+            ],
           ],
         ),
         actions: [
@@ -255,7 +300,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final updateService = UpdateService();
 
     try {
-      final release = await updateService.getLatestRelease();
+      final release = await updateService.getLatestGithubRelease();
 
       if (release != null) {
         if (!context.mounted) return;

@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'services/background_service.dart';
+
+import 'app_router.dart';
 import 'constants.dart';
 import 'l10n/app_localizations.dart';
+import 'services/background_service.dart';
 import 'services/language_service.dart';
 import 'services/log_service.dart';
-import 'app_router.dart';
+import 'services/update_service.dart';
 import 'theme_provider.dart';
 import 'viewmodels/advanced_settings_viewmodel.dart';
 import 'viewmodels/home_page_viewmodel.dart';
@@ -148,8 +151,34 @@ void main() async {
   runApp(const WalkGoApp());
 }
 
-class WalkGoApp extends StatelessWidget {
+class WalkGoApp extends StatefulWidget {
   const WalkGoApp({super.key});
+
+  @override
+  State<WalkGoApp> createState() => _WalkGoAppState();
+}
+
+class _WalkGoAppState extends State<WalkGoApp> {
+  @override
+  void initState() {
+    super.initState();
+    _checkForUpdate();
+  }
+
+  Future<void> _checkForUpdate() async {
+    if (updateChannel == 'google_play') {
+      try {
+        final updateInfo = await UpdateService().checkForUpdate();
+        if (updateInfo is AppUpdateInfo &&
+            updateInfo.updateAvailability ==
+                UpdateAvailability.updateAvailable) {
+          await UpdateService().startGooglePlayUpdate(updateInfo);
+        }
+      } catch (e) {
+        // Silently fail on startup, user can manually check in settings
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,10 +201,9 @@ class WalkGoApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LanguageService()),
         ChangeNotifierProvider(create: (_) => LogService()),
         ChangeNotifierProvider(create: (_) => HomePageViewModel()),
-        ChangeNotifierProxyProvider<HomePageViewModel,
-            AdvancedSettingsViewModel>(
-          create: (context) => AdvancedSettingsViewModel(
-              Provider.of<HomePageViewModel>(context, listen: false)),
+        ChangeNotifierProxyProvider<HomePageViewModel, AdvancedSettingsViewModel>(
+          create: (context) =>
+              AdvancedSettingsViewModel(Provider.of<HomePageViewModel>(context, listen: false)),
           update: (context, homePageViewModel, previous) =>
               AdvancedSettingsViewModel(homePageViewModel),
         ),

@@ -254,6 +254,7 @@
         }
     },
     "latest_version_installed": "目前已是最新版本。",
+    "no_updates_available": "沒有可用的更新。",
     "@latest_version_installed": {},
     "invalid_architecture": "找不到適合您裝置架構的更新檔。",
     "@invalid_architecture": {},
@@ -314,5 +315,7 @@
     "notification_start_button": "啟動",
     "@notification_start_button": {},
     "notification_stop_button": "停止",
-    "@notification_stop_button": {}
+    "@notification_stop_button": {},
+    "find_on_google_play": "在 Google Play 上尋找",
+    "@find_on_google_play": {}
 }

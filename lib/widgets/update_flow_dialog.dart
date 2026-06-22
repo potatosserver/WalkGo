@@ -14,13 +14,13 @@ class UpdateFlowDialog {
       final updateService = UpdateService();
       final release = await updateService.checkForUpdate();
 
-      if (release != null) {
+      if (release != null && release is ReleaseInfo) {
         if (!context.mounted) return;
         UpdateDialog.show(context, release);
       } else {
-        if(force) {
-          final latestRelease = await updateService.getLatestRelease();
-          if(latestRelease != null) {
+        if (force) {
+          final latestRelease = await updateService.getLatestGithubRelease();
+          if (latestRelease != null) {
             if (!context.mounted) return;
             UpdateDialog.show(context, latestRelease);
           } else {

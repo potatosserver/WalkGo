@@ -15,6 +15,7 @@ const String prefManualSteps = 'manual_steps';
 const String prefAutoPauseEnabled = 'auto_pause_enabled';
 const String prefAutoPauseThreshold = 'auto_pause_threshold';
 const String prefStatusLog = 'status_log';
+const String updateChannel = String.fromEnvironment('UPDATE_CHANNEL', defaultValue: 'github');
 
 
 // Notification Channel constants

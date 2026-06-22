@@ -2,6 +2,26 @@ name: Build and Test APK
 
 on:
   workflow_dispatch:
+    inputs:
+      flutter_channel:
+        description: 'Flutter channel to use'
+        required: true
+        default: 'stable'
+        type: choice
+        options:
+        - stable
+        - beta
+        - master
+      update_channel:
+        description: 'Value for UPDATE_CHANNEL (e.g., google_play). Leave empty to omit.'
+        required: false
+        default: 'google_play'
+        type: string
+      build_args:
+        description: 'Additional arguments for flutter build apk'
+        required: false
+        default: '--split-per-abi --obfuscate --split-debug-info=./build/app/outputs/debug-info'
+        type: string
 
 jobs:
   build:
@@ -19,7 +39,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: '${{ github.event.inputs.flutter_channel }}'
           cache: true
 
       - name: Install Dependencies
@@ -42,7 +62,12 @@ jobs:
           echo "storePassword=${STORE_PASSWORD}" >> android/key.properties
 
       - name: Build APK
-        run: flutter build apk --split-per-abi --obfuscate --split-debug-info=./build/app/outputs/debug-info
+        run: |
+          DART_DEFINE_ARGS=""
+          if [[ -n "${{ github.event.inputs.update_channel }}" ]]; then
+            DART_DEFINE_ARGS="--dart-define=UPDATE_CHANNEL=${{ github.event.inputs.update_channel }}"
+          fi
+          flutter build apk ${{ github.event.inputs.build_args }} $DART_DEFINE_ARGS
 
       - name: Upload Test APKs
         uses: actions/upload-artifact@v7
