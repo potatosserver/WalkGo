@@ -20,8 +20,8 @@ jobs:
           RAW_VERSION="${{ github.event.inputs.version }}"
           VERSION_NAME=$(echo "$RAW_VERSION" | sed 's/^[vV]//')
           
-          # 使用精確欄位比對以避開正則表達式轉義問題
-          awk -v ver="[$VERSION_NAME]" '/^## / { if (p) { exit }; if ($2 == ver) { p=1; next } } p' CHANGELOG.md > current_release_notes.txt
+          # 精確比對並自動過濾掉含有 --- 的行
+          awk -v ver="[$VERSION_NAME]" '/^## / { if (p) { exit }; if ($2 == ver) { p=1; next } } p && !/^---/' CHANGELOG.md > current_release_notes.txt
 
       - name: Display Extracted Release Notes
         run: |
