@@ -56,15 +56,15 @@ android {
             ndk {
                 debugSymbolLevel = "NONE"
             }
+            
+            // 【第一重防禦】在 Release 編譯管線中，主動清空原生庫的偵錯符號保留設定
+            packaging.jniLibs.keepDebugSymbols.clear()
         }
     }
 
-    // 解決 DWARF 警告的配置區塊
-    packaging {
-        jniLibs {
-            // 剔除所有原生函式庫 (.so 檔案) 中的 DWARF 偵錯符號
-            keepDebugSymbols.clear()
-        }
+    // 【第二重防禦】在最終打包壓縮 APK 時，全域排除並剔除符合條件的原生函式庫符號
+    packagingOptions {
+        exclude("**/lib*.so")
     }
 }
 
