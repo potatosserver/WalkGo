@@ -16,7 +16,6 @@ if (keyPropertiesFile.exists()) {
 android {
     namespace = "com.potatosserver.walkgo"
     compileSdk = 36
-    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
