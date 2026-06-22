@@ -21,11 +21,26 @@ jobs:
         with:
           channel: 'stable'
 
-      # 關鍵修正：在安裝前強制清空 pub 雲端快取，避免抓到過期的相容層殘留
       - name: Clear Pub Cache & Fresh Install
         run: |
           flutter pub cache clean --force
           flutter pub get
+
+      - name: Decode Keystore and Create Properties
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          echo "Decoding keystore..."
+          echo $KEYSTORE_BASE64 | base64 --decode > android/upload-keystore.jks
+          echo "Creating key.properties file..."
+          echo "storeFile=upload-keystore.jks" > android/key.properties
+          echo "keyAlias=$KEY_ALIAS" >> android/key.properties
+          echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
+          echo "storePassword=$STORE_PASSWORD" >> android/key.properties
+          echo "Keystore and properties files created successfully."
 
       - name: Build APK
         run: flutter build apk --release
