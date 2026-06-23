@@ -6,7 +6,7 @@ on:
       update_channel:
         description: 'Value for UPDATE_CHANNEL (e.g., google_play). Leave empty to omit.'
         required: false
-        default: 'google_play'
+        default: ''
         type: string
 
 jobs:
