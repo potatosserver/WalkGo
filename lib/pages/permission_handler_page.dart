@@ -12,11 +12,32 @@ class PermissionHandlerPage extends StatefulWidget {
   State<PermissionHandlerPage> createState() => _PermissionHandlerPageState();
 }
 
-class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
+class _PermissionHandlerPageState extends State<PermissionHandlerPage>
+    with WidgetsBindingObserver {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   static const int _pageCount = 4;
   final _health = Health();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _updatePageState();
+    }
+  }
 
   Future<PermissionStatus> _checkSimplePermission(Permission permission) async {
     return await permission.status;
