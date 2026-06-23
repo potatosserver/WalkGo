@@ -47,6 +47,23 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  void _showAlertDialog(String title, String content) {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.close),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _checkForGooglePlayUpdate(AppLocalizations l10n) async {
     try {
       final updateInfo = await UpdateService().checkForUpdate();
@@ -54,38 +71,11 @@ class _SettingsPageState extends State<SettingsPage> {
           updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
         await UpdateService().startGooglePlayUpdate(updateInfo);
       } else {
-        if (mounted) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(l10n.check_for_updates),
-              content: Text(l10n.latest_version_installed),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(l10n.close),
-                ),
-              ],
-            ),
-          );
-        }
+        _showAlertDialog(
+            l10n.check_for_updates, l10n.latest_version_installed);
       }
     } catch (e) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(l10n.check_for_updates),
-            content: Text(l10n.update_check_failed),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(l10n.close),
-              ),
-            ],
-          ),
-        );
-      }
+      _showAlertDialog(l10n.check_for_updates, l10n.update_check_failed);
     }
   }
 
@@ -328,16 +318,10 @@ class _SettingsPageState extends State<SettingsPage> {
           builder: (context) => ReleaseNotesDialog(release: release),
         );
       } else {
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(l10n.update_failed('Could not fetch release notes')),
-        ));
+        _showAlertDialog(l10n.view_release_notes, l10n.update_failed('Could not fetch release notes'));
       }
     } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(l10n.update_check_failed),
-      ));
+      _showAlertDialog(l10n.view_release_notes, l10n.update_check_failed);
     }
   }
 
@@ -361,10 +345,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 await prefs.clear();
                 await logService.clearLogs();
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(l10n.data_cleared_success),
-                  ));
-                  navigator.pop();
+                  navigator.pop(); // Close the confirmation dialog
+                  _showAlertDialog(l10n.clear_data_button, l10n.data_cleared_success);
                   router.go('/');
                 }
               },

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
@@ -29,9 +28,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       if (steps == null) return;
 
       final l10n = AppLocalizations.of(context)!;
-      Fluttertoast.showToast(
-        msg: l10n.manual_write_success_feedback(steps.toString()),
-        toastLength: Toast.LENGTH_SHORT,
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.manual_steps_title),
+          content: Text(l10n.manual_write_success_feedback(steps.toString())),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.close),
+            ),
+          ],
+        ),
       );
       // After manual writing, refresh the total steps of the day immediately
       Provider.of<HomePageViewModel>(context, listen: false).refreshTodaySteps();
@@ -143,7 +151,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             : Colors.green.shade600,
                         foregroundColor: Colors.white,
                       ),
-                      onPressed: () => viewModel.toggleAutoMode(),
+                      onPressed: () => viewModel.toggleAutoMode(context),
                     ),
                   ],
                 ),

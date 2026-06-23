@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import '../services/log_service.dart';
 import '../l10n/app_localizations.dart';
@@ -18,7 +17,19 @@ class LogPage extends StatelessWidget {
     Future<void> clearLogs() async {
       await context.read<LogService>().clearLogs();
       if (context.mounted) {
-        Fluttertoast.showToast(msg: l10n.logs_cleared);
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.clear_all_logs),
+            content: Text(l10n.logs_cleared),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(l10n.close),
+              ),
+            ],
+          ),
+        );
       }
     }
 

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/services/health_service.dart';
 import 'package:walkgo/constants.dart';
@@ -166,23 +165,39 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
     notifyListeners();
   }
 
-  Future<bool> _validateParameters() async {
+  Future<bool> _validateParameters(BuildContext context) async {
     if (_l10n == null) return true;
     await _loadNonStateSettings();
     final int? base = int.tryParse(_baseSteps);
     if (base == null) return false;
     if (_offsetEnabled && base <= _offsetSteps) {
-      Fluttertoast.showToast(msg: _l10n!.error_base_less_than_offset);
+      _showErrorDialog(context, _l10n!.error_base_less_than_offset);
       return false;
     }
     if (_autoPauseEnabled) {
       final int maxPossibleWrite = _offsetEnabled ? base + _offsetSteps : base;
       if (_autoPauseThreshold <= maxPossibleWrite) {
-        Fluttertoast.showToast(msg: _l10n!.error_threshold_too_low);
+        _showErrorDialog(context, _l10n!.error_threshold_too_low);
         return false;
       }
     }
     return true;
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(_l10n!.actions),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(_l10n!.close),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _updateRemainingSteps() async {
@@ -251,20 +266,20 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
-  Future<void> toggleAutoMode() async {
+  Future<void> toggleAutoMode(BuildContext context) async {
     final serviceAlive = await _service.isRunning();
     if (!_isAutoRunning) {
-      if (!(await _validateParameters())) return;
+      if (!(await _validateParameters(context))) return;
       if (!serviceAlive) {
         await _service.startService();
       }
        if (_l10n == null) return;
       _service.invoke('start', _getLocalizedStrings());
-      Fluttertoast.showToast(msg: _l10n!.auto_service_started);
+      _showErrorDialog(context, _l10n!.auto_service_started);
     } else {
        if (_l10n == null) return;
       _service.invoke("stop", _getLocalizedStrings());
-      Fluttertoast.showToast(msg: _l10n!.auto_service_stopped);
+      _showErrorDialog(context, _l10n!.auto_service_stopped);
       // Ensure data is refreshed immediately after stopping
       await refreshTodaySteps();
     }
