@@ -102,10 +102,8 @@ jobs:
 
       - name: Build App Bundle and APK
         run: |
-          # 1. 先建置 AAB（產生完整的編譯快取）
-          flutter build appbundle --obfuscate --split-debug-info=./build/app/outputs/debug-info
+          flutter build appbundle --obfuscate --split-debug-info=./build/app/outputs/debug-info --dart-define=UPDATE_CHANNEL=google_play
           
-          # 2. 再建置 APK（複用上一步快取，速度極快）
           flutter build apk --split-per-abi --obfuscate --split-debug-info=./build/app/outputs/debug-info
 
       - name: Upload AAB as Artifact
@@ -119,7 +117,6 @@ jobs:
         run: |
           RAW_VERSION="${{ github.event.inputs.version }}"
           VERSION_NAME=$(echo "$RAW_VERSION" | sed 's/^[vV]//')
-          # 修正處：精確比對並自動過濾掉含有 --- 的行
           awk -v ver="[$VERSION_NAME]" '/^## / { if (p) { exit }; if ($2 == ver) { p=1; next } } p && !/^---/' CHANGELOG.md > current_release_notes.txt
 
       - name: Create GitHub Release and Upload APKs

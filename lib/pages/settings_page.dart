@@ -225,20 +225,6 @@ class _SettingsPageState extends State<SettingsPage> {
             const SizedBox(height: 12),
             _buildAboutRow(
               context,
-              icon: const FaIcon(FontAwesomeIcons.googlePlay, size: 24),
-              text: l10n.view_on_google_play,
-              trailing: const Icon(Icons.open_in_new, size: 20),
-              onTap: () async {
-                final url = Uri.parse(
-                    'https://play.google.com/store/apps/details?id=com.potatosserver.walkgo');
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                }
-              },
-            ),
-            const SizedBox(height: 12),
-            _buildAboutRow(
-              context,
               icon: const Icon(Icons.badge_outlined, size: 24),
               text: l10n.developer_label,
             ),
