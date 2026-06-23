@@ -55,15 +55,35 @@ class _SettingsPageState extends State<SettingsPage> {
         await UpdateService().startGooglePlayUpdate(updateInfo);
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.no_updates_available)),
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(l10n.check_for_updates),
+              content: Text(l10n.latest_version_installed),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(l10n.close),
+                ),
+              ],
+            ),
           );
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.update_check_failed)),
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.check_for_updates),
+            content: Text(l10n.update_check_failed),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(l10n.close),
+              ),
+            ],
+          ),
         );
       }
     }
