@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="sunsetGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E64A19" />
+      <stop offset="40%" stop-color="#F57C00" />
+      <stop offset="80%" stop-color="#FFCC80" />
+      <stop offset="100%" stop-color="#FFE082" />
+    </linearGradient>
+
+    <clipPath id="iconClip">
+      <rect width="512" height="512" rx="100" />
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#iconClip)">
+    <!-- 滿版漸層背景 -->
+    <rect width="512" height="512" fill="url(#sunsetGrad)" />
+
+    <!-- 巨型落日 -->
+    <circle cx="256" cy="210" r="65" fill="#FFF59D" opacity="0.9" />
+    
+    <!-- 橫向晚霞 -->
+    <rect x="60" y="220" width="120" height="8" rx="4" fill="#E64A19" opacity="0.5" />
+    <rect x="340" y="190" width="110" height="8" rx="4" fill="#E64A19" opacity="0.5" />
+    <rect x="180" y="130" width="150" height="6" rx="3" fill="#E64A19" opacity="0.4" />
+    <rect x="120" y="90" width="80" height="5" rx="2.5" fill="#E64A19" opacity="0.3" />
+
+    <!-- 放大山脈 (2.2 倍) -->
+    <g transform="translate(-316, -181) scale(2.2)">
+      <polygon points="145,315 180,240 215,315" fill="#2D1A14" />
+      <polygon points="215,315 250,220 285,315" fill="#22120C" />
+      <polygon points="285,315 325,235 365,315" fill="#2D1A14" />
+
+      <polygon points="150,315 210,195 245,315" fill="#4E342E" />
+      <polygon points="210,195 245,315 275,315" fill="#3E2723" />
+      <polygon points="190,235 210,195 222,235" fill="#4CAF50" />
+      <polygon points="210,195 222,235 235,245" fill="#2E7D32" />
+
+      <polygon points="255,315 295,185 340,315" fill="#4E342E" />
+      <polygon points="295,185 340,315 370,315" fill="#3E2723" />
+      <polygon points="280,220 295,185 310,230" fill="#4CAF50" />
+      <polygon points="295,185 310,230 325,245" fill="#2E7D32" />
+
+      <polygon points="160,315 200,245 220,315" fill="#6D4C41" />
+      <polygon points="200,245 220,315 250,315" fill="#5D4037" />
+      <polygon points="190,262 200,245 208,265" fill="#81C784" />
+
+      <polygon points="240,315 275,230 305,315" fill="#5D4037" />
+      <polygon points="275,230 305,315 335,315" fill="#3E2723" />
+      <polygon points="265,255 275,230 285,255" fill="#4CAF50" />
+
+      <polygon points="315,315 345,250 375,315" fill="#4E342E" />
+      <polygon points="335,272 345,250 355,275" fill="#2E7D32" />
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <clipPath id="iconClip">
+      <rect width="512" height="512" rx="100" />
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#iconClip)">
+    <!-- 深色主題背景底色 -->
+    <rect width="512" height="512" fill="#1E293B" />
+
+    <!-- 繁星 (淺色、不同透明度) -->
+    <circle cx="100" cy="150" r="2.5" fill="#F1F5F9" opacity="0.3" />
+    <circle cx="340" cy="130" r="1.8" fill="#F1F5F9" opacity="0.2" />
+    <circle cx="250" cy="80" r="2.2" fill="#F1F5F9" opacity="0.3" />
+    <circle cx="420" cy="110" r="1.5" fill="#F1F5F9" opacity="0.3" />
+    <circle cx="80" cy="220" r="2" fill="#F1F5F9" opacity="0.2" />
+    <circle cx="280" cy="160" r="1.5" fill="#F1F5F9" opacity="0.3" />
+    
+    <!-- 十字星 -->
+    <path d="M380,70 L382,75 L387,77 L382,79 L380,84 L378,79 L373,77 L378,75 Z" fill="#F1F5F9" opacity="0.4" />
+
+    <!-- 新月 -->
+    <path d="M160,90 A40,40 0 0,0 200,150 A32,32 0 0,1 160,90" fill="#F1F5F9" opacity="0.9" />
+
+    <!-- 遠中近景淺色山脈 (2.2 倍) -->
+    <g transform="translate(-316, -181) scale(2.2)">
+      <!-- 遠景山脈 -->
+      <polygon points="145,315 180,240 215,315" fill="#F1F5F9" opacity="0.35" />
+      <polygon points="215,315 250,220 285,315" fill="#F1F5F9" opacity="0.35" />
+      <polygon points="285,315 325,235 365,315" fill="#F1F5F9" opacity="0.35" />
+
+      <!-- 中景山脈 -->
+      <polygon points="150,315 210,195 245,315" fill="#F1F5F9" opacity="0.65" />
+      <polygon points="210,195 245,315 275,315" fill="#F1F5F9" opacity="0.65" />
+      <polygon points="255,315 295,185 340,315" fill="#F1F5F9" opacity="0.65" />
+      <polygon points="295,185 340,315 370,315" fill="#F1F5F9" opacity="0.65" />
+
+      <!-- 近景山脈 -->
+      <polygon points="160,315 200,245 220,315" fill="#F1F5F9" opacity="0.90" />
+      <polygon points="200,245 220,315 250,315" fill="#F1F5F9" opacity="0.90" />
+      <polygon points="240,315 275,230 305,315" fill="#F1F5F9" opacity="0.90" />
+      <polygon points="275,230 305,315 335,315" fill="#F1F5F9" opacity="0.90" />
+      <polygon points="315,315 345,250 375,315" fill="#F1F5F9" opacity="0.90" />
+
+      <!-- 草地/細節 -->
+      <polygon points="190,235 210,195 222,235" fill="#F1F5F9" opacity="1.00" />
+      <polygon points="210,195 222,235 235,245" fill="#F1F5F9" opacity="1.00" />
+      <polygon points="280,220 295,185 310,230" fill="#F1F5F9" opacity="1.00" />
+      <polygon points="295,185 310,230 325,245" fill="#F1F5F9" opacity="1.00" />
+      <polygon points="190,262 200,245 208,265" fill="#F1F5F9" opacity="1.00" />
+      <polygon points="265,255 275,230 285,255" fill="#F1F5F9" opacity="1.00" />
+      <polygon points="335,272 345,250 355,275" fill="#F1F5F9" opacity="1.00" />
+    </g>
+  </g>
+</svg>
