@@ -117,6 +117,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clear_all_logs => 'Clear all logs';
 
   @override
+  String get clear_logs_confirm_title => 'Clear Logs';
+
+  @override
+  String get clear_logs_confirm_content =>
+      'Are you sure you want to clear all step logs? This action cannot be undone.';
+
+  @override
   String get no_logs => 'No logs yet.';
 
   @override

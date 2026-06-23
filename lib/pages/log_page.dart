@@ -14,21 +14,48 @@ class LogPage extends StatelessWidget {
     final logs = logService.logs;
 
     Future<void> clearLogs() async {
-      await context.read<LogService>().clearLogs();
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(l10n.clear_all_logs),
-            content: Text(l10n.logs_cleared),
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: Text(l10n.clear_logs_confirm_title),
+            content: Text(l10n.clear_logs_confirm_content),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(l10n.close),
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(l10n.cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: Text(
+                  l10n.confirm,
+                  style: TextStyle(
+                    color: Theme.of(dialogContext).colorScheme.error,
+                  ),
+                ),
               ),
             ],
-          ),
-        );
+          );
+        },
+      );
+
+      if (confirm == true && context.mounted) {
+        await context.read<LogService>().clearLogs();
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(l10n.clear_all_logs),
+              content: Text(l10n.logs_cleared),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(l10n.close),
+                ),
+              ],
+            ),
+          );
+        }
       }
     }
 

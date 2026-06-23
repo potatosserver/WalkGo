@@ -116,6 +116,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get clear_all_logs => '清除所有日誌';
 
   @override
+  String get clear_logs_confirm_title => '確認清除日誌';
+
+  @override
+  String get clear_logs_confirm_content => '確定要清除所有步數日誌嗎？此操作無法復原。';
+
+  @override
   String get no_logs => '尚無日誌。';
 
   @override

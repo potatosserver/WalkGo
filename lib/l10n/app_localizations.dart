@@ -308,6 +308,18 @@ abstract class AppLocalizations {
   /// **'Clear all logs'**
   String get clear_all_logs;
 
+  /// No description provided for @clear_logs_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Logs'**
+  String get clear_logs_confirm_title;
+
+  /// No description provided for @clear_logs_confirm_content.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to clear all step logs? This action cannot be undone.'**
+  String get clear_logs_confirm_content;
+
   /// No description provided for @no_logs.
   ///
   /// In en, this message translates to:
