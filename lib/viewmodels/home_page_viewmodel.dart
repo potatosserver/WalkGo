@@ -11,8 +11,6 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
   final FlutterBackgroundService _service = FlutterBackgroundService();
 
   bool _isAutoRunning = false;
-  // ... (previous fields remain the same)
-  // [Internal State Fields Placeholder for brevity, no changes above this line in the real file]
   String _statusLog = "";
   int _sessionTotalSteps = 0;
   int _lastStepsWritten = 0;
@@ -26,7 +24,6 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
   int _todayTotalSteps = 0;
   String? _nextRunTime;
 
-  // ... (getters remain the same)
   bool get isAutoRunning => _isAutoRunning;
   String get statusLog => _statusLog;
   int get sessionTotalSteps => _sessionTotalSteps;
@@ -53,48 +50,36 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
 
   HomePageViewModel() {
     LogService().attachToBackgroundService();
-    // Register lifecycle observer
     WidgetsBinding.instance.addObserver(this);
     _initialize();
   }
 
   @override
   void dispose() {
-    // Unregister lifecycle observer to prevent memory leak
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Trigger step refresh when returning to the app
     if (state == AppLifecycleState.resumed) {
       refreshTodaySteps();
     }
   }
 
   Future<void> _initialize() async {
-    // 1. Setup listeners to catch any events from the service.
     _setupServiceListeners();
 
-    // 2. Ensure the background service is running.
     final isServiceRunning = await _service.isRunning();
     if (!isServiceRunning) {
       await _service.startService();
     }
 
-    // 3. Load user settings from SharedPreferences.
     await _loadNonStateSettings();
-
-    // 4. Get the current step count from the health service.
     await refreshTodaySteps();
-
-    // 5. Now that the service is running and listeners are attached,
-    //    request the initial state from the service.
     _service.invoke('get_status');
   }
 
-  // ... (previous methods remain the same)
   void notifyAppDetached() {
     _service.invoke("app_detached");
   }
@@ -168,6 +153,10 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
   Future<bool> _validateParameters(BuildContext context) async {
     if (_l10n == null) return true;
     await _loadNonStateSettings();
+    
+    // 非同步操作（_loadNonStateSettings）之後，檢查 context 是否依然掛載
+    if (!context.mounted) return false;
+
     final int? base = int.tryParse(_baseSteps);
     if (base == null) return false;
     if (_offsetEnabled && base <= _offsetSteps) {
@@ -269,10 +258,18 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> toggleAutoMode(BuildContext context) async {
     final serviceAlive = await _service.isRunning();
+    // 非同步操作之後，檢查 context 是否依然掛載
+    if (!context.mounted) return;
+
     if (!_isAutoRunning) {
       if (!(await _validateParameters(context))) return;
+      // 非同步操作（_validateParameters）之後，檢查 context 是否依然掛載
+      if (!context.mounted) return;
+
       if (!serviceAlive) {
         await _service.startService();
+        // 非同步操作之後，檢查 context 是否依然掛載
+        if (!context.mounted) return;
       }
       if (_l10n == null) return;
       _service.invoke('start', _getLocalizedStrings());
@@ -281,7 +278,6 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
       if (_l10n == null) return;
       _service.invoke("stop", _getLocalizedStrings());
       _showErrorDialog(context, _l10n!.auto_service_stopped);
-      // Ensure data is refreshed immediately after stopping
       await refreshTodaySteps();
     }
   }
