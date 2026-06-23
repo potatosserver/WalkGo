@@ -113,7 +113,7 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
         _lastStepsWritten =
             (event['last_steps_written'] as num?)?.toInt() ?? _lastStepsWritten;
       }
-      
+
       _nextRunTime = event['next_run_time'] as String?;
 
       if (_l10n != null) {
@@ -244,8 +244,9 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
       'notification_service_running': _l10n!.notification_service_running,
       'notification_steps_written_title':
           _l10n!.notification_steps_written_title,
-      'notification_steps_written':
-          _l10n!.notification_steps_written('{steps}'),
+      'notification_steps_written': _l10n!.notification_steps_written(
+        '{steps}',
+      ),
       'notification_next_run': _l10n!.notification_next_run('{time}'),
       'automatic_write_success': _l10n!.automatic_write_success('{steps}'),
       'write_fail_check_log': _l10n!.write_fail_check_log,
@@ -255,8 +256,8 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
           _l10n!.notification_service_stopped_content,
       'background_service_start': _l10n!.background_service_start,
       'auto_pause_notification_title': _l10n!.auto_pause_notification_title,
-      'auto_pause_notification_content_with_steps':
-          _l10n!.auto_pause_notification_content_with_steps('{steps}'),
+      'auto_pause_notification_content_with_steps': _l10n!
+          .auto_pause_notification_content_with_steps('{steps}'),
     };
   }
 
@@ -273,11 +274,11 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
       if (!serviceAlive) {
         await _service.startService();
       }
-       if (_l10n == null) return;
+      if (_l10n == null) return;
       _service.invoke('start', _getLocalizedStrings());
       _showErrorDialog(context, _l10n!.auto_service_started);
     } else {
-       if (_l10n == null) return;
+      if (_l10n == null) return;
       _service.invoke("stop", _getLocalizedStrings());
       _showErrorDialog(context, _l10n!.auto_service_stopped);
       // Ensure data is refreshed immediately after stopping

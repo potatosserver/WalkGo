@@ -102,8 +102,9 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
       systemNavigationBarColor: theme.colorScheme.surface,
-      systemNavigationBarIconBrightness:
-          isLightMode ? Brightness.dark : Brightness.light,
+      systemNavigationBarIconBrightness: isLightMode
+          ? Brightness.dark
+          : Brightness.light,
     );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -138,10 +139,11 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                     title: l10n.permission_activity_title,
                     description: l10n.permission_activity_desc,
                     requestPermission: () => _requestSimplePermission(
-                        Permission.activityRecognition),
+                      Permission.activityRecognition,
+                    ),
                     checkPermission: () async => (await _checkSimplePermission(
-                            Permission.activityRecognition))
-                        .isGranted,
+                      Permission.activityRecognition,
+                    )).isGranted,
                   );
                 case 2:
                   return _buildPermissionPage(
@@ -150,9 +152,9 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                     description: l10n.permission_notification_desc,
                     requestPermission: () =>
                         _requestSimplePermission(Permission.notification),
-                    checkPermission: () async =>
-                        (await _checkSimplePermission(Permission.notification))
-                            .isGranted,
+                    checkPermission: () async => (await _checkSimplePermission(
+                      Permission.notification,
+                    )).isGranted,
                   );
                 case 3:
                   return _buildPermissionPage(
@@ -160,10 +162,11 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                     title: l10n.permission_battery_title,
                     description: l10n.permission_battery_desc,
                     requestPermission: () => _requestSimplePermission(
-                        Permission.ignoreBatteryOptimizations),
+                      Permission.ignoreBatteryOptimizations,
+                    ),
                     checkPermission: () async => (await _checkSimplePermission(
-                            Permission.ignoreBatteryOptimizations))
-                        .isGranted,
+                      Permission.ignoreBatteryOptimizations,
+                    )).isGranted,
                   );
                 default:
                   return const SizedBox.shrink();
@@ -238,27 +241,30 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                 child: ElevatedButton(
                   onPressed: isGranted ? _goToNextPage : null,
                   style: ButtonStyle(
-                      padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      shape: WidgetStateProperty.all(const StadiumBorder()),
-                      backgroundColor:
-                          WidgetStateProperty.resolveWith<Color?>((states) {
-                        if (states.contains(WidgetState.disabled)) {
-                          return colorScheme.onSurface.withAlpha(30);
-                        }
-                        if (_currentPage == _pageCount - 1) {
-                          return Colors.green.shade600;
-                        }
-                        return colorScheme.primary;
-                      }),
-                      foregroundColor:
-                          WidgetStateProperty.resolveWith<Color?>((states) {
-                        if (states.contains(WidgetState.disabled)) {
-                          return colorScheme.onSurface.withAlpha(97);
-                        }
-                        return colorScheme.onPrimary;
-                      })),
+                    padding: WidgetStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    shape: WidgetStateProperty.all(const StadiumBorder()),
+                    backgroundColor: WidgetStateProperty.resolveWith<Color?>((
+                      states,
+                    ) {
+                      if (states.contains(WidgetState.disabled)) {
+                        return colorScheme.onSurface.withAlpha(30);
+                      }
+                      if (_currentPage == _pageCount - 1) {
+                        return Colors.green.shade600;
+                      }
+                      return colorScheme.primary;
+                    }),
+                    foregroundColor: WidgetStateProperty.resolveWith<Color?>((
+                      states,
+                    ) {
+                      if (states.contains(WidgetState.disabled)) {
+                        return colorScheme.onSurface.withAlpha(97);
+                      }
+                      return colorScheme.onPrimary;
+                    }),
+                  ),
                   child: Text(
                     _currentPage == _pageCount - 1
                         ? l10n.setup_complete

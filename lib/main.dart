@@ -24,7 +24,8 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 @pragma('vm:entry-point')
 void onDidReceiveNotificationResponse(
-    NotificationResponse notificationResponse) async {
+  NotificationResponse notificationResponse,
+) async {
   if (notificationResponse.actionId == 'notification_toggled') {
     final service = FlutterBackgroundService();
     final prefs = await SharedPreferences.getInstance();
@@ -54,8 +55,8 @@ void onDidReceiveNotificationResponse(
       'notification_stop_button': l10n.notification_stop_button,
       'notification_start_button': l10n.notification_start_button,
       'auto_pause_notification_title': l10n.auto_pause_notification_title,
-      'auto_pause_notification_content_with_steps':
-          l10n.auto_pause_notification_content_with_steps('{steps}'),
+      'auto_pause_notification_content_with_steps': l10n
+          .auto_pause_notification_content_with_steps('{steps}'),
       'write_fail_check_log': l10n.write_fail_check_log,
       'automatic_write_success': l10n.automatic_write_success('{steps}'),
       'notification_next_run': l10n.notification_next_run('{time}'),
@@ -71,7 +72,9 @@ void onDidReceiveNotificationResponse(
 }
 
 Future<void> initializeService(
-    String initialTitle, String initialContent) async {
+  String initialTitle,
+  String initialContent,
+) async {
   final service = FlutterBackgroundService();
 
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -83,7 +86,8 @@ Future<void> initializeService(
 
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
+        AndroidFlutterLocalNotificationsPlugin
+      >()
       ?.createNotificationChannel(channel);
 
   await service.configure(
@@ -96,10 +100,7 @@ Future<void> initializeService(
       initialNotificationContent: initialContent,
       foregroundServiceNotificationId: foregroundNotificationId,
     ),
-    iosConfiguration: IosConfiguration(
-      autoStart: false,
-      onForeground: onStart,
-    ),
+    iosConfiguration: IosConfiguration(autoStart: false, onForeground: onStart),
   );
 }
 
@@ -201,9 +202,13 @@ class _WalkGoAppState extends State<WalkGoApp> {
         ChangeNotifierProvider(create: (_) => LanguageService()),
         ChangeNotifierProvider(create: (_) => LogService()),
         ChangeNotifierProvider(create: (_) => HomePageViewModel()),
-        ChangeNotifierProxyProvider<HomePageViewModel, AdvancedSettingsViewModel>(
-          create: (context) =>
-              AdvancedSettingsViewModel(Provider.of<HomePageViewModel>(context, listen: false)),
+        ChangeNotifierProxyProvider<
+          HomePageViewModel,
+          AdvancedSettingsViewModel
+        >(
+          create: (context) => AdvancedSettingsViewModel(
+            Provider.of<HomePageViewModel>(context, listen: false),
+          ),
           update: (context, homePageViewModel, previous) =>
               AdvancedSettingsViewModel(homePageViewModel),
         ),

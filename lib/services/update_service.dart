@@ -65,17 +65,24 @@ class UpdateService {
     if (updateChannel == 'google_play') {
       try {
         final AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
-        if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+        if (updateInfo.updateAvailability ==
+            UpdateAvailability.updateAvailable) {
           return updateInfo;
         }
       } catch (e) {
-        developer.log('Error checking for Google Play update: $e', name: 'walkgo.updateservice');
+        developer.log(
+          'Error checking for Google Play update: $e',
+          name: 'walkgo.updateservice',
+        );
       }
     } else {
       try {
         final latestRelease = await getLatestGithubRelease();
         if (latestRelease != null) {
-          final String latestVersion = latestRelease.tagName.replaceAll('v', '');
+          final String latestVersion = latestRelease.tagName.replaceAll(
+            'v',
+            '',
+          );
           final packageInfo = await PackageInfo.fromPlatform();
           final String currentVersion = packageInfo.version;
 
@@ -96,17 +103,12 @@ class UpdateService {
     }
   }
 
-
   Future<String?> getArchitecture() async {
     if (!Platform.isAndroid) {
       return null;
     }
 
-    const availableApkAbis = {
-      'arm64-v8a',
-      'armeabi-v7a',
-      'x86_64',
-    };
+    const availableApkAbis = {'arm64-v8a', 'armeabi-v7a', 'x86_64'};
 
     try {
       final deviceInfo = DeviceInfoPlugin();
@@ -124,7 +126,10 @@ class UpdateService {
 
       for (final String abi in supportedAbis) {
         if (availableApkAbis.contains(abi)) {
-          developer.log('Found best matching ABI: $abi', name: 'walkgo.updateservice');
+          developer.log(
+            'Found best matching ABI: $abi',
+            name: 'walkgo.updateservice',
+          );
           return abi;
         }
       }
@@ -153,7 +158,10 @@ class UpdateService {
     );
   }
 
-  Future<String?> downloadUpdate(ReleaseInfo release, String arch, AppLocalizations l10n, {
+  Future<String?> downloadUpdate(
+    ReleaseInfo release,
+    String arch,
+    AppLocalizations l10n, {
     Function(double)? onProgress,
     Function(String)? onError,
     Function(String)? onStatus,
@@ -163,8 +171,14 @@ class UpdateService {
       final apkName = 'app-$arch-release.apk';
       final sha1Name = '$apkName.sha1';
 
-      final apkAsset = assets.firstWhere((a) => a['name'] == apkName, orElse: () => null);
-      final sha1Asset = assets.firstWhere((a) => a['name'] == sha1Name, orElse: () => null);
+      final apkAsset = assets.firstWhere(
+        (a) => a['name'] == apkName,
+        orElse: () => null,
+      );
+      final sha1Asset = assets.firstWhere(
+        (a) => a['name'] == sha1Name,
+        orElse: () => null,
+      );
 
       if (apkAsset == null) {
         final errorMessage = l10n.invalid_architecture;
@@ -191,13 +205,19 @@ class UpdateService {
       if (sha1Asset != null) {
         onStatus?.call(l10n.verifying_integrity);
         await Dio().download(sha1Asset['browser_download_url'], sha1Path);
-        final expectedHash = (await File(sha1Path).readAsString()).trim().split(' ').first;
+        final expectedHash = (await File(
+          sha1Path,
+        ).readAsString()).trim().split(' ').first;
         final actualHash = await _calculateSHA1(apkPath);
 
         if (actualHash != expectedHash) {
           final errorMessage = l10n.hash_mismatch;
           onError?.call(errorMessage);
-          developer.log(errorMessage, name: 'walkgo.updateservice', level: 1000);
+          developer.log(
+            errorMessage,
+            name: 'walkgo.updateservice',
+            level: 1000,
+          );
           return null;
         }
       }
@@ -209,12 +229,23 @@ class UpdateService {
     } on DioException catch (e) {
       final errorMessage = l10n.update_check_failed;
       onError?.call(errorMessage);
-      developer.log(errorMessage, name: 'walkgo.updateservice', error: e, level: 1000);
+      developer.log(
+        errorMessage,
+        name: 'walkgo.updateservice',
+        error: e,
+        level: 1000,
+      );
       return null;
     } catch (e, s) {
       final errorMessage = l10n.unknown_error;
       onError?.call(errorMessage);
-      developer.log(errorMessage, name: 'walkgo.updateservice', error: e, stackTrace: s, level: 1000);
+      developer.log(
+        errorMessage,
+        name: 'walkgo.updateservice',
+        error: e,
+        stackTrace: s,
+        level: 1000,
+      );
       return null;
     }
   }

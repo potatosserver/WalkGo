@@ -19,10 +19,15 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
   @override
   void initState() {
     super.initState();
-    final viewModel = Provider.of<AdvancedSettingsViewModel>(context, listen: false);
+    final viewModel = Provider.of<AdvancedSettingsViewModel>(
+      context,
+      listen: false,
+    );
 
     _offsetStepsController = TextEditingController(text: viewModel.offsetSteps);
-    _autoPauseThresholdController = TextEditingController(text: viewModel.autoPauseThreshold);
+    _autoPauseThresholdController = TextEditingController(
+      text: viewModel.autoPauseThreshold,
+    );
 
     _offsetStepsFocusNode = FocusNode();
     _autoPauseThresholdFocusNode = FocusNode();
@@ -55,9 +60,7 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.advanced_parameters),
-      ),
+      appBar: AppBar(title: Text(l10n.advanced_parameters)),
       body: Consumer<AdvancedSettingsViewModel>(
         builder: (context, viewModel, child) {
           final isLocked = viewModel.isAutoModeRunning;
@@ -65,7 +68,8 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
           if (_offsetStepsController.text != viewModel.offsetSteps) {
             _offsetStepsController.text = viewModel.offsetSteps;
           }
-          if (_autoPauseThresholdController.text != viewModel.autoPauseThreshold) {
+          if (_autoPauseThresholdController.text !=
+              viewModel.autoPauseThreshold) {
             _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
           }
 
@@ -93,7 +97,10 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                     child: GestureDetector(
                       onTap: () => FocusScope.of(context).unfocus(),
                       child: ListView(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0,
+                          vertical: 16.0,
+                        ),
                         children: [
                           _buildSettingsCard(
                             context,
@@ -101,14 +108,21 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                             subtitle: l10n.offset_settings_subtitle,
                             trailing: Switch(
                               value: viewModel.offsetEnabled,
-                              onChanged: isLocked ? null : (bool value) {
-                                viewModel.setOffsetEnabled(value);
-                              },
+                              onChanged: isLocked
+                                  ? null
+                                  : (bool value) {
+                                      viewModel.setOffsetEnabled(value);
+                                    },
                             ),
                             child: Visibility(
                               visible: viewModel.offsetEnabled,
                               child: Padding(
-                                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  8,
+                                  16,
+                                  16,
+                                ),
                                 child: _buildTextField(
                                   enabled: !isLocked,
                                   controller: _offsetStepsController,
@@ -125,14 +139,21 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                             subtitle: l10n.auto_pause_subtitle,
                             trailing: Switch(
                               value: viewModel.autoPauseEnabled,
-                              onChanged: isLocked ? null : (bool value) {
-                                viewModel.setAutoPauseEnabled(value);
-                              },
+                              onChanged: isLocked
+                                  ? null
+                                  : (bool value) {
+                                      viewModel.setAutoPauseEnabled(value);
+                                    },
                             ),
                             child: Visibility(
                               visible: viewModel.autoPauseEnabled,
                               child: Padding(
-                                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  8,
+                                  16,
+                                  16,
+                                ),
                                 child: _buildTextField(
                                   enabled: !isLocked,
                                   controller: _autoPauseThresholdController,
@@ -156,11 +177,13 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
     );
   }
 
-  Widget _buildSettingsCard(BuildContext context,
-      {required String title,
-      String? subtitle,
-      Widget? trailing,
-      required Widget child}) {
+  Widget _buildSettingsCard(
+    BuildContext context, {
+    required String title,
+    String? subtitle,
+    Widget? trailing,
+    required Widget child,
+  }) {
     final theme = Theme.of(context);
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
@@ -183,8 +206,9 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                     children: [
                       Text(
                         title,
-                        style: theme.textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       if (subtitle != null)
                         Padding(
@@ -192,7 +216,8 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                           child: Text(
                             subtitle,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant),
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ),
                     ],

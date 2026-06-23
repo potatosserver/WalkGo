@@ -26,7 +26,8 @@ class LogService extends ChangeNotifier {
     } catch (e) {
       if (kDebugMode) {
         print(
-            'LogService: Failed to attach to background service. This is expected if in a secondary isolate.');
+          'LogService: Failed to attach to background service. This is expected if in a secondary isolate.',
+        );
       }
     }
   }

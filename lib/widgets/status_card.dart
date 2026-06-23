@@ -50,21 +50,26 @@ class StatusCard extends StatelessWidget {
                       l10n.status_ready_to_start,
                       textAlign: TextAlign.center,
                       style: theme.textTheme.titleMedium?.copyWith(
-                          color: contentColor, fontWeight: FontWeight.bold),
+                        color: contentColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ] else ...[
                     // When running, only show the "Next run" info to avoid redundancy
                     Text(
                       l10n.next_run_title,
                       style: theme.textTheme.titleSmall?.copyWith(
-                          color: contentColor.withAlpha(200),
-                          fontWeight: FontWeight.bold),
+                        color: contentColor.withAlpha(200),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       viewModel.nextRunTime ?? '--:--',
                       style: theme.textTheme.headlineMedium?.copyWith(
-                          color: contentColor, fontWeight: FontWeight.bold),
+                        color: contentColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ],
@@ -88,7 +93,8 @@ class StatusCard extends StatelessWidget {
                     children: [
                       Text(
                         l10n.today_steps_total(
-                            viewModel.todayTotalSteps.toString()),
+                          viewModel.todayTotalSteps.toString(),
+                        ),
                         textAlign: TextAlign.center,
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: contentColor.withAlpha(200),
@@ -149,11 +155,12 @@ class StatusCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMetricColumn(
-      {required String title,
-      required String value,
-      required ThemeData theme,
-      required Color contentColor}) {
+  Widget _buildMetricColumn({
+    required String title,
+    required String value,
+    required ThemeData theme,
+    required Color contentColor,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -163,15 +170,19 @@ class StatusCard extends StatelessWidget {
           child: Text(
             title,
             textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall
-                ?.copyWith(color: contentColor, fontWeight: FontWeight.w500),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: contentColor,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
         const SizedBox(height: 4),
         Text(
           value,
-          style: theme.textTheme.titleLarge
-              ?.copyWith(color: contentColor, fontWeight: FontWeight.bold),
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: contentColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );

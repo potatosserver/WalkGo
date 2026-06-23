@@ -15,8 +15,10 @@ const String prefManualSteps = 'manual_steps';
 const String prefAutoPauseEnabled = 'auto_pause_enabled';
 const String prefAutoPauseThreshold = 'auto_pause_threshold';
 const String prefStatusLog = 'status_log';
-const String updateChannel = String.fromEnvironment('UPDATE_CHANNEL', defaultValue: 'github');
-
+const String updateChannel = String.fromEnvironment(
+  'UPDATE_CHANNEL',
+  defaultValue: 'github',
+);
 
 // Notification Channel constants
 const String channelName = 'background_service';
@@ -34,5 +36,6 @@ const int stepsUpdateNotificationId = 889;
 
 const String confirmationChannelId = 'confirmation_channel';
 const String confirmationChannelName = 'Confirmation';
-const String confirmationChannelDescription = 'Channel for confirmation notifications.';
+const String confirmationChannelDescription =
+    'Channel for confirmation notifications.';
 const int confirmationNotificationId = 890;

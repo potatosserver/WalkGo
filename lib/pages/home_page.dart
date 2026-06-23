@@ -42,7 +42,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
       );
       // After manual writing, refresh the total steps of the day immediately
-      Provider.of<HomePageViewModel>(context, listen: false).refreshTodaySteps();
+      Provider.of<HomePageViewModel>(
+        context,
+        listen: false,
+      ).refreshTodaySteps();
     });
 
     // Use the new update flow
@@ -76,8 +79,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
       systemNavigationBarColor: theme.colorScheme.surface,
-      systemNavigationBarIconBrightness:
-          isLightMode ? Brightness.dark : Brightness.light,
+      systemNavigationBarIconBrightness: isLightMode
+          ? Brightness.dark
+          : Brightness.light,
     );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -108,8 +112,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               return GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),
                 child: ListView(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   children: [
                     const StatusCard(),
                     const SizedBox(height: 16),
@@ -126,8 +132,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         backgroundColor: isLightMode
                             ? Colors.grey.shade300
                             : Colors.grey.shade700,
-                        foregroundColor:
-                            isLightMode ? Colors.black : Colors.white,
+                        foregroundColor: isLightMode
+                            ? Colors.black
+                            : Colors.white,
                       ),
                       onPressed: () {
                         viewModel.manualWriteSteps();
@@ -135,12 +142,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     ),
                     const SizedBox(height: 24),
                     FilledButton.icon(
-                      icon: Icon(viewModel.isAutoRunning
-                          ? Icons.stop_circle_outlined
-                          : Icons.play_circle_outline),
-                      label: Text(viewModel.isAutoRunning
-                          ? l10n.stop_auto_steps
-                          : l10n.start_auto_steps),
+                      icon: Icon(
+                        viewModel.isAutoRunning
+                            ? Icons.stop_circle_outlined
+                            : Icons.play_circle_outline,
+                      ),
+                      label: Text(
+                        viewModel.isAutoRunning
+                            ? l10n.stop_auto_steps
+                            : l10n.start_auto_steps,
+                      ),
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(

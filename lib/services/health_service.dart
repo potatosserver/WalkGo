@@ -19,8 +19,9 @@ class HealthService {
       final bool hasPermission =
           await health.hasPermissions([HealthDataType.STEPS]) ?? false;
       if (!hasPermission) {
-        final bool authorized =
-            await health.requestAuthorization([HealthDataType.STEPS]);
+        final bool authorized = await health.requestAuthorization([
+          HealthDataType.STEPS,
+        ]);
         if (!authorized) {
           return 0;
         }
@@ -32,7 +33,9 @@ class HealthService {
       return steps ?? 0;
     } catch (e) {
       ErrorLogService().addErrorLog(
-          '[HealthService] Error fetching steps today', e.toString());
+        '[HealthService] Error fetching steps today',
+        e.toString(),
+      );
       return 0;
     }
   }
@@ -51,8 +54,10 @@ class HealthService {
       );
       return success;
     } catch (e) {
-      ErrorLogService()
-          .addErrorLog('[HealthService] Error writing steps', e.toString());
+      ErrorLogService().addErrorLog(
+        '[HealthService] Error writing steps',
+        e.toString(),
+      );
       return false;
     }
   }

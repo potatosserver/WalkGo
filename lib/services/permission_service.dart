@@ -1,4 +1,3 @@
-
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionService {
@@ -6,7 +5,9 @@ class PermissionService {
     final activityStatus = await Permission.activityRecognition.status;
     final notificationStatus = await Permission.notification.status;
     final batteryStatus = await Permission.ignoreBatteryOptimizations.status;
-    return activityStatus.isGranted && notificationStatus.isGranted && batteryStatus.isGranted;
+    return activityStatus.isGranted &&
+        notificationStatus.isGranted &&
+        batteryStatus.isGranted;
   }
 
   Future<void> requestPermissions() async {

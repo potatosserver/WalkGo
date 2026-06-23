@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/log_service.dart';
@@ -69,18 +68,21 @@ class LogPage extends StatelessWidget {
                   title = l10n.log_write_success_manual(steps.toString());
                 }
 
-                final formattedTimestamp = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(timestamp));
+                final formattedTimestamp = DateFormat(
+                  'yyyy-MM-dd HH:mm',
+                ).format(DateTime.parse(timestamp));
 
                 return Card(
                   elevation: 1,
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
                   child: ListTile(
                     leading: Icon(iconData, color: iconColor, size: 36),
                     title: Text(
                       title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
                       formattedTimestamp,

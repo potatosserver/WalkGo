@@ -71,8 +71,7 @@ class _SettingsPageState extends State<SettingsPage> {
           updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
         await UpdateService().startGooglePlayUpdate(updateInfo);
       } else {
-        _showAlertDialog(
-            l10n.check_for_updates, l10n.latest_version_installed);
+        _showAlertDialog(l10n.check_for_updates, l10n.latest_version_installed);
       }
     } catch (e) {
       _showAlertDialog(l10n.check_for_updates, l10n.update_check_failed);
@@ -86,9 +85,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final isGooglePlay = updateChannel == 'google_play';
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.settings),
-      ),
+      appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
         children: [
@@ -133,9 +130,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   trailing: const Icon(Icons.open_in_new),
                   onTap: () async {
                     final url = Uri.parse(
-                        'https://play.google.com/store/apps/details?id=com.potatosserver.walkgo');
+                      'https://play.google.com/store/apps/details?id=com.potatosserver.walkgo',
+                    );
                     if (await canLaunchUrl(url)) {
-                      await launchUrl(url, mode: LaunchMode.externalApplication);
+                      await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
                     }
                   },
                 ),
@@ -164,13 +165,20 @@ class _SettingsPageState extends State<SettingsPage> {
                   onTap: () => UpdateFlowDialog.run(context, force: true),
                 ),
               ListTile(
-                leading: Icon(Icons.delete_forever_outlined,
-                    color: theme.colorScheme.error),
-                title: Text(l10n.clear_data_button,
-                    style: TextStyle(color: theme.colorScheme.error)),
-                subtitle: Text(l10n.app_reset_desc,
-                    style: TextStyle(
-                        color: theme.colorScheme.error.withAlpha(204))),
+                leading: Icon(
+                  Icons.delete_forever_outlined,
+                  color: theme.colorScheme.error,
+                ),
+                title: Text(
+                  l10n.clear_data_button,
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+                subtitle: Text(
+                  l10n.app_reset_desc,
+                  style: TextStyle(
+                    color: theme.colorScheme.error.withAlpha(204),
+                  ),
+                ),
                 onTap: () => _showClearDataDialog(context, l10n),
               ),
             ],
@@ -180,8 +188,11 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildSettingsCard(BuildContext context,
-      {required String title, required List<Widget> children}) {
+  Widget _buildSettingsCard(
+    BuildContext context, {
+    required String title,
+    required List<Widget> children,
+  }) {
     final theme = Theme.of(context);
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
@@ -225,8 +236,9 @@ class _SettingsPageState extends State<SettingsPage> {
               text: l10n.github_source_code,
               trailing: const Icon(Icons.open_in_new, size: 20),
               onTap: () async {
-                final url =
-                    Uri.parse('https://github.com/potatosserver/WalkGo');
+                final url = Uri.parse(
+                  'https://github.com/potatosserver/WalkGo',
+                );
                 if (await canLaunchUrl(url)) {
                   await launchUrl(url, mode: LaunchMode.externalApplication);
                 }
@@ -265,11 +277,13 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildAboutRow(BuildContext context,
-      {required Widget icon,
-      required String text,
-      Widget? trailing,
-      VoidCallback? onTap}) {
+  Widget _buildAboutRow(
+    BuildContext context, {
+    required Widget icon,
+    required String text,
+    Widget? trailing,
+    VoidCallback? onTap,
+  }) {
     final theme = Theme.of(context);
     return InkWell(
       onTap: onTap,
@@ -280,7 +294,9 @@ class _SettingsPageState extends State<SettingsPage> {
           children: [
             IconTheme(
               data: IconThemeData(
-                  size: 24, color: theme.colorScheme.onSurfaceVariant),
+                size: 24,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
               child: icon,
             ),
             const SizedBox(width: 16),
@@ -318,7 +334,10 @@ class _SettingsPageState extends State<SettingsPage> {
           builder: (context) => ReleaseNotesDialog(release: release),
         );
       } else {
-        _showAlertDialog(l10n.view_release_notes, l10n.update_failed('Could not fetch release notes'));
+        _showAlertDialog(
+          l10n.view_release_notes,
+          l10n.update_failed('Could not fetch release notes'),
+        );
       }
     } catch (e) {
       _showAlertDialog(l10n.view_release_notes, l10n.update_check_failed);
@@ -330,15 +349,19 @@ class _SettingsPageState extends State<SettingsPage> {
     showDialog(
       context: context,
       builder: (dialogContext) {
-        final logService =
-            Provider.of<LogService>(dialogContext, listen: false);
+        final logService = Provider.of<LogService>(
+          dialogContext,
+          listen: false,
+        );
         final navigator = Navigator.of(dialogContext);
         return AlertDialog(
           title: Text(l10n.clear_data_confirm_title),
           content: Text(l10n.clear_data_confirm_content),
           actions: [
             TextButton(
-                onPressed: () => navigator.pop(), child: Text(l10n.cancel)),
+              onPressed: () => navigator.pop(),
+              child: Text(l10n.cancel),
+            ),
             TextButton(
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
@@ -346,13 +369,19 @@ class _SettingsPageState extends State<SettingsPage> {
                 await logService.clearLogs();
                 if (context.mounted) {
                   navigator.pop(); // Close the confirmation dialog
-                  _showAlertDialog(l10n.clear_data_button, l10n.data_cleared_success);
+                  _showAlertDialog(
+                    l10n.clear_data_button,
+                    l10n.data_cleared_success,
+                  );
                   router.go('/');
                 }
               },
-              child: Text(l10n.confirm,
-                  style: TextStyle(
-                      color: Theme.of(dialogContext).colorScheme.error)),
+              child: Text(
+                l10n.confirm,
+                style: TextStyle(
+                  color: Theme.of(dialogContext).colorScheme.error,
+                ),
+              ),
             ),
           ],
         );

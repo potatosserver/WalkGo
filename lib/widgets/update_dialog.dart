@@ -21,13 +21,7 @@ class UpdateDialog extends StatefulWidget {
   State<UpdateDialog> createState() => _UpdateDialogState();
 }
 
-enum UpdateStep {
-  details,
-  downloading,
-  readyToInstall,
-  error,
-  manualDownload,
-}
+enum UpdateStep { details, downloading, readyToInstall, error, manualDownload }
 
 class _UpdateDialogState extends State<UpdateDialog> {
   UpdateStep _step = UpdateStep.details;
@@ -156,10 +150,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
             onPressed: () => Navigator.pop(context),
             child: Text(l10n.cancel),
           ),
-          ElevatedButton(
-            onPressed: _startDownload,
-            child: Text(l10n.retry),
-          ),
+          ElevatedButton(onPressed: _startDownload, child: Text(l10n.retry)),
         ];
 
       case UpdateStep.readyToInstall:
@@ -168,10 +159,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
             onPressed: () => Navigator.pop(context),
             child: Text(l10n.cancel),
           ),
-          ElevatedButton(
-            onPressed: _installUpdate,
-            child: Text(l10n.install),
-          ),
+          ElevatedButton(onPressed: _installUpdate, child: Text(l10n.install)),
         ];
 
       case UpdateStep.manualDownload:
@@ -206,10 +194,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
             },
             child: Text(l10n.manual_download),
           ),
-          ElevatedButton(
-            onPressed: _startDownload,
-            child: Text(l10n.download),
-          ),
+          ElevatedButton(onPressed: _startDownload, child: Text(l10n.download)),
         ];
     }
   }

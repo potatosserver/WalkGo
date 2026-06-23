@@ -77,8 +77,9 @@ class _ParameterSettingsCardState extends State<ParameterSettingsCard> {
           children: [
             Text(
               l10n.param_settings,
-              style: theme.textTheme.titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 20),
             _buildTextField(
@@ -107,13 +108,16 @@ class _ParameterSettingsCardState extends State<ParameterSettingsCard> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                 ),
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const AdvancedParametersPage()),
+                    builder: (context) => const AdvancedParametersPage(),
+                  ),
                 ),
               ),
             ),

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart' hide RadioGroup;
 import 'package:provider/provider.dart';
 import 'package:walkgo/theme_provider.dart';
@@ -26,9 +25,7 @@ class AppearanceSettingsPage extends StatelessWidget {
     final currentMode = themeProvider.themeMode;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.theme),
-      ),
+      appBar: AppBar(title: Text(l10n.theme)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: RadioGroup<ThemeMode>.builder(
@@ -39,9 +36,8 @@ class AppearanceSettingsPage extends StatelessWidget {
             }
           },
           items: ThemeMode.values,
-          itemBuilder: (item) => RadioButtonBuilder(
-            _getThemeModeName(item, l10n),
-          ),
+          itemBuilder: (item) =>
+              RadioButtonBuilder(_getThemeModeName(item, l10n)),
           textStyle: const TextStyle(fontSize: 16),
         ),
       ),

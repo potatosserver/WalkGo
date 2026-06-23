@@ -14,8 +14,8 @@ class LanguageSettingsPage extends StatelessWidget {
   Map<String, String> _getLocalizedStrings(AppLocalizations l10n) {
     return {
       'auto_pause_notification_title': l10n.auto_pause_notification_title,
-      'auto_pause_notification_content_with_steps':
-          l10n.auto_pause_notification_content_with_steps('{steps}'),
+      'auto_pause_notification_content_with_steps': l10n
+          .auto_pause_notification_content_with_steps('{steps}'),
       'write_fail_check_log': l10n.write_fail_check_log,
       'automatic_write_success': l10n.automatic_write_success('{steps}'),
       'notification_next_run': l10n.notification_next_run('{time}'),
@@ -52,9 +52,7 @@ class LanguageSettingsPage extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.language_settings),
-      ),
+      appBar: AppBar(title: Text(l10n.language_settings)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: RadioGroup<Locale?>.builder(
@@ -73,20 +71,19 @@ class LanguageSettingsPage extends StatelessWidget {
             // Manually load the localizations for the new locale.
             // This is necessary because the background service runs in a separate isolate
             // and cannot access the app's context.
-            final newL10n =
-                await AppLocalizations.delegate.load(newLocale);
+            final newL10n = await AppLocalizations.delegate.load(newLocale);
 
             // Prepare the map of strings to send to the background service.
             final localizedStrings = _getLocalizedStrings(newL10n);
 
             // Send the updated strings to the background service.
-            FlutterBackgroundService()
-                .invoke('update_localization', localizedStrings);
+            FlutterBackgroundService().invoke(
+              'update_localization',
+              localizedStrings,
+            );
           },
           items: locales,
-          itemBuilder: (item) => RadioButtonBuilder(
-            getLocaleName(item),
-          ),
+          itemBuilder: (item) => RadioButtonBuilder(getLocaleName(item)),
           textStyle: const TextStyle(fontSize: 16),
         ),
       ),

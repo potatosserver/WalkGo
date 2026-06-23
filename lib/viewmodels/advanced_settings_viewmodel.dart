@@ -47,8 +47,8 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     _offsetSteps = (prefs.getInt(prefOffsetSteps) ?? 50).toString();
     _manualSteps = (prefs.getInt(prefManualSteps) ?? 1000).toString();
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
-    _autoPauseThreshold =
-        (prefs.getInt(prefAutoPauseThreshold) ?? 5000).toString();
+    _autoPauseThreshold = (prefs.getInt(prefAutoPauseThreshold) ?? 5000)
+        .toString();
     notifyListeners();
   }
 

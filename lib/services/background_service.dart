@@ -48,32 +48,36 @@ void onStart(ServiceInstance service) {
     }
   }
 
-  Future<void> showCustomNotification(String title, String content,
-      {required bool isRunning}) async {
+  Future<void> showCustomNotification(
+    String title,
+    String content, {
+    required bool isRunning,
+  }) async {
     final buttonLabel = isRunning
         ? (localizedStrings['notification_stop_button'] ?? 'Stop')
         : (localizedStrings['notification_start_button'] ?? 'Start');
 
     final AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-      foregroundChannelId,
-      'WalkGo Service',
-      channelDescription: 'This channel is used for the WalkGo service.',
-      importance: Importance.low,
-      priority: Priority.low,
-      ongoing: true,
-      autoCancel: false,
-      actions: <AndroidNotificationAction>[
-        AndroidNotificationAction(
-          'notification_toggled', // Action ID
-          buttonLabel, // Button title
-          showsUserInterface: true,
-        ),
-      ],
-    );
+          foregroundChannelId,
+          'WalkGo Service',
+          channelDescription: 'This channel is used for the WalkGo service.',
+          importance: Importance.low,
+          priority: Priority.low,
+          ongoing: true,
+          autoCancel: false,
+          actions: <AndroidNotificationAction>[
+            AndroidNotificationAction(
+              'notification_toggled', // Action ID
+              buttonLabel, // Button title
+              showsUserInterface: true,
+            ),
+          ],
+        );
 
-    final NotificationDetails platformDetails =
-        NotificationDetails(android: androidDetails);
+    final NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+    );
 
     await flutterLocalNotificationsPlugin.show(
       id: foregroundNotificationId,
@@ -104,7 +108,8 @@ void onStart(ServiceInstance service) {
       timer?.cancel();
       isRunning = false;
 
-      final title = localizedStrings['auto_pause_notification_title'] ??
+      final title =
+          localizedStrings['auto_pause_notification_title'] ??
           'Service Automatically Paused';
       final body =
           (localizedStrings['auto_pause_notification_content_with_steps'] ??
@@ -121,8 +126,9 @@ void onStart(ServiceInstance service) {
 
   Future<bool> writeStepsLogic({String source = 'automatic'}) async {
     final random = Random();
-    final offset =
-        offsetEnabled ? random.nextInt(offsetSteps * 2 + 1) - offsetSteps : 0;
+    final offset = offsetEnabled
+        ? random.nextInt(offsetSteps * 2 + 1) - offsetSteps
+        : 0;
     final steps = (source == 'manual') ? baseSteps : baseSteps + offset;
 
     try {
@@ -130,8 +136,10 @@ void onStart(ServiceInstance service) {
       if (!success) {
         final errorLog =
             localizedStrings['write_fail_check_log'] ?? 'Write failed.';
-        ErrorLogService().addErrorLog('[BackgroundService] Health write failed',
-            'Received failure from health service.');
+        ErrorLogService().addErrorLog(
+          '[BackgroundService] Health write failed',
+          'Received failure from health service.',
+        );
         broadcastUIUpdate(statusLog: errorLog);
         return false;
       }
@@ -153,27 +161,31 @@ void onStart(ServiceInstance service) {
         final stopped = await checkAndStopIfNeeded();
         if (stopped) return true;
 
-        final statusLog = (localizedStrings['automatic_write_success'] ??
-                'Wrote {steps} steps')
-            .replaceAll('{steps}', steps.toString());
+        final statusLog =
+            (localizedStrings['automatic_write_success'] ??
+                    'Wrote {steps} steps')
+                .replaceAll('{steps}', steps.toString());
 
         broadcastUIUpdate(statusLog: statusLog);
 
-        final nextRunBody = (localizedStrings['notification_next_run'] ??
-                'Next run at {time}')
-            .replaceAll(
-                '{time}',
-                DateFormat('HH:mm').format(
-                    DateTime.now().add(Duration(minutes: currentInterval))));
+        final nextRunBody =
+            (localizedStrings['notification_next_run'] ?? 'Next run at {time}')
+                .replaceAll(
+                  '{time}',
+                  DateFormat('HH:mm').format(
+                    DateTime.now().add(Duration(minutes: currentInterval)),
+                  ),
+                );
         showCustomNotification(
           localizedStrings['notification_service_running'] ?? 'Service Running',
           '$statusLog, $nextRunBody',
           isRunning: isRunning,
         );
       } else {
-        final statusLog = (localizedStrings['automatic_write_success'] ??
-                'Wrote {steps} steps')
-            .replaceAll('{steps}', steps.toString());
+        final statusLog =
+            (localizedStrings['automatic_write_success'] ??
+                    'Wrote {steps} steps')
+                .replaceAll('{steps}', steps.toString());
 
         broadcastUIUpdate(statusLog: statusLog);
         service.invoke('manual_write_complete', {'steps': steps});
@@ -182,8 +194,10 @@ void onStart(ServiceInstance service) {
     } catch (e) {
       final errorLog =
           localizedStrings['write_fail_check_log'] ?? 'Write failed.';
-      ErrorLogService()
-          .addErrorLog('[BackgroundService] Error writing steps', e.toString());
+      ErrorLogService().addErrorLog(
+        '[BackgroundService] Error writing steps',
+        e.toString(),
+      );
       broadcastUIUpdate(statusLog: errorLog);
       return false;
     }
@@ -201,7 +215,10 @@ void onStart(ServiceInstance service) {
   Future<void> startService(Map<String, String>? event) async {
     developer.log('Received start event', name: 'WalkGo.Background');
     if (isRunning) {
-      developer.log('Service is already running, returning.', name: 'WalkGo.Background');
+      developer.log(
+        'Service is already running, returning.',
+        name: 'WalkGo.Background',
+      );
       broadcastUIUpdate();
       return;
     }
@@ -232,7 +249,10 @@ void onStart(ServiceInstance service) {
     developer.log('Received stop event', name: 'WalkGo.Background');
     timer?.cancel();
     if (!isRunning) {
-      developer.log('Service is not running, returning.', name: 'WalkGo.Background');
+      developer.log(
+        'Service is not running, returning.',
+        name: 'WalkGo.Background',
+      );
       broadcastUIUpdate();
       return;
     }
@@ -244,9 +264,11 @@ void onStart(ServiceInstance service) {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefLastStepsWritten, 0);
 
-    final title = localizedStrings['notification_service_stopped_title'] ??
+    final title =
+        localizedStrings['notification_service_stopped_title'] ??
         'Service Stopped';
-    final body = localizedStrings['notification_service_stopped_content'] ??
+    final body =
+        localizedStrings['notification_service_stopped_content'] ??
         'Ready to start.';
     showCustomNotification(title, body, isRunning: isRunning);
     broadcastUIUpdate(statusLog: body);
@@ -269,10 +291,15 @@ void onStart(ServiceInstance service) {
   });
 
   service.on('notification_toggled').listen((event) {
-    developer.log('Received notification_toggled event, isRunning: $isRunning', name: 'WalkGo.Background');
+    developer.log(
+      'Received notification_toggled event, isRunning: $isRunning',
+      name: 'WalkGo.Background',
+    );
     Map<String, String>? strings;
     if (event != null) {
-      strings = (event as Map).map((key, value) => MapEntry(key.toString(), value.toString()));
+      strings = (event as Map).map(
+        (key, value) => MapEntry(key.toString(), value.toString()),
+      );
     }
     if (isRunning) {
       stopService(strings);
@@ -300,27 +327,33 @@ void onStart(ServiceInstance service) {
   });
 
   service.on('update_localization').listen((event) {
-    developer.log('Received update_localization event', name: 'WalkGo.Background');
+    developer.log(
+      'Received update_localization event',
+      name: 'WalkGo.Background',
+    );
     if (event != null) {
       localizedStrings = Map<String, String>.from(event);
       if (isRunning) {
         final nextRun = DateTime.now().add(Duration(minutes: currentInterval));
         final nextRunTime = DateFormat('HH:mm').format(nextRun);
-        final statusLog = (localizedStrings['automatic_write_success'] ??
-                'Wrote {steps} steps')
-            .replaceAll('{steps}', lastStepsWritten.toString());
-        final nextRunBody = (localizedStrings['notification_next_run'] ??
-                'Next run at {time}')
-            .replaceAll('{time}', nextRunTime);
+        final statusLog =
+            (localizedStrings['automatic_write_success'] ??
+                    'Wrote {steps} steps')
+                .replaceAll('{steps}', lastStepsWritten.toString());
+        final nextRunBody =
+            (localizedStrings['notification_next_run'] ?? 'Next run at {time}')
+                .replaceAll('{time}', nextRunTime);
         showCustomNotification(
           localizedStrings['notification_service_running'] ?? 'Service Running',
           lastStepsWritten > 0 ? '$statusLog, $nextRunBody' : nextRunBody,
           isRunning: isRunning,
         );
       } else {
-        final title = localizedStrings['notification_service_stopped_title'] ??
+        final title =
+            localizedStrings['notification_service_stopped_title'] ??
             'Service Stopped';
-        final body = localizedStrings['notification_service_stopped_content'] ??
+        final body =
+            localizedStrings['notification_service_stopped_content'] ??
             'Ready to start.';
         showCustomNotification(title, body, isRunning: isRunning);
       }

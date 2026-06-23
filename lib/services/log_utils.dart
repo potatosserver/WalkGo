@@ -6,8 +6,10 @@ class LogUtils {
 
   /// A static method that can be called from a background isolate.
   /// It writes a log entry to SharedPreferences without any UI dependencies.
-  static Future<void> writeLogFromBackground(int steps,
-      {String source = 'automatic'}) async {
+  static Future<void> writeLogFromBackground(
+    int steps, {
+    String source = 'automatic',
+  }) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.reload(); // Critical: reload before reading in background
 

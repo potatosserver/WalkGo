@@ -28,27 +28,22 @@ class AppRouter {
           path: '/permission',
           builder: (context, state) => const PermissionHandlerPage(),
         ),
+        GoRoute(path: '/home', builder: (context, state) => const HomePage()),
         GoRoute(
-          path: '/home',
-          builder: (context, state) => const HomePage(),
+          path: '/settings',
+          builder: (context, state) => const SettingsPage(),
+          routes: [
+            GoRoute(
+              path: 'appearance',
+              builder: (context, state) => const AppearanceSettingsPage(),
+            ),
+            GoRoute(
+              path: 'language',
+              builder: (context, state) => const LanguageSettingsPage(),
+            ),
+            GoRoute(path: 'logs', builder: (context, state) => const LogPage()),
+          ],
         ),
-        GoRoute(
-            path: '/settings',
-            builder: (context, state) => const SettingsPage(),
-            routes: [
-              GoRoute(
-                path: 'appearance',
-                builder: (context, state) => const AppearanceSettingsPage(),
-              ),
-              GoRoute(
-                path: 'language',
-                builder: (context, state) => const LanguageSettingsPage(),
-              ),
-              GoRoute(
-                path: 'logs',
-                builder: (context, state) => const LogPage(),
-              ),
-            ]),
         GoRoute(
           path: '/advanced_parameters',
           builder: (context, state) => const AdvancedParametersPage(),
