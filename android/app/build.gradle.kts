@@ -4,6 +4,7 @@ import java.io.File
 
 plugins {
     id("com.android.application")
+    id("org.jetbrains.kotlin.android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -59,7 +60,6 @@ android {
     }
 }
 
-// 🎯 修正核心：全面擁抱現代 Kotlin 任務配置，徹底解決所有版本不相容與過期問題
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
@@ -71,6 +71,7 @@ flutter {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22")
     implementation("com.google.android.material:material:1.12.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
