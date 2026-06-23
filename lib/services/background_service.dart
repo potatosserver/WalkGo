@@ -59,21 +59,21 @@ void onStart(ServiceInstance service) {
 
     final AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-          foregroundChannelId,
-          'WalkGo Service',
-          channelDescription: 'This channel is used for the WalkGo service.',
-          importance: Importance.low,
-          priority: Priority.low,
-          ongoing: true,
-          autoCancel: false,
-          actions: <AndroidNotificationAction>[
-            AndroidNotificationAction(
-              'notification_toggled', // Action ID
-              buttonLabel, // Button title
-              showsUserInterface: true,
-            ),
-          ],
-        );
+      foregroundChannelId,
+      'WalkGo Service',
+      channelDescription: 'This channel is used for the WalkGo service.',
+      importance: Importance.low,
+      priority: Priority.low,
+      ongoing: true,
+      autoCancel: false,
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction(
+          'notification_toggled', // Action ID
+          buttonLabel, // Button title
+          showsUserInterface: true,
+        ),
+      ],
+    );
 
     final NotificationDetails platformDetails = NotificationDetails(
       android: androidDetails,
@@ -108,8 +108,7 @@ void onStart(ServiceInstance service) {
       timer?.cancel();
       isRunning = false;
 
-      final title =
-          localizedStrings['auto_pause_notification_title'] ??
+      final title = localizedStrings['auto_pause_notification_title'] ??
           'Service Automatically Paused';
       final body =
           (localizedStrings['auto_pause_notification_content_with_steps'] ??
@@ -126,9 +125,8 @@ void onStart(ServiceInstance service) {
 
   Future<bool> writeStepsLogic({String source = 'automatic'}) async {
     final random = Random();
-    final offset = offsetEnabled
-        ? random.nextInt(offsetSteps * 2 + 1) - offsetSteps
-        : 0;
+    final offset =
+        offsetEnabled ? random.nextInt(offsetSteps * 2 + 1) - offsetSteps : 0;
     final steps = (source == 'manual') ? baseSteps : baseSteps + offset;
 
     try {
@@ -161,31 +159,29 @@ void onStart(ServiceInstance service) {
         final stopped = await checkAndStopIfNeeded();
         if (stopped) return true;
 
-        final statusLog =
-            (localizedStrings['automatic_write_success'] ??
-                    'Wrote {steps} steps')
-                .replaceAll('{steps}', steps.toString());
+        final statusLog = (localizedStrings['automatic_write_success'] ??
+                'Wrote {steps} steps')
+            .replaceAll('{steps}', steps.toString());
 
         broadcastUIUpdate(statusLog: statusLog);
 
         final nextRunBody =
             (localizedStrings['notification_next_run'] ?? 'Next run at {time}')
                 .replaceAll(
-                  '{time}',
-                  DateFormat('HH:mm').format(
-                    DateTime.now().add(Duration(minutes: currentInterval)),
-                  ),
-                );
+          '{time}',
+          DateFormat('HH:mm').format(
+            DateTime.now().add(Duration(minutes: currentInterval)),
+          ),
+        );
         showCustomNotification(
           localizedStrings['notification_service_running'] ?? 'Service Running',
           '$statusLog, $nextRunBody',
           isRunning: isRunning,
         );
       } else {
-        final statusLog =
-            (localizedStrings['automatic_write_success'] ??
-                    'Wrote {steps} steps')
-                .replaceAll('{steps}', steps.toString());
+        final statusLog = (localizedStrings['automatic_write_success'] ??
+                'Wrote {steps} steps')
+            .replaceAll('{steps}', steps.toString());
 
         broadcastUIUpdate(statusLog: statusLog);
         service.invoke('manual_write_complete', {'steps': steps});
@@ -264,11 +260,9 @@ void onStart(ServiceInstance service) {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefLastStepsWritten, 0);
 
-    final title =
-        localizedStrings['notification_service_stopped_title'] ??
+    final title = localizedStrings['notification_service_stopped_title'] ??
         'Service Stopped';
-    final body =
-        localizedStrings['notification_service_stopped_content'] ??
+    final body = localizedStrings['notification_service_stopped_content'] ??
         'Ready to start.';
     showCustomNotification(title, body, isRunning: isRunning);
     broadcastUIUpdate(statusLog: body);
@@ -336,10 +330,9 @@ void onStart(ServiceInstance service) {
       if (isRunning) {
         final nextRun = DateTime.now().add(Duration(minutes: currentInterval));
         final nextRunTime = DateFormat('HH:mm').format(nextRun);
-        final statusLog =
-            (localizedStrings['automatic_write_success'] ??
-                    'Wrote {steps} steps')
-                .replaceAll('{steps}', lastStepsWritten.toString());
+        final statusLog = (localizedStrings['automatic_write_success'] ??
+                'Wrote {steps} steps')
+            .replaceAll('{steps}', lastStepsWritten.toString());
         final nextRunBody =
             (localizedStrings['notification_next_run'] ?? 'Next run at {time}')
                 .replaceAll('{time}', nextRunTime);
@@ -349,11 +342,9 @@ void onStart(ServiceInstance service) {
           isRunning: isRunning,
         );
       } else {
-        final title =
-            localizedStrings['notification_service_stopped_title'] ??
+        final title = localizedStrings['notification_service_stopped_title'] ??
             'Service Stopped';
-        final body =
-            localizedStrings['notification_service_stopped_content'] ??
+        final body = localizedStrings['notification_service_stopped_content'] ??
             'Ready to start.';
         showCustomNotification(title, body, isRunning: isRunning);
       }

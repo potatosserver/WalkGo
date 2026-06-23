@@ -102,9 +102,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
       systemNavigationBarColor: theme.colorScheme.surface,
-      systemNavigationBarIconBrightness: isLightMode
-          ? Brightness.dark
-          : Brightness.light,
+      systemNavigationBarIconBrightness:
+          isLightMode ? Brightness.dark : Brightness.light,
     );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -143,7 +142,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                     ),
                     checkPermission: () async => (await _checkSimplePermission(
                       Permission.activityRecognition,
-                    )).isGranted,
+                    ))
+                        .isGranted,
                   );
                 case 2:
                   return _buildPermissionPage(
@@ -154,7 +154,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                         _requestSimplePermission(Permission.notification),
                     checkPermission: () async => (await _checkSimplePermission(
                       Permission.notification,
-                    )).isGranted,
+                    ))
+                        .isGranted,
                   );
                 case 3:
                   return _buildPermissionPage(
@@ -166,7 +167,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage> {
                     ),
                     checkPermission: () async => (await _checkSimplePermission(
                       Permission.ignoreBatteryOptimizations,
-                    )).isGranted,
+                    ))
+                        .isGranted,
                   );
                 default:
                   return const SizedBox.shrink();

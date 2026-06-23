@@ -21,9 +21,8 @@ class WelcomePage extends StatelessWidget {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
       systemNavigationBarColor: theme.colorScheme.surface,
-      systemNavigationBarIconBrightness: isLightMode
-          ? Brightness.dark
-          : Brightness.light,
+      systemNavigationBarIconBrightness:
+          isLightMode ? Brightness.dark : Brightness.light,
     );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -42,8 +41,8 @@ class WelcomePage extends StatelessWidget {
                   Text(
                     l10n.welcome_to_walkgo,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),

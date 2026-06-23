@@ -153,7 +153,7 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
   Future<bool> _validateParameters(BuildContext context) async {
     if (_l10n == null) return true;
     await _loadNonStateSettings();
-    
+
     // 非同步操作（_loadNonStateSettings）之後，檢查 context 是否依然掛載
     if (!context.mounted) return false;
 
@@ -245,8 +245,8 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
           _l10n!.notification_service_stopped_content,
       'background_service_start': _l10n!.background_service_start,
       'auto_pause_notification_title': _l10n!.auto_pause_notification_title,
-      'auto_pause_notification_content_with_steps': _l10n!
-          .auto_pause_notification_content_with_steps('{steps}'),
+      'auto_pause_notification_content_with_steps':
+          _l10n!.auto_pause_notification_content_with_steps('{steps}'),
     };
   }
 

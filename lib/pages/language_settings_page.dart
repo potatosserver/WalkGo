@@ -14,8 +14,8 @@ class LanguageSettingsPage extends StatelessWidget {
   Map<String, String> _getLocalizedStrings(AppLocalizations l10n) {
     return {
       'auto_pause_notification_title': l10n.auto_pause_notification_title,
-      'auto_pause_notification_content_with_steps': l10n
-          .auto_pause_notification_content_with_steps('{steps}'),
+      'auto_pause_notification_content_with_steps':
+          l10n.auto_pause_notification_content_with_steps('{steps}'),
       'write_fail_check_log': l10n.write_fail_check_log,
       'automatic_write_success': l10n.automatic_write_success('{steps}'),
       'notification_next_run': l10n.notification_next_run('{time}'),

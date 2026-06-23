@@ -79,9 +79,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
       systemNavigationBarColor: theme.colorScheme.surface,
-      systemNavigationBarIconBrightness: isLightMode
-          ? Brightness.dark
-          : Brightness.light,
+      systemNavigationBarIconBrightness:
+          isLightMode ? Brightness.dark : Brightness.light,
     );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -132,9 +131,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         backgroundColor: isLightMode
                             ? Colors.grey.shade300
                             : Colors.grey.shade700,
-                        foregroundColor: isLightMode
-                            ? Colors.black
-                            : Colors.white,
+                        foregroundColor:
+                            isLightMode ? Colors.black : Colors.white,
                       ),
                       onPressed: () {
                         viewModel.manualWriteSteps();

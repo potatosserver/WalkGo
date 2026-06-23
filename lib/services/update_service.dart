@@ -207,7 +207,10 @@ class UpdateService {
         await Dio().download(sha1Asset['browser_download_url'], sha1Path);
         final expectedHash = (await File(
           sha1Path,
-        ).readAsString()).trim().split(' ').first;
+        ).readAsString())
+            .trim()
+            .split(' ')
+            .first;
         final actualHash = await _calculateSHA1(apkPath);
 
         if (actualHash != expectedHash) {

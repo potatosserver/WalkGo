@@ -55,8 +55,8 @@ void onDidReceiveNotificationResponse(
       'notification_stop_button': l10n.notification_stop_button,
       'notification_start_button': l10n.notification_start_button,
       'auto_pause_notification_title': l10n.auto_pause_notification_title,
-      'auto_pause_notification_content_with_steps': l10n
-          .auto_pause_notification_content_with_steps('{steps}'),
+      'auto_pause_notification_content_with_steps':
+          l10n.auto_pause_notification_content_with_steps('{steps}'),
       'write_fail_check_log': l10n.write_fail_check_log,
       'automatic_write_success': l10n.automatic_write_success('{steps}'),
       'notification_next_run': l10n.notification_next_run('{time}'),
@@ -86,8 +86,7 @@ Future<void> initializeService(
 
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin
-      >()
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
   await service.configure(
@@ -202,10 +201,8 @@ class _WalkGoAppState extends State<WalkGoApp> {
         ChangeNotifierProvider(create: (_) => LanguageService()),
         ChangeNotifierProvider(create: (_) => LogService()),
         ChangeNotifierProvider(create: (_) => HomePageViewModel()),
-        ChangeNotifierProxyProvider<
-          HomePageViewModel,
-          AdvancedSettingsViewModel
-        >(
+        ChangeNotifierProxyProvider<HomePageViewModel,
+            AdvancedSettingsViewModel>(
           create: (context) => AdvancedSettingsViewModel(
             Provider.of<HomePageViewModel>(context, listen: false),
           ),
