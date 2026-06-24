@@ -48,8 +48,7 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
   }
 
   void _syncControllers() {
-    final viewModel =
-        Provider.of<AdvancedSettingsViewModel>(context, listen: false);
+    final viewModel = Provider.of<AdvancedSettingsViewModel>(context, listen: false);
     if (_offsetStepsController.text != viewModel.offsetSteps) {
       _offsetStepsController.text = viewModel.offsetSteps;
     }
@@ -60,8 +59,7 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
 
   @override
   void dispose() {
-    final viewModel =
-        Provider.of<AdvancedSettingsViewModel>(context, listen: false);
+    final viewModel = Provider.of<AdvancedSettingsViewModel>(context, listen: false);
     viewModel.removeListener(_syncControllers);
     _offsetStepsController.dispose();
     _autoPauseThresholdController.dispose();
@@ -159,112 +157,100 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
   }) {
     final theme = Theme.of(context);
 
-    // 這裡不再用 Consumer 包裹 Card，Card 變成靜態的
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16.0),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.dividerColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          subtitle,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+    return Consumer<AdvancedSettingsViewModel>(
+      builder: (context, viewModel, child) {
+        final bool isEnabled = prefKey == 'offset' 
+            ? viewModel.offsetEnabled 
+            : viewModel.autoPauseEnabled;
+
+        return Card(
+          margin: const EdgeInsets.only(bottom: 16.0),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: theme.dividerColor),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              subtitle,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                // 僅針對 Switch 使用 Selector，避免重建整個 Card
-                Selector<AdvancedSettingsViewModel, bool>(
-                  selector: (_, viewModel) => prefKey == 'offset'
-                      ? viewModel.offsetEnabled
-                      : viewModel.autoPauseEnabled,
-                  builder: (context, isEnabled, child) {
-                    return Switch(
+                    ),
+                    Switch(
                       value: isEnabled,
                       onChanged: isLocked
                           ? null
                           : (bool value) {
                               if (prefKey == 'offset') {
-                                Provider.of<AdvancedSettingsViewModel>(context,
-                                        listen: false)
-                                    .setOffsetEnabled(value);
+                                viewModel.setOffsetEnabled(value);
                               } else {
-                                Provider.of<AdvancedSettingsViewModel>(context,
-                                        listen: false)
-                                    .setAutoPauseEnabled(value);
+                                viewModel.setAutoPauseEnabled(value);
                               }
                             },
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-          // 僅針對 Opacity 使用 Selector，且使用 SizedBox 強制固定高度
-          Selector<AdvancedSettingsViewModel, bool>(
-            selector: (_, viewModel) => prefKey == 'offset'
-                ? viewModel.offsetEnabled
-                : viewModel.autoPauseEnabled,
-            builder: (context, isEnabled, child) {
-              return SizedBox(
-                height: 80, // 強制固定高度，絕對不會跳動
-                child: Opacity(
-                  opacity: isEnabled ? 1.0 : 0.0,
-                  child: AbsorbPointer(
-                    absorbing: !isEnabled,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: _ParameterTextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        label: label,
-                        hint: hint,
-                        enabled: !isLocked,
-                      ),
                     ),
+                  ],
+                ),
+              ),
+              // 使用 AnimatedCrossFade 實現平滑伸縮效果，避免瞬間跳變
+              AnimatedCrossFade(
+                duration: const Duration(milliseconds: 200),
+                crossFadeState: isEnabled 
+                    ? CrossFadeState.showFirst 
+                    : CrossFadeState.showSecond,
+                firstChild: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: _ParameterFieldWrapper(
+                    controller: controller,
+                    focusNode: focusNode,
+                    label: label,
+                    hint: hint,
+                    enabled: !isLocked,
                   ),
                 ),
-              );
-            },
+                secondChild: const SizedBox(width: double.infinity),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
-class _ParameterTextField extends StatelessWidget {
+// 關鍵：將輸入框封裝在獨立的 StatefulWidget 中
+// 這能確保輸入框在父頁面重建時，其內部的狀態和實例得以保留，消除閃爍
+class _ParameterFieldWrapper extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final String label;
   final String hint;
   final bool enabled;
 
-  const _ParameterTextField({
+  const _ParameterFieldWrapper({
     required this.controller,
     required this.focusNode,
     required this.label,
@@ -273,15 +259,20 @@ class _ParameterTextField extends StatelessWidget {
   });
 
   @override
+  State<_ParameterFieldWrapper> createState() => _ParameterFieldWrapperState();
+}
+
+class _ParameterFieldWrapperState extends State<_ParameterFieldWrapper> {
+  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
-      focusNode: focusNode,
+      controller: widget.controller,
+      focusNode: widget.focusNode,
       keyboardType: TextInputType.number,
-      enabled: enabled,
+      enabled: widget.enabled,
       decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
+        labelText: widget.label,
+        hintText: widget.hint,
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
