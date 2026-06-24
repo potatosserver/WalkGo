@@ -244,7 +244,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         'https://github.com/potatosserver/WalkGo',
                       );
                       if (await canLaunchUrl(url)) {
-                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                        await launchUrl(url,
+                            mode: LaunchMode.externalApplication);
                       }
                     },
                   ),

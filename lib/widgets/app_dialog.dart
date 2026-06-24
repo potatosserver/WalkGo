@@ -34,7 +34,7 @@ class AppDialog extends StatelessWidget {
           width: dialogWidth,
           child: AlertDialog(
             // CRITICAL: Remove default padding so it doesn't fight with SizedBox
-            insetPadding: EdgeInsets.zero, 
+            insetPadding: EdgeInsets.zero,
             title: titleWidget ?? (title != null ? Text(title!) : null),
             content: content,
             actions: actions,

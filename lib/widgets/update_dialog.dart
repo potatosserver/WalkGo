@@ -52,9 +52,19 @@ class _UpdateDialogState extends State<UpdateDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
+    // Wrap the entire content in a consistent height container
+    // to prevent the dialog from jumping in size during state transitions.
     return AppDialog(
       title: _getTitle(l10n),
-      content: _buildContent(context, l10n),
+      content: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.6,
+        ),
+        child: SingleChildScrollView(
+          child: _buildContent(context, l10n),
+        ),
+      ),
       actions: _buildActions(context, l10n),
     );
   }
@@ -113,27 +123,18 @@ class _UpdateDialogState extends State<UpdateDialog> {
         );
 
       case UpdateStep.details:
-        return ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.6,
-          ),
-          child: Scrollbar(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.update_available_desc(widget.release.tagName)),
-                  const SizedBox(height: 16),
-                  Markdown(
-                    data: widget.release.body,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                  ),
-                ],
-              ),
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.update_available_desc(widget.release.tagName)),
+            const SizedBox(height: 16),
+            Markdown(
+              data: widget.release.body,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
             ),
-          ),
+          ],
         );
     }
   }
