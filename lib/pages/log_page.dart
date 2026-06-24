@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:walkgo/main.dart';
 import '../services/log_service.dart';
 import '../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
@@ -42,17 +43,9 @@ class LogPage extends StatelessWidget {
       if (confirm == true && context.mounted) {
         await context.read<LogService>().clearLogs();
         if (context.mounted) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(l10n.clear_all_logs),
+          scaffoldMessengerKey.currentState?.showSnackBar(
+            SnackBar(
               content: Text(l10n.logs_cleared),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(l10n.close),
-                ),
-              ],
             ),
           );
         }

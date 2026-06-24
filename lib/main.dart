@@ -19,6 +19,9 @@ import 'theme_provider.dart';
 import 'viewmodels/advanced_settings_viewmodel.dart';
 import 'viewmodels/home_page_viewmodel.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
@@ -215,6 +218,7 @@ class _WalkGoAppState extends State<WalkGoApp> {
           return Consumer<LanguageService>(
             builder: (context, languageService, child) {
               return MaterialApp.router(
+                scaffoldMessengerKey: scaffoldMessengerKey,
                 routerConfig: appRouter.router,
                 debugShowCheckedModeBanner: false,
                 title: 'WalkGo',

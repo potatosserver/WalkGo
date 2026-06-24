@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/services/health_service.dart';
 import 'package:walkgo/constants.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
+import 'package:walkgo/main.dart';
 import 'package:walkgo/services/log_service.dart';
 
 class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
@@ -150,41 +151,38 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
     notifyListeners();
   }
 
-  Future<bool> _validateParameters(BuildContext context) async {
+  Future<bool> _validateParameters() async {
     if (_l10n == null) return true;
     await _loadNonStateSettings();
-
-    // 非同步操作（_loadNonStateSettings）之後，檢查 context 是否依然掛載
-    if (!context.mounted) return false;
-
     final int? base = int.tryParse(_baseSteps);
     if (base == null) return false;
     if (_offsetEnabled && base <= _offsetSteps) {
-      _showErrorDialog(context, _l10n!.error_base_less_than_offset);
+      _showErrorSnackBar(_l10n!.error_base_less_than_offset);
       return false;
     }
     if (_autoPauseEnabled) {
       final int maxPossibleWrite = _offsetEnabled ? base + _offsetSteps : base;
       if (_autoPauseThreshold <= maxPossibleWrite) {
-        _showErrorDialog(context, _l10n!.error_threshold_too_low);
+        _showErrorSnackBar(_l10n!.error_threshold_too_low);
         return false;
       }
     }
     return true;
   }
 
-  void _showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(_l10n!.actions),
+  void _showErrorSnackBar(String message) {
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
         content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(_l10n!.close),
-          ),
-        ],
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  void _showInfoSnackBar(String message) {
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(message),
       ),
     );
   }
@@ -258,26 +256,20 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> toggleAutoMode(BuildContext context) async {
     final serviceAlive = await _service.isRunning();
-    // 非同步操作之後，檢查 context 是否依然掛載
-    if (!context.mounted) return;
 
     if (!_isAutoRunning) {
-      if (!(await _validateParameters(context))) return;
-      // 非同步操作（_validateParameters）之後，檢查 context 是否依然掛載
-      if (!context.mounted) return;
+      if (!(await _validateParameters())) return;
 
       if (!serviceAlive) {
         await _service.startService();
-        // 非同步操作之後，檢查 context 是否依然掛載
-        if (!context.mounted) return;
       }
       if (_l10n == null) return;
       _service.invoke('start', _getLocalizedStrings());
-      _showErrorDialog(context, _l10n!.auto_service_started);
+      _showInfoSnackBar(_l10n!.auto_service_started);
     } else {
       if (_l10n == null) return;
       _service.invoke("stop", _getLocalizedStrings());
-      _showErrorDialog(context, _l10n!.auto_service_stopped);
+      _showInfoSnackBar(_l10n!.auto_service_stopped);
       await refreshTodaySteps();
     }
   }

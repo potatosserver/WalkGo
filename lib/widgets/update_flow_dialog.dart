@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
+import 'package:walkgo/main.dart';
 import 'package:walkgo/services/update_service.dart';
 import 'package:walkgo/widgets/update_dialog.dart';
 
@@ -7,7 +8,7 @@ class UpdateFlowDialog {
   static Future<void> run(BuildContext context, {bool force = false}) async {
     final l10n = AppLocalizations.of(context)!;
 
-    _showToast(context, l10n.checking_for_updates);
+    _showSnackBar(l10n.checking_for_updates);
 
     try {
       final updateService = UpdateService();
@@ -24,31 +25,24 @@ class UpdateFlowDialog {
             UpdateDialog.show(context, latestRelease);
           } else {
             if (!context.mounted) return;
-            _showToast(context, l10n.update_check_failed);
+            _showSnackBar(l10n.update_check_failed, isError: true);
           }
         } else {
           if (!context.mounted) return;
-          _showToast(context, l10n.latest_version_installed);
+          _showSnackBar(l10n.latest_version_installed);
         }
       }
     } catch (e) {
       if (!context.mounted) return;
-      _showToast(context, l10n.update_check_failed);
+      _showSnackBar(l10n.update_check_failed, isError: true);
     }
   }
 
-  static void _showToast(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.check_for_updates),
+  static void _showSnackBar(String message, {bool isError = false}) {
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
         content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.close),
-          ),
-        ],
+        backgroundColor: isError ? Colors.red : null,
       ),
     );
   }

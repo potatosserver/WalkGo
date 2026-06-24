@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../constants.dart';
 import '../l10n/app_localizations.dart';
+import '../main.dart';
 import '../services/log_service.dart';
 import '../services/update_service.dart';
 import '../widgets/release_notes_dialog.dart';
@@ -47,19 +48,12 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  void _showAlertDialog(String title, String content) {
+  void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) return;
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.close),
-          ),
-        ],
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Theme.of(context).colorScheme.error : null,
       ),
     );
   }
@@ -71,10 +65,10 @@ class _SettingsPageState extends State<SettingsPage> {
           updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
         await UpdateService().startGooglePlayUpdate(updateInfo);
       } else {
-        _showAlertDialog(l10n.check_for_updates, l10n.latest_version_installed);
+        _showSnackBar(l10n.latest_version_installed);
       }
     } catch (e) {
-      _showAlertDialog(l10n.check_for_updates, l10n.update_check_failed);
+      _showSnackBar(l10n.update_check_failed, isError: true);
     }
   }
 
@@ -334,13 +328,11 @@ class _SettingsPageState extends State<SettingsPage> {
           builder: (context) => ReleaseNotesDialog(release: release),
         );
       } else {
-        _showAlertDialog(
-          l10n.view_release_notes,
-          l10n.update_failed('Could not fetch release notes'),
-        );
+        _showSnackBar(l10n.update_failed('Could not fetch release notes'),
+            isError: true);
       }
     } catch (e) {
-      _showAlertDialog(l10n.view_release_notes, l10n.update_check_failed);
+      _showSnackBar(l10n.update_check_failed, isError: true);
     }
   }
 
@@ -369,10 +361,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 await logService.clearLogs();
                 if (context.mounted) {
                   navigator.pop(); // Close the confirmation dialog
-                  _showAlertDialog(
-                    l10n.clear_data_button,
-                    l10n.data_cleared_success,
-                  );
+                  _showSnackBar(l10n.data_cleared_success);
                   router.go('/');
                 }
               },
