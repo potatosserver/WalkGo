@@ -21,11 +21,15 @@ class ReleaseNotesDialog extends StatelessWidget {
         ),
         child: Scrollbar(
           child: SingleChildScrollView(
-            child: Markdown(
-              data: release.body,
-              selectable: true,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
+            child: SizedBox(
+              width: double
+                  .infinity, // FORCE the markdown to fill the dialog width
+              child: Markdown(
+                data: release.body,
+                selectable: true,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+              ),
             ),
           ),
         ),

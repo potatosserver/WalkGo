@@ -53,8 +53,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    // Wrap the entire content in a consistent height container
-    // to prevent the dialog from jumping in size during state transitions.
     return AppDialog(
       title: _getTitle(l10n),
       content: ConstrainedBox(
@@ -62,7 +60,11 @@ class _UpdateDialogState extends State<UpdateDialog> {
           maxHeight: MediaQuery.of(context).size.height * 0.6,
         ),
         child: SingleChildScrollView(
-          child: _buildContent(context, l10n),
+          child: SizedBox(
+            width:
+                double.infinity, // FORCE all content to fill the dialog width
+            child: _buildContent(context, l10n),
+          ),
         ),
       ),
       actions: _buildActions(context, l10n),

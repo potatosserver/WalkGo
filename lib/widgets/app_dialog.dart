@@ -27,18 +27,19 @@ class AppDialog extends StatelessWidget {
 
     return Center(
       child: Padding(
-        // This replaces the default AlertDialog insetPadding
-        // Ensuring the dialog never touches the screen edges
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
         child: SizedBox(
           width: dialogWidth,
           child: AlertDialog(
-            // CRITICAL: Remove default padding so it doesn't fight with SizedBox
             insetPadding: EdgeInsets.zero,
             title: titleWidget ?? (title != null ? Text(title!) : null),
-            content: content,
+            // FORCE the content to expand to the full width of the SizedBox
+            // This prevents the dialog from shrinking when the content is narrow
+            content: SizedBox(
+              width: double.infinity,
+              child: content,
+            ),
             actions: actions,
-            // Ensure consistent internal content padding
             contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
           ),
         ),
