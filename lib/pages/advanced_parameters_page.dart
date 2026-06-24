@@ -61,118 +61,120 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.advanced_parameters)),
-      body: Consumer<AdvancedSettingsViewModel>(
-        builder: (context, viewModel, child) {
-          final isLocked = viewModel.isAutoModeRunning;
+      body: SafeArea(
+        child: Consumer<AdvancedSettingsViewModel>(
+          builder: (context, viewModel, child) {
+            final isLocked = viewModel.isAutoModeRunning;
 
-          if (_offsetStepsController.text != viewModel.offsetSteps) {
-            _offsetStepsController.text = viewModel.offsetSteps;
-          }
-          if (_autoPauseThresholdController.text !=
-              viewModel.autoPauseThreshold) {
-            _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
-          }
+            if (_offsetStepsController.text != viewModel.offsetSteps) {
+              _offsetStepsController.text = viewModel.offsetSteps;
+            }
+            if (_autoPauseThresholdController.text !=
+                viewModel.autoPauseThreshold) {
+              _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
+            }
 
-          return AbsorbPointer(
-            absorbing: isLocked,
-            child: Opacity(
-              opacity: isLocked ? 0.5 : 1.0,
-              child: Column(
-                children: [
-                  if (isLocked)
-                    Container(
-                      padding: const EdgeInsets.all(16.0),
-                      color: theme.colorScheme.errorContainer,
-                      width: double.infinity,
-                      child: Text(
-                        l10n.auto_mode_running_lock_warning,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: theme.colorScheme.onErrorContainer,
-                          fontWeight: FontWeight.bold,
+            return AbsorbPointer(
+              absorbing: isLocked,
+              child: Opacity(
+                opacity: isLocked ? 0.5 : 1.0,
+                child: Column(
+                  children: [
+                    if (isLocked)
+                      Container(
+                        padding: const EdgeInsets.all(16.0),
+                        color: theme.colorScheme.errorContainer,
+                        width: double.infinity,
+                        child: Text(
+                          l10n.auto_mode_running_lock_warning,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: theme.colorScheme.onErrorContainer,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => FocusScope.of(context).unfocus(),
-                      child: ListView(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0,
-                          vertical: 16.0,
-                        ),
-                        children: [
-                          _buildSettingsCard(
-                            context,
-                            title: l10n.offset_settings_title,
-                            subtitle: l10n.offset_settings_subtitle,
-                            trailing: Switch(
-                              value: viewModel.offsetEnabled,
-                              onChanged: isLocked
-                                  ? null
-                                  : (bool value) {
-                                      viewModel.setOffsetEnabled(value);
-                                    },
-                            ),
-                            child: Visibility(
-                              visible: viewModel.offsetEnabled,
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  16,
-                                  8,
-                                  16,
-                                  16,
-                                ),
-                                child: _buildTextField(
-                                  enabled: !isLocked,
-                                  controller: _offsetStepsController,
-                                  focusNode: _offsetStepsFocusNode,
-                                  label: l10n.offset_steps,
-                                  hint: l10n.offset_steps_hint,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => FocusScope.of(context).unfocus(),
+                        child: ListView(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                            vertical: 16.0,
+                          ),
+                          children: [
+                            _buildSettingsCard(
+                              context,
+                              title: l10n.offset_settings_title,
+                              subtitle: l10n.offset_settings_subtitle,
+                              trailing: Switch(
+                                value: viewModel.offsetEnabled,
+                                onChanged: isLocked
+                                    ? null
+                                    : (bool value) {
+                                        viewModel.setOffsetEnabled(value);
+                                      },
+                              ),
+                              child: Visibility(
+                                visible: viewModel.offsetEnabled,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    8,
+                                    16,
+                                    16,
+                                  ),
+                                  child: _buildTextField(
+                                    enabled: !isLocked,
+                                    controller: _offsetStepsController,
+                                    focusNode: _offsetStepsFocusNode,
+                                    label: l10n.offset_steps,
+                                    hint: l10n.offset_steps_hint,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          _buildSettingsCard(
-                            context,
-                            title: l10n.auto_pause_title,
-                            subtitle: l10n.auto_pause_subtitle,
-                            trailing: Switch(
-                              value: viewModel.autoPauseEnabled,
-                              onChanged: isLocked
-                                  ? null
-                                  : (bool value) {
-                                      viewModel.setAutoPauseEnabled(value);
-                                    },
-                            ),
-                            child: Visibility(
-                              visible: viewModel.autoPauseEnabled,
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  16,
-                                  8,
-                                  16,
-                                  16,
-                                ),
-                                child: _buildTextField(
-                                  enabled: !isLocked,
-                                  controller: _autoPauseThresholdController,
-                                  focusNode: _autoPauseThresholdFocusNode,
-                                  label: l10n.auto_pause_threshold,
-                                  hint: l10n.auto_pause_threshold_hint,
+                            _buildSettingsCard(
+                              context,
+                              title: l10n.auto_pause_title,
+                              subtitle: l10n.auto_pause_subtitle,
+                              trailing: Switch(
+                                value: viewModel.autoPauseEnabled,
+                                onChanged: isLocked
+                                    ? null
+                                    : (bool value) {
+                                        viewModel.setAutoPauseEnabled(value);
+                                      },
+                              ),
+                              child: Visibility(
+                                visible: viewModel.autoPauseEnabled,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    8,
+                                    16,
+                                    16,
+                                  ),
+                                  child: _buildTextField(
+                                    enabled: !isLocked,
+                                    controller: _autoPauseThresholdController,
+                                    focusNode: _autoPauseThresholdFocusNode,
+                                    label: l10n.auto_pause_threshold,
+                                    hint: l10n.auto_pause_threshold_hint,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

@@ -53,38 +53,37 @@ class LanguageSettingsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.language_settings)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: RadioGroup<Locale?>.builder(
-          groupValue: languageService.selectedLocale,
-          onChanged: (Locale? value) async {
-            if (value == null) {
-              languageService.clearLocale();
-            } else {
-              languageService.setLocale(value);
-            }
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: RadioGroup<Locale?>.builder(
+            groupValue: languageService.selectedLocale,
+            onChanged: (Locale? value) async {
+              if (value == null) {
+                languageService.clearLocale();
+              } else {
+                languageService.setLocale(value);
+              }
 
-            // Determine the locale that will actually be used.
-            // If `value` is null, it means we're reverting to the system's default locale.
-            final newLocale = value ?? PlatformDispatcher.instance.locale;
+              // Determine the locale that will actually be used.
+              final newLocale = value ?? PlatformDispatcher.instance.locale;
 
-            // Manually load the localizations for the new locale.
-            // This is necessary because the background service runs in a separate isolate
-            // and cannot access the app's context.
-            final newL10n = await AppLocalizations.delegate.load(newLocale);
+              // Manually load the localizations for the new locale.
+              final newL10n = await AppLocalizations.delegate.load(newLocale);
 
-            // Prepare the map of strings to send to the background service.
-            final localizedStrings = _getLocalizedStrings(newL10n);
+              // Prepare the map of strings to send to the background service.
+              final localizedStrings = _getLocalizedStrings(newL10n);
 
-            // Send the updated strings to the background service.
-            FlutterBackgroundService().invoke(
-              'update_localization',
-              localizedStrings,
-            );
-          },
-          items: locales,
-          itemBuilder: (item) => RadioButtonBuilder(getLocaleName(item)),
-          textStyle: const TextStyle(fontSize: 16),
+              // Send the updated strings to the background service.
+              FlutterBackgroundService().invoke(
+                'update_localization',
+                localizedStrings,
+              );
+            },
+            items: locales,
+            itemBuilder: (item) => RadioButtonBuilder(getLocaleName(item)),
+            textStyle: const TextStyle(fontSize: 16),
+          ),
         ),
       ),
     );

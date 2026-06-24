@@ -48,13 +48,10 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
   }
 
   Future<void> _requestHealthPermission() async {
-    final granted = await _health.requestAuthorization(
+    await _health.requestAuthorization(
       [HealthDataType.STEPS],
       permissions: [HealthDataAccess.READ_WRITE],
     );
-    if (granted) {
-      // Health permission doesn't have a 'skip' option, so nothing to clear
-    }
     _updatePageState();
   }
 
@@ -65,31 +62,25 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
 
   Future<void> _requestPermissionWithPermanentlyDeniedCheck(
       Permission permission) async {
-    // First, check the status before requesting
     PermissionStatus status = await permission.status;
 
     if (status.isPermanentlyDenied) {
-      // If permanently denied, directly show the dialog to open settings
       _showPermanentlyDeniedDialog();
-      return; // Stop further execution
+      return;
     }
 
-    // If not permanently denied, then request the permission
     status = await permission.request();
 
     if (status.isGranted) {
-      // If granted, clear the corresponding skip flag
       if (permission == Permission.notification) {
         await PreferenceService().setSkipNotification(false);
       } else if (permission == Permission.ignoreBatteryOptimizations) {
         await PreferenceService().setSkipBattery(false);
       }
     } else if (status.isPermanentlyDenied) {
-      // If the user chose 'Don't ask again' during the request, show the dialog
       _showPermanentlyDeniedDialog();
     }
 
-    // Finally, update the UI state
     _updatePageState();
   }
 
@@ -175,9 +166,7 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
     final isLightMode = theme.brightness == Brightness.light;
 
     final systemUiOverlayStyle = SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
       statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
-      systemNavigationBarColor: theme.colorScheme.surface,
       systemNavigationBarIconBrightness:
           isLightMode ? Brightness.dark : Brightness.light,
     );
@@ -185,7 +174,6 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: systemUiOverlayStyle,
       child: Scaffold(
-        extendBody: true,
         body: SafeArea(
           child: PageView.builder(
             controller: _pageController,
@@ -332,7 +320,7 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                                 style: const TextStyle(color: Colors.grey)),
                           ),
                         ),
-                    ],
+                    ]
                   ],
                 ),
               ),
@@ -343,28 +331,18 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: isGranted ? _goToNextPage : null,
-                  style: ButtonStyle(
-                      padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      shape: WidgetStateProperty.all(const StadiumBorder()),
-                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                          (Set<WidgetState> states) {
-                        if (states.contains(WidgetState.disabled)) {
-                          return colorScheme.onSurface.withAlpha(30);
-                        }
-                        if (_currentPage == _pageCount - 1) {
-                          return Colors.green.shade600;
-                        }
-                        return colorScheme.primary;
-                      }),
-                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                          (Set<WidgetState> states) {
-                        if (states.contains(WidgetState.disabled)) {
-                          return colorScheme.onSurface.withAlpha(97);
-                        }
-                        return colorScheme.onPrimary;
-                      })),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: const StadiumBorder(),
+                    backgroundColor: isGranted
+                        ? (_currentPage == _pageCount - 1
+                            ? Colors.green.shade600
+                            : colorScheme.primary)
+                        : colorScheme.onSurface.withAlpha(30),
+                    foregroundColor: isGranted
+                        ? colorScheme.onPrimary
+                        : colorScheme.onSurface.withAlpha(97),
+                  ),
                   child: Text(
                     _currentPage == _pageCount - 1
                         ? l10n.setup_complete

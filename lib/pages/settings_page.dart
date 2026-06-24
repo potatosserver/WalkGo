@@ -78,104 +78,106 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settings)),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-        children: [
-          _buildSettingsCard(
-            context,
-            title: l10n.param_settings,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.palette_outlined),
-                title: Text(l10n.theme),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () => context.push('/settings/appearance'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.language_outlined),
-                title: Text(l10n.language_settings),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () => context.push('/settings/language'),
-              ),
-            ],
-          ),
-          _buildSettingsCard(
-            context,
-            title: l10n.about,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.history_outlined),
-                title: Text(l10n.write_logs),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () => context.push('/settings/logs'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.info_outline),
-                title: Text(l10n.about_walkgo),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () => _showAboutDialog(context, l10n),
-              ),
-              if (isGooglePlay)
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+          children: [
+            _buildSettingsCard(
+              context,
+              title: l10n.param_settings,
+              children: [
                 ListTile(
-                  leading: const FaIcon(FontAwesomeIcons.googlePlay),
-                  title: Text(l10n.view_on_google_play),
-                  trailing: const Icon(Icons.open_in_new),
-                  onTap: () async {
-                    final url = Uri.parse(
-                      'https://play.google.com/store/apps/details?id=com.potatosserver.walkgo',
-                    );
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(
-                        url,
-                        mode: LaunchMode.externalApplication,
+                  leading: const Icon(Icons.palette_outlined),
+                  title: Text(l10n.theme),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () => context.push('/settings/appearance'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.language_outlined),
+                  title: Text(l10n.language_settings),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () => context.push('/settings/language'),
+                ),
+              ],
+            ),
+            _buildSettingsCard(
+              context,
+              title: l10n.about,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.history_outlined),
+                  title: Text(l10n.write_logs),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () => context.push('/settings/logs'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.info_outline),
+                  title: Text(l10n.about_walkgo),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () => _showAboutDialog(context, l10n),
+                ),
+                if (isGooglePlay)
+                  ListTile(
+                    leading: const FaIcon(FontAwesomeIcons.googlePlay),
+                    title: Text(l10n.view_on_google_play),
+                    trailing: const Icon(Icons.open_in_new),
+                    onTap: () async {
+                      final url = Uri.parse(
+                        'https://play.google.com/store/apps/details?id=com.potatosserver.walkgo',
                       );
-                    }
-                  },
-                ),
-              ListTile(
-                leading: const Icon(Icons.system_update_outlined),
-                title: Text(l10n.check_for_updates),
-                onTap: () => isGooglePlay
-                    ? _checkForGooglePlayUpdate(l10n)
-                    : UpdateFlowDialog.run(context),
-              ),
-            ],
-          ),
-          _buildSettingsCard(
-            context,
-            title: l10n.app_reset,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.replay_outlined),
-                title: Text(l10n.rerun_setup),
-                onTap: () => context.push('/welcome'),
-              ),
-              if (!isGooglePlay)
-                ListTile(
-                  leading: const Icon(Icons.download_outlined),
-                  title: Text(l10n.download_latest_version),
-                  onTap: () => UpdateFlowDialog.run(context, force: true),
-                ),
-              ListTile(
-                leading: Icon(
-                  Icons.delete_forever_outlined,
-                  color: theme.colorScheme.error,
-                ),
-                title: Text(
-                  l10n.clear_data_button,
-                  style: TextStyle(color: theme.colorScheme.error),
-                ),
-                subtitle: Text(
-                  l10n.app_reset_desc,
-                  style: TextStyle(
-                    color: theme.colorScheme.error.withAlpha(204),
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(
+                          url,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
+                    },
                   ),
+                ListTile(
+                  leading: const Icon(Icons.system_update_outlined),
+                  title: Text(l10n.check_for_updates),
+                  onTap: () => isGooglePlay
+                      ? _checkForGooglePlayUpdate(l10n)
+                      : UpdateFlowDialog.run(context),
                 ),
-                onTap: () => _showClearDataDialog(context, l10n),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+            _buildSettingsCard(
+              context,
+              title: l10n.app_reset,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.replay_outlined),
+                  title: Text(l10n.rerun_setup),
+                  onTap: () => context.push('/welcome'),
+                ),
+                if (!isGooglePlay)
+                  ListTile(
+                    leading: const Icon(Icons.download_outlined),
+                    title: Text(l10n.download_latest_version),
+                    onTap: () => UpdateFlowDialog.run(context, force: true),
+                  ),
+                ListTile(
+                  leading: Icon(
+                    Icons.delete_forever_outlined,
+                    color: theme.colorScheme.error,
+                  ),
+                  title: Text(
+                    l10n.clear_data_button,
+                    style: TextStyle(color: theme.colorScheme.error),
+                  ),
+                  subtitle: Text(
+                    l10n.app_reset_desc,
+                    style: TextStyle(
+                      color: theme.colorScheme.error.withAlpha(204),
+                    ),
+                  ),
+                  onTap: () => _showClearDataDialog(context, l10n),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

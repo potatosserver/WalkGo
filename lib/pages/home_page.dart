@@ -105,7 +105,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   padding: EdgeInsets.only(
                     left: 16,
                     right: 16,
-                    top: MediaQuery.of(context).padding.top + 16, // Adjust top padding for status bar
+                    top: MediaQuery.of(context).padding.top +
+                        16, // Adjust top padding for status bar
                     bottom: 16,
                   ),
                   children: [

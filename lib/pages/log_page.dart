@@ -59,57 +59,59 @@ class LogPage extends StatelessWidget {
           ),
         ],
       ),
-      body: logs.isEmpty
-          ? Center(child: Text(l10n.no_logs))
-          : ListView.builder(
-              padding: const EdgeInsets.only(top: 8, bottom: 8),
-              itemCount: logs.length,
-              itemBuilder: (context, index) {
-                final log = logs[index];
-                final steps = log['steps'] ?? 0;
-                final timestamp = log['timestamp'] ?? '';
-                final source = log['source'] as String?;
+      body: SafeArea(
+        child: logs.isEmpty
+            ? Center(child: Text(l10n.no_logs))
+            : ListView.builder(
+                padding: const EdgeInsets.only(top: 8, bottom: 16),
+                itemCount: logs.length,
+                itemBuilder: (context, index) {
+                  final log = logs[index];
+                  final steps = log['steps'] ?? 0;
+                  final timestamp = log['timestamp'] ?? '';
+                  final source = log['source'] as String?;
 
-                IconData iconData;
-                Color iconColor;
-                String title;
+                  IconData iconData;
+                  Color iconColor;
+                  String title;
 
-                if (source == 'automatic') {
-                  iconData = Icons.auto_awesome;
-                  iconColor = Colors.blue.shade600;
-                  title = l10n.log_write_success_auto(steps.toString());
-                } else {
-                  iconData = Icons.edit;
-                  iconColor = Colors.orange.shade600;
-                  title = l10n.log_write_success_manual(steps.toString());
-                }
+                  if (source == 'automatic') {
+                    iconData = Icons.auto_awesome;
+                    iconColor = Colors.blue.shade600;
+                    title = l10n.log_write_success_auto(steps.toString());
+                  } else {
+                    iconData = Icons.edit;
+                    iconColor = Colors.orange.shade600;
+                    title = l10n.log_write_success_manual(steps.toString());
+                  }
 
-                final formattedTimestamp = DateFormat(
-                  'yyyy-MM-dd HH:mm',
-                ).format(DateTime.parse(timestamp));
+                  final formattedTimestamp = DateFormat(
+                    'yyyy-MM-dd HH:mm',
+                  ).format(DateTime.parse(timestamp));
 
-                return Card(
-                  elevation: 1,
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 6,
-                  ),
-                  child: ListTile(
-                    leading: Icon(iconData, color: iconColor, size: 36),
-                    title: Text(
-                      title,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                  return Card(
+                    elevation: 1,
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
                     ),
-                    subtitle: Text(
-                      formattedTimestamp,
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.bodySmall?.color,
+                    child: ListTile(
+                      leading: Icon(iconData, color: iconColor, size: 36),
+                      title: Text(
+                        title,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        formattedTimestamp,
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
+      ),
     );
   }
 }

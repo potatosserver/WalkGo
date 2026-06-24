@@ -26,19 +26,21 @@ class AppearanceSettingsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.theme)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: RadioGroup<ThemeMode>.builder(
-          groupValue: currentMode,
-          onChanged: (ThemeMode? value) {
-            if (value != null) {
-              themeProvider.setThemeMode(value);
-            }
-          },
-          items: ThemeMode.values,
-          itemBuilder: (item) =>
-              RadioButtonBuilder(_getThemeModeName(item, l10n)),
-          textStyle: const TextStyle(fontSize: 16),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: RadioGroup<ThemeMode>.builder(
+            groupValue: currentMode,
+            onChanged: (ThemeMode? value) {
+              if (value != null) {
+                themeProvider.setThemeMode(value);
+              }
+            },
+            items: ThemeMode.values,
+            itemBuilder: (item) =>
+                RadioButtonBuilder(_getThemeModeName(item, l10n)),
+            textStyle: const TextStyle(fontSize: 16),
+          ),
         ),
       ),
     );
