@@ -17,7 +17,7 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
     with WidgetsBindingObserver {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  static const int _pageCount = 3; 
+  static const int _pageCount = 3;
   final _health = Health();
 
   @override
@@ -61,11 +61,10 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
   }
 
   Future<void> _requestHealthPermission() async {
-    final granted = await _health.requestAuthorization(
+    await _health.requestAuthorization(
       [HealthDataType.STEPS],
       permissions: [HealthDataAccess.READ_WRITE],
     );
-    if (!granted) {}
     _updatePageState();
   }
 
@@ -93,12 +92,17 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
     );
   }
 
-  void _showSkipWarningDialog({required String title, required String description, required Future<void> Function() onConfirm}) {
+  void _showSkipWarningDialog(
+      {required String title,
+      required String description,
+      required Future<void> Function() onConfirm}) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+        title: Text(title,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.red)),
         content: Text(description),
         actions: [
           TextButton(
@@ -110,7 +114,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
               Navigator.pop(context);
               await onConfirm();
             },
-            child: Text(l10n.skip_permission_confirm, style: const TextStyle(color: Colors.red)),
+            child: Text(l10n.skip_permission_confirm,
+                style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -243,6 +248,14 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
       builder: (context, snapshot) {
         final bool isGranted = snapshot.data ?? false;
 
+        if (isGranted) {
+          if (index == 1) {
+            PreferenceService().setSkipNotification(false);
+          } else if (index == 2) {
+            PreferenceService().setSkipBattery(false);
+          }
+        }
+
         return Column(
           children: [
             Expanded(
@@ -286,20 +299,25 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                             onPressed: () {
                               Future<void> performSkip() async {
                                 if (index == 1) {
-                                  await PreferenceService().setSkipNotification(true);
+                                  await PreferenceService()
+                                      .setSkipNotification(true);
                                 } else if (index == 2) {
-                                  await PreferenceService().setSkipBattery(true);
+                                  await PreferenceService()
+                                      .setSkipBattery(true);
                                 }
                                 _updatePageState();
                                 _goToNextPage();
                               }
+
                               _showSkipWarningDialog(
                                 title: skipTitle ?? l10n.skip_permission_title,
-                                description: skipDesc ?? l10n.skip_permission_description,
+                                description: skipDesc ??
+                                    l10n.skip_permission_description,
                                 onConfirm: performSkip,
                               );
                             },
-                            child: Text(l10n.skip_permission_label, style: const TextStyle(color: Colors.grey)),
+                            child: Text(l10n.skip_permission_label,
+                                style: const TextStyle(color: Colors.grey)),
                           ),
                         ),
                     ],
@@ -318,7 +336,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                       const EdgeInsets.symmetric(vertical: 16),
                     ),
                     shape: WidgetStateProperty.all(const StadiumBorder()),
-                    backgroundColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+                    backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (Set<WidgetState> states) {
                       if (states.contains(WidgetState.disabled)) {
                         return colorScheme.onSurface.withAlpha(30);
                       }
@@ -327,7 +346,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                       }
                       return colorScheme.primary;
                     }),
-                    foregroundColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+                    foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (Set<WidgetState> states) {
                       if (states.contains(WidgetState.disabled)) {
                         return colorScheme.onSurface.withAlpha(97);
                       }
