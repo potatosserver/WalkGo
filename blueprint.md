@@ -71,6 +71,15 @@ lib
 *   **元件主題：** 為 `AppBar` 和 `ElevatedButton` 等元件進行集中式主題設定，以在整個應用程式中保持一致的風格。
 *   **圖示：** 使用有意義的圖示來增強使用者的理解和導覽。
 
+## 編碼規範
+
+為了確保代碼的一致性與使用者體驗，請遵循以下規範：
+
+*   **通知與回饋 (Toast)：**
+    *   所有的短暫提示（Toast）必須使用 `fluttertoast` 套件的 `Fluttertoast.showToast` 方法。
+    *   **禁止** 使用 `scaffoldMessengerKey.currentState?.showSnackBar` 或 `SnackBar` 來實現短暫提示功能。
+    *   **正確範例：** `Fluttertoast.showToast(msg: l10n.manual_write_success_feedback(steps.toString()));`
+
 ## 功能
 
 ### 1. 步數追蹤與記錄
