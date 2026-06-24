@@ -15,9 +15,9 @@ class ReleaseNotesDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(l10n.release_notes),
       content: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxHeight: 300, // Changed from 400 to 300
-          maxWidth: 500,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.6,
+          maxWidth: MediaQuery.of(context).size.width * 0.8,
         ),
         child: Scrollbar(
           child: SingleChildScrollView(

@@ -54,11 +54,6 @@ void onDidReceiveNotificationResponse(
     final localizedStrings = {
       'notification_stop_button': l10n.notification_stop_button,
       'notification_start_button': l10n.notification_start_button,
-      'auto_pause_notification_title': l10n.auto_pause_notification_title,
-      'auto_pause_notification_content_with_steps':
-          l10n.auto_pause_notification_content_with_steps('{steps}'),
-      'write_fail_check_log': l10n.write_fail_check_log,
-      'automatic_write_success': l10n.automatic_write_success('{steps}'),
       'notification_next_run': l10n.notification_next_run('{time}'),
       'notification_service_running': l10n.notification_service_running,
       'background_service_start': l10n.background_service_start,
@@ -183,16 +178,29 @@ class _WalkGoAppState extends State<WalkGoApp> {
   @override
   Widget build(BuildContext context) {
     final appRouter = AppRouter();
+
+    final dialogTheme = DialogThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      titleTextStyle: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 20,
+      ),
+    );
+
     final lightTheme = ThemeData(
       useMaterial3: true,
       colorSchemeSeed: Colors.deepPurple,
       brightness: Brightness.light,
+      dialogTheme: dialogTheme,
     );
 
     final darkTheme = ThemeData(
       useMaterial3: true,
       colorSchemeSeed: Colors.deepPurple,
       brightness: Brightness.dark,
+      dialogTheme: dialogTheme,
     );
 
     return MultiProvider(

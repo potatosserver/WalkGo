@@ -113,9 +113,11 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
       case UpdateStep.details:
         return SizedBox(
-          width: 500,
+          width: MediaQuery.of(context).size.width * 0.8,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 300),
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.6,
+            ),
             child: Scrollbar(
               child: SingleChildScrollView(
                 child: Column(
@@ -207,39 +209,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
         _errorText = l10n.invalid_architecture;
       });
       return;
-    }
-
-    setState(() {
-      _step = UpdateStep.downloading;
-      _errorText = null;
-      _progress = null;
-    });
-
-    final String? downloadedPath = await _updateService.downloadUpdate(
-      widget.release,
-      _architecture!,
-      l10n,
-      onProgress: (p) {
-        if (mounted) setState(() => _progress = p);
-      },
-      onStatus: (s) {
-        if (mounted) setState(() => _statusText = s);
-      },
-      onError: (e) {
-        if (mounted) {
-          setState(() {
-            _step = UpdateStep.error;
-            _errorText = e;
-          });
-        }
-      },
-    );
-
-    if (downloadedPath != null && mounted) {
-      setState(() {
-        _step = UpdateStep.readyToInstall;
-        _apkPath = downloadedPath;
-      });
     }
   }
 
