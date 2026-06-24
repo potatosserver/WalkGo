@@ -533,32 +533,32 @@ class AppLocalizationsZh extends AppLocalizations {
   String get view_on_google_play => '在 Google Play 上查看';
 
   @override
-  String get skip_permission_title => 'Permission Skip Warning';
+  String get skip_permission_title => '權限略過警告';
 
   @override
   String get skip_permission_description =>
-      'Skipping this permission may affect the app\'s stability and background synchronization. The system may force stop the app, causing step synchronization to be interrupted.';
+      '略過此權限可能會影響應用程式的穩定性和背景同步。系統可能會強制停止應用程式，導致計步同步中斷。';
 
   @override
-  String get skip_permission_confirm => 'Confirm Skip';
+  String get skip_permission_confirm => '確認略過';
 
   @override
-  String get skip_permission_label => 'Skip for now';
+  String get skip_permission_label => '暫時略過';
 
   @override
-  String get skip_notification_warning => 'Notification Permission Warning';
+  String get skip_notification_warning => '通知權限警告';
 
   @override
   String get skip_notification_desc =>
-      'If you skip notification permission, the foreground service priority will be lowered, and the system may force stop the app at any time in the background, interrupting step synchronization.';
+      '如果您略過通知權限，前台服務的優先級將會降低，系統可能隨時在背景強制停止應用程式，從而中斷計步同步。';
 
   @override
-  String get skip_battery_warning => 'Battery Optimization Warning';
+  String get skip_battery_warning => '電池優化警告';
 
   @override
   String get skip_battery_desc =>
-      'If you skip battery optimization, Android system will pause synchronization tasks when the phone enters sleep mode, preventing steps from being written to health data in real time.';
+      '如果您略過電池優化，Android 系統將在手機進入休眠模式時暫停同步任務，導致無法即時將步數寫入健康數據。';
 
   @override
-  String get skip_permission_cancel => 'Cancel';
+  String get skip_permission_cancel => '取消';
 }

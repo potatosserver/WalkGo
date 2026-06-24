@@ -1,13 +1,1 @@
-{
-  "zh": [
-    "skip_permission_title",
-    "skip_permission_description",
-    "skip_permission_confirm",
-    "skip_permission_label",
-    "skip_notification_warning",
-    "skip_notification_desc",
-    "skip_battery_warning",
-    "skip_battery_desc",
-    "skip_permission_cancel"
-  ]
-}
+{}
