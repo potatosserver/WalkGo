@@ -19,10 +19,10 @@ class AppDialog extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     // Strict width logic:
-    // Mobile (< 600dp): Always 90% of screen width
+    // Mobile (< 600dp): Always 95% of screen width (updated as requested)
     // Tablet/Web (>= 600dp): Always 50% of screen width, capped at 600dp
     final double dialogWidth = screenWidth < 600
-        ? screenWidth * 0.9
+        ? screenWidth * 0.95
         : (screenWidth * 0.5).clamp(300.0, 600.0);
 
     return Center(
@@ -31,15 +31,12 @@ class AppDialog extends StatelessWidget {
         child: SizedBox(
           width: dialogWidth,
           child: Dialog(
-            // Use a standard rounded corner to match Material 3 AlertDialog
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(28.0)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment:
-                  CrossAxisAlignment.stretch, // Force children to fill width
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Title section
                 if (title != null || titleWidget != null)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
@@ -52,7 +49,6 @@ class AppDialog extends StatelessWidget {
                                   ),
                         ),
                   ),
-                // Content section
                 Flexible(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
@@ -62,7 +58,6 @@ class AppDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Actions section
                 if (actions != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0, right: 8.0),
