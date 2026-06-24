@@ -157,66 +157,76 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
   }) {
     final theme = Theme.of(context);
 
-    return Consumer<AdvancedSettingsViewModel>(
-      builder: (context, viewModel, child) {
-        final bool isEnabled = prefKey == 'offset' 
-            ? viewModel.offsetEnabled 
-            : viewModel.autoPauseEnabled;
-
-        return Card(
-          margin: const EdgeInsets.only(bottom: 16.0),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: theme.dividerColor),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Text(
-                              subtitle,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ),
-                        ],
+    // 關鍵改動：移除最外層的 Consumer，讓 Card 變成靜態組件，不再重建
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16.0),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: theme.dividerColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    Switch(
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          subtitle,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // 使用 Selector 僅針對 Switch 進行局部重建
+                Selector<AdvancedSettingsViewModel, bool>(
+                  selector: (_, viewModel) => prefKey == 'offset' 
+                      ? viewModel.offsetEnabled 
+                      : viewModel.autoPauseEnabled,
+                  builder: (context, isEnabled, child) {
+                    return Switch(
                       value: isEnabled,
                       onChanged: isLocked
                           ? null
                           : (bool value) {
                               if (prefKey == 'offset') {
-                                viewModel.setOffsetEnabled(value);
+                                Provider.of<AdvancedSettingsViewModel>(context, listen: false)
+                                    .setOffsetEnabled(value);
                               } else {
-                                viewModel.setAutoPauseEnabled(value);
+                                Provider.of<AdvancedSettingsViewModel>(context, listen: false)
+                                    .setAutoPauseEnabled(value);
                               }
                             },
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              ),
-              // 使用 AnimatedCrossFade 實現平滑伸縮效果，避免瞬間跳變
-              AnimatedCrossFade(
+              ],
+            ),
+          ),
+          // 使用 Selector 僅針對動畫區域進行局部重建
+          Selector<AdvancedSettingsViewModel, bool>(
+            selector: (_, viewModel) => prefKey == 'offset' 
+                ? viewModel.offsetEnabled 
+                : viewModel.autoPauseEnabled,
+            builder: (context, isEnabled, child) {
+              return AnimatedCrossFade(
                 duration: const Duration(milliseconds: 200),
                 crossFadeState: isEnabled 
                     ? CrossFadeState.showFirst 
@@ -232,17 +242,15 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                   ),
                 ),
                 secondChild: const SizedBox(width: double.infinity),
-              ),
-            ],
+              );
+            },
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }
 
-// 關鍵：將輸入框封裝在獨立的 StatefulWidget 中
-// 這能確保輸入框在父頁面重建時，其內部的狀態和實例得以保留，消除閃爍
 class _ParameterFieldWrapper extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
