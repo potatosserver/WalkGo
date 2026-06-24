@@ -40,24 +40,11 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
     }
   }
 
-  Future<PermissionStatus> _checkSimplePermission(Permission permission) async {
-    return await permission.status;
-  }
-
-  Future<void> _requestSimplePermission(Permission permission) async {
-    final status = await permission.request();
-    if (status.isPermanentlyDenied) {
-      _showPermanentlyDeniedDialog();
-    }
-    _updatePageState();
-  }
-
   Future<bool> _checkHealthPermission() async {
     final types = [HealthDataType.STEPS];
     final permissions = [HealthDataAccess.READ_WRITE];
-    final granted =
-        await _health.hasPermissions(types, permissions: permissions) ?? false;
-    return granted;
+    return await _health.hasPermissions(types, permissions: permissions) ??
+        false;
   }
 
   Future<void> _requestHealthPermission() async {
@@ -65,6 +52,33 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
       [HealthDataType.STEPS],
       permissions: [HealthDataAccess.READ_WRITE],
     );
+    _updatePageState();
+  }
+
+  Future<bool> _checkSimplePermission(Permission permission) async {
+    final status = await permission.status;
+    return status.isGranted;
+  }
+
+  Future<void> _requestNotificationPermission() async {
+    final status = await Permission.notification.request();
+    if (status.isGranted) {
+      await PreferenceService().setSkipNotification(false);
+    }
+    if (status.isPermanentlyDenied) {
+      _showPermanentlyDeniedDialog();
+    }
+    _updatePageState();
+  }
+
+  Future<void> _requestBatteryPermission() async {
+    final status = await Permission.ignoreBatteryOptimizations.request();
+    if (status.isGranted) {
+      await PreferenceService().setSkipBattery(false);
+    }
+    if (status.isPermanentlyDenied) {
+      _showPermanentlyDeniedDialog();
+    }
     _updatePageState();
   }
 
@@ -191,12 +205,9 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                     icon: Icons.notifications,
                     title: l10n.permission_notification_title,
                     description: l10n.permission_notification_desc,
-                    requestPermission: () =>
-                        _requestSimplePermission(Permission.notification),
-                    checkPermission: () async => (await _checkSimplePermission(
-                      Permission.notification,
-                    ))
-                        .isGranted,
+                    requestPermission: _requestNotificationPermission,
+                    checkPermission: () =>
+                        _checkSimplePermission(Permission.notification),
                     canSkip: true,
                     skipTitle: l10n.skip_notification_warning,
                     skipDesc: l10n.skip_notification_desc,
@@ -207,13 +218,9 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                     icon: Icons.battery_charging_full,
                     title: l10n.permission_battery_title,
                     description: l10n.permission_battery_desc,
-                    requestPermission: () => _requestSimplePermission(
-                      Permission.ignoreBatteryOptimizations,
-                    ),
-                    checkPermission: () async => (await _checkSimplePermission(
-                      Permission.ignoreBatteryOptimizations,
-                    ))
-                        .isGranted,
+                    requestPermission: _requestBatteryPermission,
+                    checkPermission: () => _checkSimplePermission(
+                        Permission.ignoreBatteryOptimizations),
                     canSkip: true,
                     skipTitle: l10n.skip_battery_warning,
                     skipDesc: l10n.skip_battery_desc,
@@ -228,17 +235,16 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
     );
   }
 
-  Widget _buildPermissionPage({
-    required int index,
-    required IconData icon,
-    required String title,
-    required String description,
-    required Future<void> Function() requestPermission,
-    required Future<bool> Function() checkPermission,
-    bool canSkip = false,
-    String? skipTitle,
-    String? skipDesc,
-  }) {
+  Widget _buildPermissionPage(
+      {required int index,
+      required IconData icon,
+      required String title,
+      required String description,
+      required Future<void> Function() requestPermission,
+      required Future<bool> Function() checkPermission,
+      bool canSkip = false,
+      String? skipTitle,
+      String? skipDesc}) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -247,14 +253,6 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
       future: checkPermission(),
       builder: (context, snapshot) {
         final bool isGranted = snapshot.data ?? false;
-
-        if (isGranted) {
-          if (index == 1) {
-            PreferenceService().setSkipNotification(false);
-          } else if (index == 2) {
-            PreferenceService().setSkipBattery(false);
-          }
-        }
 
         return Column(
           children: [
@@ -268,9 +266,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                     const SizedBox(height: 20),
                     Text(
                       title,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: theme.textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 15),
@@ -332,28 +329,27 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                 child: ElevatedButton(
                   onPressed: isGranted ? _goToNextPage : null,
                   style: ButtonStyle(
-                    padding: WidgetStateProperty.all(
-                      const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    shape: WidgetStateProperty.all(const StadiumBorder()),
-                    backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (Set<WidgetState> states) {
-                      if (states.contains(WidgetState.disabled)) {
-                        return colorScheme.onSurface.withAlpha(30);
-                      }
-                      if (_currentPage == _pageCount - 1) {
-                        return Colors.green.shade600;
-                      }
-                      return colorScheme.primary;
-                    }),
-                    foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (Set<WidgetState> states) {
-                      if (states.contains(WidgetState.disabled)) {
-                        return colorScheme.onSurface.withAlpha(97);
-                      }
-                      return colorScheme.onPrimary;
-                    }),
-                  ),
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      shape: WidgetStateProperty.all(const StadiumBorder()),
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                          (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.disabled)) {
+                          return colorScheme.onSurface.withAlpha(30);
+                        }
+                        if (_currentPage == _pageCount - 1) {
+                          return Colors.green.shade600;
+                        }
+                        return colorScheme.primary;
+                      }),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                          (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.disabled)) {
+                          return colorScheme.onSurface.withAlpha(97);
+                        }
+                        return colorScheme.onPrimary;
+                      })),
                   child: Text(
                     _currentPage == _pageCount - 1
                         ? l10n.setup_complete
