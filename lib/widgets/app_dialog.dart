@@ -18,19 +18,15 @@ class AppDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    // Strict width logic:
-    // Mobile (< 600dp): Always 95% of screen width
-    // Tablet/Web (>= 600dp): Always 50% of screen width, capped at 600dp
     final double dialogWidth = screenWidth < 600
-        ? screenWidth * 0.95
+        ? screenWidth * 0.9
         : (screenWidth * 0.5).clamp(300.0, 600.0);
 
     return Center(
       child: SizedBox(
         width: dialogWidth,
         child: Dialog(
-          // CRITICAL: Remove the default insetPadding (usually 40dp horizontal)
-          // This is what was preventing the dialog from actually reaching 95% width.
+
           insetPadding: EdgeInsets.zero,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(28.0)),
