@@ -66,10 +66,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final theme = Theme.of(context);
     final isLightMode = theme.brightness == Brightness.light;
 
+    // Android 15 optimization: Removed deprecated color settings
     final systemUiOverlayStyle = SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
       statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
-      systemNavigationBarColor: theme.colorScheme.surface,
       systemNavigationBarIconBrightness:
           isLightMode ? Brightness.dark : Brightness.light,
     );
@@ -94,6 +93,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           scrolledUnderElevation: 0,
         ),
         body: SafeArea(
+          top: false, // Allow content to extend behind the transparent AppBar
           child: Consumer<HomePageViewModel>(
             builder: (context, viewModel, child) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -102,9 +102,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               return GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+                  padding: EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: MediaQuery.of(context).padding.top + 16, // Adjust top padding for status bar
+                    bottom: 16,
                   ),
                   children: [
                     const StatusCard(),

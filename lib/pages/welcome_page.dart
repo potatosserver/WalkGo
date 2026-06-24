@@ -17,10 +17,9 @@ class WelcomePage extends StatelessWidget {
     final theme = Theme.of(context);
     final isLightMode = theme.brightness == Brightness.light;
 
+    // Android 15 optimization: Removed deprecated color settings
     final systemUiOverlayStyle = SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
       statusBarIconBrightness: isLightMode ? Brightness.dark : Brightness.light,
-      systemNavigationBarColor: theme.colorScheme.surface,
       systemNavigationBarIconBrightness:
           isLightMode ? Brightness.dark : Brightness.light,
     );
@@ -28,7 +27,7 @@ class WelcomePage extends StatelessWidget {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: systemUiOverlayStyle,
       child: Scaffold(
-        extendBody: true,
+        // Removed extendBody: true to avoid potential navigation bar overlaps
         body: SafeArea(
           child: Center(
             child: Padding(
