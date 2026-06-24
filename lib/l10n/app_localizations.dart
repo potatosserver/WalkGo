@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @walkgo.
   ///
   /// In en, this message translates to:
-  /// **'WalkGO'**
+  /// **'WalkGo'**
   String get walkgo;
 
   /// No description provided for @settings_tooltip.
@@ -1069,6 +1069,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View on Google Play'**
   String get view_on_google_play;
+
+  /// No description provided for @skip_permission_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission Skip Warning'**
+  String get skip_permission_title;
+
+  /// No description provided for @skip_permission_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipping this permission may affect the app\'s stability and background synchronization. The system may force stop the app, causing step synchronization to be interrupted.'**
+  String get skip_permission_description;
+
+  /// No description provided for @skip_permission_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Skip'**
+  String get skip_permission_confirm;
+
+  /// No description provided for @skip_permission_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get skip_permission_label;
+
+  /// No description provided for @skip_notification_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Permission Warning'**
+  String get skip_notification_warning;
+
+  /// No description provided for @skip_notification_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'If you skip notification permission, the foreground service priority will be lowered, and the system may force stop the app at any time in the background, interrupting step synchronization.'**
+  String get skip_notification_desc;
+
+  /// No description provided for @skip_battery_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery Optimization Warning'**
+  String get skip_battery_warning;
+
+  /// No description provided for @skip_battery_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'If you skip battery optimization, Android system will pause synchronization tasks when the phone enters sleep mode, preventing steps from being written to health data in real time.'**
+  String get skip_battery_desc;
+
+  /// No description provided for @skip_permission_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get skip_permission_cancel;
 }
 
 class _AppLocalizationsDelegate

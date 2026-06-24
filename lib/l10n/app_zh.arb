@@ -184,7 +184,6 @@
     "notification_steps_written_title": "成功寫入步數",
     "manual_write_initiated": "手動寫入已啟動。",
     "manual_write_button_text": "手動寫入一次",
-    "@manual_write_button_text": {},
     "manual_write_success_feedback": "已手動寫入 {steps} 步",
     "@manual_write_success_feedback": {
         "placeholders": {
@@ -284,11 +283,11 @@
     },
     "manual_download_filename": "檔案名稱：{filename}",
     "@manual_download_filename": {
-      "placeholders": {
-        "filename": {
-          "type": "String"
+        "placeholders": {
+            "filename": {
+                "type": "String"
+            }
         }
-      }
     },
     "copy_link": "複製連結",
     "@copy_link": {},

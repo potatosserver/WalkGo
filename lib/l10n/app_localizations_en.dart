@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get walkgo => 'WalkGO';
+  String get walkgo => 'WalkGo';
 
   @override
   String get settings_tooltip => 'Settings';
@@ -554,4 +554,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get view_on_google_play => 'View on Google Play';
+
+  @override
+  String get skip_permission_title => 'Permission Skip Warning';
+
+  @override
+  String get skip_permission_description =>
+      'Skipping this permission may affect the app\'s stability and background synchronization. The system may force stop the app, causing step synchronization to be interrupted.';
+
+  @override
+  String get skip_permission_confirm => 'Confirm Skip';
+
+  @override
+  String get skip_permission_label => 'Skip for now';
+
+  @override
+  String get skip_notification_warning => 'Notification Permission Warning';
+
+  @override
+  String get skip_notification_desc =>
+      'If you skip notification permission, the foreground service priority will be lowered, and the system may force stop the app at any time in the background, interrupting step synchronization.';
+
+  @override
+  String get skip_battery_warning => 'Battery Optimization Warning';
+
+  @override
+  String get skip_battery_desc =>
+      'If you skip battery optimization, Android system will pause synchronization tasks when the phone enters sleep mode, preventing steps from being written to health data in real time.';
+
+  @override
+  String get skip_permission_cancel => 'Cancel';
 }

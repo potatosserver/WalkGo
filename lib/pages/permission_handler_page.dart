@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:health/health.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../l10n/app_localizations.dart';
+import '../services/preference_service.dart';
 
 class PermissionHandlerPage extends StatefulWidget {
   const PermissionHandlerPage({super.key});
@@ -16,7 +17,7 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
     with WidgetsBindingObserver {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  static const int _pageCount = 3; // Updated from 4 to 3
+  static const int _pageCount = 3; 
   final _health = Health();
 
   @override
@@ -92,6 +93,30 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
     );
   }
 
+  void _showSkipWarningDialog({required String title, required String description, required Future<void> Function() onConfirm}) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+        content: Text(description),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await onConfirm();
+            },
+            child: Text(l10n.skip_permission_confirm, style: const TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _updatePageState() {
     if (mounted) {
       setState(() {});
@@ -147,14 +172,17 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
               switch (index) {
                 case 0:
                   return _buildPermissionPage(
+                    index: index,
                     icon: Icons.favorite,
                     title: l10n.permission_health_title,
                     description: l10n.permission_health_desc,
                     requestPermission: _requestHealthPermission,
                     checkPermission: _checkHealthPermission,
+                    canSkip: false,
                   );
                 case 1:
                   return _buildPermissionPage(
+                    index: index,
                     icon: Icons.notifications,
                     title: l10n.permission_notification_title,
                     description: l10n.permission_notification_desc,
@@ -164,9 +192,13 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                       Permission.notification,
                     ))
                         .isGranted,
+                    canSkip: true,
+                    skipTitle: l10n.skip_notification_warning,
+                    skipDesc: l10n.skip_notification_desc,
                   );
                 case 2:
                   return _buildPermissionPage(
+                    index: index,
                     icon: Icons.battery_charging_full,
                     title: l10n.permission_battery_title,
                     description: l10n.permission_battery_desc,
@@ -177,6 +209,9 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                       Permission.ignoreBatteryOptimizations,
                     ))
                         .isGranted,
+                    canSkip: true,
+                    skipTitle: l10n.skip_battery_warning,
+                    skipDesc: l10n.skip_battery_desc,
                   );
                 default:
                   return const SizedBox.shrink();
@@ -189,11 +224,15 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
   }
 
   Widget _buildPermissionPage({
+    required int index,
     required IconData icon,
     required String title,
     required String description,
     required Future<void> Function() requestPermission,
     required Future<bool> Function() checkPermission,
+    bool canSkip = false,
+    String? skipTitle,
+    String? skipDesc,
   }) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
@@ -228,7 +267,7 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 40),
-                    if (!isGranted)
+                    if (!isGranted) ...[
                       ElevatedButton.icon(
                         icon: const Icon(Icons.shield),
                         label: Text(l10n.grant_permission),
@@ -240,6 +279,30 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                           ),
                         ),
                       ),
+                      if (canSkip)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: TextButton(
+                            onPressed: () {
+                              Future<void> performSkip() async {
+                                if (index == 1) {
+                                  await PreferenceService().setSkipNotification(true);
+                                } else if (index == 2) {
+                                  await PreferenceService().setSkipBattery(true);
+                                }
+                                _updatePageState();
+                                _goToNextPage();
+                              }
+                              _showSkipWarningDialog(
+                                title: skipTitle ?? l10n.skip_permission_title,
+                                description: skipDesc ?? l10n.skip_permission_description,
+                                onConfirm: performSkip,
+                              );
+                            },
+                            child: Text(l10n.skip_permission_label, style: const TextStyle(color: Colors.grey)),
+                          ),
+                        ),
+                    ],
                   ],
                 ),
               ),
@@ -250,15 +313,26 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: isGranted ? _goToNextPage : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: const StadiumBorder(),
-                    backgroundColor: _currentPage == _pageCount - 1 
-                        ? Colors.green.shade600 
-                        : colorScheme.primary,
-                    foregroundColor: colorScheme.onPrimary,
-                    disabledBackgroundColor: colorScheme.onSurface.withAlpha(30),
-                    disabledForegroundColor: colorScheme.onSurface.withAlpha(97),
+                  style: ButtonStyle(
+                    padding: WidgetStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    shape: WidgetStateProperty.all(const StadiumBorder()),
+                    backgroundColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+                      if (states.contains(WidgetState.disabled)) {
+                        return colorScheme.onSurface.withAlpha(30);
+                      }
+                      if (_currentPage == _pageCount - 1) {
+                        return Colors.green.shade600;
+                      }
+                      return colorScheme.primary;
+                    }),
+                    foregroundColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+                      if (states.contains(WidgetState.disabled)) {
+                        return colorScheme.onSurface.withAlpha(97);
+                      }
+                      return colorScheme.onPrimary;
+                    }),
                   ),
                   child: Text(
                     _currentPage == _pageCount - 1
