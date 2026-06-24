@@ -26,11 +26,12 @@ class AppDialog extends StatelessWidget {
         : (screenWidth * 0.5).clamp(300.0, 600.0);
 
     return Center(
-      // REMOVED the outer Padding that was causing the width to be clamped.
-      // The SizedBox now has absolute control over the dialog width.
       child: SizedBox(
         width: dialogWidth,
         child: Dialog(
+          // CRITICAL: Remove the default insetPadding (usually 40dp horizontal)
+          // This is what was preventing the dialog from actually reaching 95% width.
+          insetPadding: EdgeInsets.zero,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(28.0)),
           child: Column(
