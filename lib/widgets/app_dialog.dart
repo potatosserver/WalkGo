@@ -30,17 +30,49 @@ class AppDialog extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
         child: SizedBox(
           width: dialogWidth,
-          child: AlertDialog(
-            insetPadding: EdgeInsets.zero,
-            title: titleWidget ?? (title != null ? Text(title!) : null),
-            // FORCE the content to expand to the full width of the SizedBox
-            // This prevents the dialog from shrinking when the content is narrow
-            content: SizedBox(
-              width: double.infinity,
-              child: content,
+          child: Dialog(
+            // Use a standard rounded corner to match Material 3 AlertDialog
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(28.0)),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment:
+                  CrossAxisAlignment.stretch, // Force children to fill width
+              children: [
+                // Title section
+                if (title != null || titleWidget != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                    child: titleWidget ??
+                        Text(
+                          title!,
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                  ),
+                // Content section
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: content,
+                    ),
+                  ),
+                ),
+                // Actions section
+                if (actions != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0, right: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: actions!,
+                    ),
+                  ),
+              ],
             ),
-            actions: actions,
-            contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
           ),
         ),
       ),
