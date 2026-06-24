@@ -117,6 +117,7 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                                     16,
                                   ),
                                   child: _buildTextField(
+                                    key: const ValueKey('offset_steps_textfield'),
                                     enabled: !isLocked,
                                     controller: _offsetStepsController,
                                     focusNode: _offsetStepsFocusNode,
@@ -148,6 +149,7 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                                     16,
                                   ),
                                   child: _buildTextField(
+                                    key: const ValueKey('auto_pause_textfield'),
                                     enabled: !isLocked,
                                     controller: _autoPauseThresholdController,
                                     focusNode: _autoPauseThresholdFocusNode,
@@ -232,6 +234,7 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
   }
 
   Widget _buildTextField({
+    Key? key, // Accept an optional key
     required TextEditingController controller,
     required String label,
     required String hint,
@@ -239,6 +242,7 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
     bool enabled = true,
   }) {
     return TextFormField(
+      key: key, // Pass the key to the TextFormField
       controller: controller,
       focusNode: focusNode,
       keyboardType: TextInputType.number,
