@@ -16,7 +16,7 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
     with WidgetsBindingObserver {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  static const int _pageCount = 4;
+  static const int _pageCount = 3; // Updated from 4 to 3
   final _health = Health();
 
   @override
@@ -155,19 +155,6 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                   );
                 case 1:
                   return _buildPermissionPage(
-                    icon: Icons.directions_run,
-                    title: l10n.permission_activity_title,
-                    description: l10n.permission_activity_desc,
-                    requestPermission: () => _requestSimplePermission(
-                      Permission.activityRecognition,
-                    ),
-                    checkPermission: () async => (await _checkSimplePermission(
-                      Permission.activityRecognition,
-                    ))
-                        .isGranted,
-                  );
-                case 2:
-                  return _buildPermissionPage(
                     icon: Icons.notifications,
                     title: l10n.permission_notification_title,
                     description: l10n.permission_notification_desc,
@@ -178,7 +165,7 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                     ))
                         .isGranted,
                   );
-                case 3:
+                case 2:
                   return _buildPermissionPage(
                     icon: Icons.battery_charging_full,
                     title: l10n.permission_battery_title,
@@ -263,30 +250,15 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: isGranted ? _goToNextPage : null,
-                  style: ButtonStyle(
-                    padding: WidgetStateProperty.all(
-                      const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    shape: WidgetStateProperty.all(const StadiumBorder()),
-                    backgroundColor: WidgetStateProperty.resolveWith<Color?>((
-                      states,
-                    ) {
-                      if (states.contains(WidgetState.disabled)) {
-                        return colorScheme.onSurface.withAlpha(30);
-                      }
-                      if (_currentPage == _pageCount - 1) {
-                        return Colors.green.shade600;
-                      }
-                      return colorScheme.primary;
-                    }),
-                    foregroundColor: WidgetStateProperty.resolveWith<Color?>((
-                      states,
-                    ) {
-                      if (states.contains(WidgetState.disabled)) {
-                        return colorScheme.onSurface.withAlpha(97);
-                      }
-                      return colorScheme.onPrimary;
-                    }),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: const StadiumBorder(),
+                    backgroundColor: _currentPage == _pageCount - 1 
+                        ? Colors.green.shade600 
+                        : colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
+                    disabledBackgroundColor: colorScheme.onSurface.withAlpha(30),
+                    disabledForegroundColor: colorScheme.onSurface.withAlpha(97),
                   ),
                   child: Text(
                     _currentPage == _pageCount - 1
