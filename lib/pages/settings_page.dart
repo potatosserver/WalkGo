@@ -219,48 +219,60 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (context) => AppDialog(
         title: l10n.about_walkgo,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(l10n.about_walkgo_content),
-            const SizedBox(height: 24),
-            _buildAboutRow(
-              context,
-              icon: const FaIcon(FontAwesomeIcons.github, size: 24),
-              text: l10n.github_source_code,
-              trailing: const Icon(Icons.open_in_new, size: 20),
-              onTap: () async {
-                final url = Uri.parse(
-                  'https://github.com/potatosserver/WalkGo',
-                );
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                }
-              },
-            ),
-            const SizedBox(height: 12),
-            _buildAboutRow(
-              context,
-              icon: const Icon(Icons.badge_outlined, size: 24),
-              text: l10n.developer_label,
-            ),
-            const SizedBox(height: 12),
-            _buildAboutRow(
-              context,
-              icon: const Icon(Icons.info_outline, size: 24),
-              text: l10n.version_label(_version),
-            ),
-            if (!isGooglePlay) ...[
-              const Divider(height: 32),
-              _buildAboutRow(
-                context,
-                icon: const Icon(Icons.article_outlined, size: 24),
-                text: l10n.view_release_notes,
-                onTap: () => _showReleaseNotes(context, l10n),
+        content: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.6,
+          ),
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.about_walkgo_content,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 24),
+                  _buildAboutRow(
+                    context,
+                    icon: const FaIcon(FontAwesomeIcons.github, size: 24),
+                    text: l10n.github_source_code,
+                    trailing: const Icon(Icons.open_in_new, size: 20),
+                    onTap: () async {
+                      final url = Uri.parse(
+                        'https://github.com/potatosserver/WalkGo',
+                      );
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildAboutRow(
+                    context,
+                    icon: const Icon(Icons.badge_outlined, size: 24),
+                    text: l10n.developer_label,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildAboutRow(
+                    context,
+                    icon: const Icon(Icons.info_outline, size: 24),
+                    text: l10n.version_label(_version),
+                  ),
+                  if (!isGooglePlay) ...[
+                    const Divider(height: 32),
+                    _buildAboutRow(
+                      context,
+                      icon: const Icon(Icons.article_outlined, size: 24),
+                      text: l10n.view_release_notes,
+                      onTap: () => _showReleaseNotes(context, l10n),
+                    ),
+                  ],
+                ],
               ),
-            ],
-          ],
+            ),
+          ),
         ),
         actions: [
           TextButton(
