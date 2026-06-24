@@ -43,24 +43,10 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
         viewModel.saveAutoPauseThreshold(_autoPauseThresholdController.text);
       }
     });
-
-    viewModel.addListener(_syncControllers);
-  }
-
-  void _syncControllers() {
-    final viewModel = Provider.of<AdvancedSettingsViewModel>(context, listen: false);
-    if (_offsetStepsController.text != viewModel.offsetSteps) {
-      _offsetStepsController.text = viewModel.offsetSteps;
-    }
-    if (_autoPauseThresholdController.text != viewModel.autoPauseThreshold) {
-      _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
-    }
   }
 
   @override
   void dispose() {
-    final viewModel = Provider.of<AdvancedSettingsViewModel>(context, listen: false);
-    viewModel.removeListener(_syncControllers);
     _offsetStepsController.dispose();
     _autoPauseThresholdController.dispose();
     _offsetStepsFocusNode.dispose();
@@ -76,9 +62,18 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.advanced_parameters)),
       body: SafeArea(
-        child: Selector<AdvancedSettingsViewModel, bool>(
-          selector: (_, vm) => vm.isAutoModeRunning,
-          builder: (context, isLocked, child) {
+        child: Consumer<AdvancedSettingsViewModel>(
+          builder: (context, viewModel, child) {
+            final isLocked = viewModel.isAutoModeRunning;
+
+            if (_offsetStepsController.text != viewModel.offsetSteps) {
+              _offsetStepsController.text = viewModel.offsetSteps;
+            }
+            if (_autoPauseThresholdController.text !=
+                viewModel.autoPauseThreshold) {
+              _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
+            }
+
             return AbsorbPointer(
               absorbing: isLocked,
               child: Opacity(
@@ -108,27 +103,67 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                             vertical: 16.0,
                           ),
                           children: [
-                            _buildSettingItem(
+                            _buildSettingsCard(
                               context,
                               title: l10n.offset_settings_title,
                               subtitle: l10n.offset_settings_subtitle,
-                              prefKey: 'offset',
-                              controller: _offsetStepsController,
-                              focusNode: _offsetStepsFocusNode,
-                              label: l10n.offset_steps,
-                              hint: l10n.offset_steps_hint,
-                              isLocked: isLocked,
+                              trailing: Switch(
+                                value: viewModel.offsetEnabled,
+                                onChanged: isLocked
+                                    ? null
+                                    : (bool value) {
+                                        viewModel.setOffsetEnabled(value);
+                                      },
+                              ),
+                              child: Visibility(
+                                visible: viewModel.offsetEnabled,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    8,
+                                    16,
+                                    16,
+                                  ),
+                                  child: _buildTextField(
+                                    enabled: !isLocked,
+                                    controller: _offsetStepsController,
+                                    focusNode: _offsetStepsFocusNode,
+                                    label: l10n.offset_steps,
+                                    hint: l10n.offset_steps_hint,
+                                  ),
+                                ),
+                              ),
                             ),
-                            _buildSettingItem(
+                            _buildSettingsCard(
                               context,
                               title: l10n.auto_pause_title,
                               subtitle: l10n.auto_pause_subtitle,
-                              prefKey: 'autoPause',
-                              controller: _autoPauseThresholdController,
-                              focusNode: _autoPauseThresholdFocusNode,
-                              label: l10n.auto_pause_threshold,
-                              hint: l10n.auto_pause_threshold_hint,
-                              isLocked: isLocked,
+                              trailing: Switch(
+                                value: viewModel.autoPauseEnabled,
+                                onChanged: isLocked
+                                    ? null
+                                    : (bool value) {
+                                        viewModel.setAutoPauseEnabled(value);
+                                      },
+                              ),
+                              child: Visibility(
+                                visible: viewModel.autoPauseEnabled,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    8,
+                                    16,
+                                    16,
+                                  ),
+                                  child: _buildTextField(
+                                    enabled: !isLocked,
+                                    controller: _autoPauseThresholdController,
+                                    focusNode: _autoPauseThresholdFocusNode,
+                                    label: l10n.auto_pause_threshold,
+                                    hint: l10n.auto_pause_threshold_hint,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -144,20 +179,14 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
     );
   }
 
-  Widget _buildSettingItem(
+  Widget _buildSettingsCard(
     BuildContext context, {
     required String title,
-    required String subtitle,
-    required String prefKey,
-    required TextEditingController controller,
-    required FocusNode focusNode,
-    required String label,
-    required String hint,
-    required bool isLocked,
+    String? subtitle,
+    Widget? trailing,
+    required Widget child,
   }) {
     final theme = Theme.of(context);
-
-    // 關鍵改動：移除最外層的 Consumer，讓 Card 變成靜態組件，不再重建
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
       elevation: 0,
@@ -183,104 +212,48 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          subtitle,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                      if (subtitle != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            subtitle,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
-                // 使用 Selector 僅針對 Switch 進行局部重建
-                Selector<AdvancedSettingsViewModel, bool>(
-                  selector: (_, viewModel) => prefKey == 'offset' 
-                      ? viewModel.offsetEnabled 
-                      : viewModel.autoPauseEnabled,
-                  builder: (context, isEnabled, child) {
-                    return Switch(
-                      value: isEnabled,
-                      onChanged: isLocked
-                          ? null
-                          : (bool value) {
-                              if (prefKey == 'offset') {
-                                Provider.of<AdvancedSettingsViewModel>(context, listen: false)
-                                    .setOffsetEnabled(value);
-                              } else {
-                                Provider.of<AdvancedSettingsViewModel>(context, listen: false)
-                                    .setAutoPauseEnabled(value);
-                              }
-                            },
-                    );
-                  },
-                ),
+                if (trailing != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: trailing,
+                  ),
               ],
             ),
           ),
-          // 使用 Selector 僅針對動畫區域進行局部重建
-          Selector<AdvancedSettingsViewModel, bool>(
-            selector: (_, viewModel) => prefKey == 'offset' 
-                ? viewModel.offsetEnabled 
-                : viewModel.autoPauseEnabled,
-            builder: (context, isEnabled, child) {
-              return AnimatedCrossFade(
-                duration: const Duration(milliseconds: 200),
-                crossFadeState: isEnabled 
-                    ? CrossFadeState.showFirst 
-                    : CrossFadeState.showSecond,
-                firstChild: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  child: _ParameterFieldWrapper(
-                    controller: controller,
-                    focusNode: focusNode,
-                    label: label,
-                    hint: hint,
-                    enabled: !isLocked,
-                  ),
-                ),
-                secondChild: const SizedBox(width: double.infinity),
-              );
-            },
-          ),
+          child,
         ],
       ),
     );
   }
-}
 
-class _ParameterFieldWrapper extends StatefulWidget {
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final String label;
-  final String hint;
-  final bool enabled;
-
-  const _ParameterFieldWrapper({
-    required this.controller,
-    required this.focusNode,
-    required this.label,
-    required this.hint,
-    required this.enabled,
-  });
-
-  @override
-  State<_ParameterFieldWrapper> createState() => _ParameterFieldWrapperState();
-}
-
-class _ParameterFieldWrapperState extends State<_ParameterFieldWrapper> {
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    FocusNode? focusNode,
+    bool enabled = true,
+  }) {
     return TextFormField(
-      controller: widget.controller,
-      focusNode: widget.focusNode,
+      controller: controller,
+      focusNode: focusNode,
       keyboardType: TextInputType.number,
-      enabled: widget.enabled,
+      enabled: enabled,
       decoration: InputDecoration(
-        labelText: widget.label,
-        hintText: widget.hint,
+        labelText: label,
+        hintText: hint,
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
