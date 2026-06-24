@@ -43,10 +43,31 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
         viewModel.saveAutoPauseThreshold(_autoPauseThresholdController.text);
       }
     });
+
+    // 監聽 ViewModel 變化，將同步邏輯移出 build 方法
+    viewModel.addListener(_syncControllers);
+  }
+
+  void _syncControllers() {
+    // 使用 listen: false 以避免在監聽器內觸發重新構建
+    final viewModel =
+        Provider.of<AdvancedSettingsViewModel>(context, listen: false);
+
+    if (_offsetStepsController.text != viewModel.offsetSteps) {
+      _offsetStepsController.text = viewModel.offsetSteps;
+    }
+    if (_autoPauseThresholdController.text != viewModel.autoPauseThreshold) {
+      _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
+    }
   }
 
   @override
   void dispose() {
+    // 必須移除監聽器以防止內存洩漏
+    final viewModel =
+        Provider.of<AdvancedSettingsViewModel>(context, listen: false);
+    viewModel.removeListener(_syncControllers);
+
     _offsetStepsController.dispose();
     _autoPauseThresholdController.dispose();
     _offsetStepsFocusNode.dispose();
@@ -65,14 +86,6 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
         child: Consumer<AdvancedSettingsViewModel>(
           builder: (context, viewModel, child) {
             final isLocked = viewModel.isAutoModeRunning;
-
-            if (_offsetStepsController.text != viewModel.offsetSteps) {
-              _offsetStepsController.text = viewModel.offsetSteps;
-            }
-            if (_autoPauseThresholdController.text !=
-                viewModel.autoPauseThreshold) {
-              _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
-            }
 
             return AbsorbPointer(
               absorbing: isLocked,
