@@ -5,6 +5,7 @@ import 'package:health/health.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../l10n/app_localizations.dart';
 import '../services/preference_service.dart';
+import '../widgets/app_dialog.dart';
 
 class PermissionHandlerPage extends StatefulWidget {
   const PermissionHandlerPage({super.key});
@@ -28,7 +29,6 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _pageController.dispose();
     super.dispose();
   }
@@ -88,8 +88,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.permission_denied_title),
+      builder: (context) => AppDialog(
+        title: l10n.permission_denied_title,
         content: Text(l10n.permission_denied_content),
         actions: [
           TextButton(
@@ -115,10 +115,8 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title,
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.red)),
+      builder: (context) => AppDialog(
+        title: title,
         content: Text(description),
         actions: [
           TextButton(

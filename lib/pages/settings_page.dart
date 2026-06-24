@@ -14,6 +14,7 @@ import '../services/log_service.dart';
 import '../services/update_service.dart';
 import '../widgets/release_notes_dialog.dart';
 import '../widgets/update_flow_dialog.dart';
+import '../widgets/app_dialog.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -216,8 +217,8 @@ class _SettingsPageState extends State<SettingsPage> {
     final isGooglePlay = updateChannel == 'google_play';
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.about_walkgo),
+      builder: (context) => AppDialog(
+        title: l10n.about_walkgo,
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,8 +347,8 @@ class _SettingsPageState extends State<SettingsPage> {
           listen: false,
         );
         final navigator = Navigator.of(dialogContext);
-        return AlertDialog(
-          title: Text(l10n.clear_data_confirm_title),
+        return AppDialog(
+          title: l10n.clear_data_confirm_title,
           content: Text(l10n.clear_data_confirm_content),
           actions: [
             TextButton(

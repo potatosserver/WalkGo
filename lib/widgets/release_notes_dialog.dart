@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/services/update_service.dart';
+import 'package:walkgo/widgets/app_dialog.dart';
 
 class ReleaseNotesDialog extends StatelessWidget {
   final ReleaseInfo release;
@@ -12,12 +13,11 @@ class ReleaseNotesDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return AlertDialog(
-      title: Text(l10n.release_notes),
+    return AppDialog(
+      title: l10n.release_notes,
       content: ConstrainedBox(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.6,
-          maxWidth: MediaQuery.of(context).size.width * 0.8,
         ),
         child: Scrollbar(
           child: SingleChildScrollView(

@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../services/log_service.dart';
 import '../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import '../widgets/app_dialog.dart';
 
 class LogPage extends StatelessWidget {
   const LogPage({super.key});
@@ -18,8 +19,8 @@ class LogPage extends StatelessWidget {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (dialogContext) {
-          return AlertDialog(
-            title: Text(l10n.clear_logs_confirm_title),
+          return AppDialog(
+            title: l10n.clear_logs_confirm_title,
             content: Text(l10n.clear_logs_confirm_content),
             actions: [
               TextButton(

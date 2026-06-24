@@ -3,6 +3,7 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/services/update_service.dart';
+import 'package:walkgo/widgets/app_dialog.dart';
 
 class UpdateDialog extends StatefulWidget {
   final ReleaseInfo release;
@@ -51,8 +52,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return AlertDialog(
-      title: Text(_getTitle(l10n)),
+    return AppDialog(
+      title: _getTitle(l10n),
       content: _buildContent(context, l10n),
       actions: _buildActions(context, l10n),
     );
@@ -112,27 +113,24 @@ class _UpdateDialogState extends State<UpdateDialog> {
         );
 
       case UpdateStep.details:
-        return SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.6,
-            ),
-            child: Scrollbar(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(l10n.update_available_desc(widget.release.tagName)),
-                    const SizedBox(height: 16),
-                    Markdown(
-                      data: widget.release.body,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                    ),
-                  ],
-                ),
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.6,
+          ),
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.update_available_desc(widget.release.tagName)),
+                  const SizedBox(height: 16),
+                  Markdown(
+                    data: widget.release.body,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                  ),
+                ],
               ),
             ),
           ),
@@ -215,7 +213,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
   Future<void> _installUpdate() async {
     if (_apkPath == null) {
       _startDownload();
-      return;
     }
     await _updateService.installFromPath(_apkPath!);
   }
