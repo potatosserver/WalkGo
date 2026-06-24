@@ -66,14 +66,6 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
           builder: (context, viewModel, child) {
             final isLocked = viewModel.isAutoModeRunning;
 
-            if (_offsetStepsController.text != viewModel.offsetSteps) {
-              _offsetStepsController.text = viewModel.offsetSteps;
-            }
-            if (_autoPauseThresholdController.text !=
-                viewModel.autoPauseThreshold) {
-              _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
-            }
-
             return AbsorbPointer(
               absorbing: isLocked,
               child: Opacity(
