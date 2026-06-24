@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
-import 'package:walkgo/main.dart';
 import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
 import 'package:walkgo/widgets/status_card.dart';
 import 'package:walkgo/widgets/parameter_settings_card.dart';
@@ -29,10 +29,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       if (steps == null) return;
 
       final l10n = AppLocalizations.of(context)!;
-      scaffoldMessengerKey.currentState?.showSnackBar(
-        SnackBar(
-          content: Text(l10n.manual_write_success_feedback(steps.toString())),
-        ),
+      Fluttertoast.showToast(
+        msg: l10n.manual_write_success_feedback(steps.toString()),
       );
       // After manual writing, refresh the total steps of the day immediately
       Provider.of<HomePageViewModel>(

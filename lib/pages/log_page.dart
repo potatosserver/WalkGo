@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:walkgo/main.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../services/log_service.dart';
 import '../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
@@ -43,11 +43,7 @@ class LogPage extends StatelessWidget {
       if (confirm == true && context.mounted) {
         await context.read<LogService>().clearLogs();
         if (context.mounted) {
-          scaffoldMessengerKey.currentState?.showSnackBar(
-            SnackBar(
-              content: Text(l10n.logs_cleared),
-            ),
-          );
+          Fluttertoast.showToast(msg: l10n.logs_cleared);
         }
       }
     }

@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/services/health_service.dart';
 import 'package:walkgo/constants.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
-import 'package:walkgo/main.dart';
 import 'package:walkgo/services/log_service.dart';
 
 class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
@@ -157,33 +157,29 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
     final int? base = int.tryParse(_baseSteps);
     if (base == null) return false;
     if (_offsetEnabled && base <= _offsetSteps) {
-      _showErrorSnackBar(_l10n!.error_base_less_than_offset);
+      _showErrorToast(_l10n!.error_base_less_than_offset);
       return false;
     }
     if (_autoPauseEnabled) {
       final int maxPossibleWrite = _offsetEnabled ? base + _offsetSteps : base;
       if (_autoPauseThreshold <= maxPossibleWrite) {
-        _showErrorSnackBar(_l10n!.error_threshold_too_low);
+        _showErrorToast(_l10n!.error_threshold_too_low);
         return false;
       }
     }
     return true;
   }
 
-  void _showErrorSnackBar(String message) {
-    scaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+  void _showErrorToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      backgroundColor: Colors.red,
     );
   }
 
-  void _showInfoSnackBar(String message) {
-    scaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
+  void _showInfoToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
     );
   }
 
@@ -265,11 +261,11 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
       }
       if (_l10n == null) return;
       _service.invoke('start', _getLocalizedStrings());
-      _showInfoSnackBar(_l10n!.auto_service_started);
+      _showInfoToast(_l10n!.auto_service_started);
     } else {
       if (_l10n == null) return;
       _service.invoke("stop", _getLocalizedStrings());
-      _showInfoSnackBar(_l10n!.auto_service_stopped);
+      _showInfoToast(_l10n!.auto_service_stopped);
       await refreshTodaySteps();
     }
   }

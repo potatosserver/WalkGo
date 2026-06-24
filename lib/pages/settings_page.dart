@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:in_app_update/in_app_update.dart';
@@ -9,7 +10,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../constants.dart';
 import '../l10n/app_localizations.dart';
-import '../main.dart';
 import '../services/log_service.dart';
 import '../services/update_service.dart';
 import '../widgets/release_notes_dialog.dart';
@@ -48,13 +48,11 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  void _showSnackBar(String message, {bool isError = false}) {
+  void _showToast(String message, {bool isError = false}) {
     if (!mounted) return;
-    scaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: isError ? Theme.of(context).colorScheme.error : null,
-      ),
+    Fluttertoast.showToast(
+      msg: message,
+      backgroundColor: isError ? Theme.of(context).colorScheme.error : null,
     );
   }
 
@@ -65,10 +63,10 @@ class _SettingsPageState extends State<SettingsPage> {
           updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
         await UpdateService().startGooglePlayUpdate(updateInfo);
       } else {
-        _showSnackBar(l10n.latest_version_installed);
+        _showToast(l10n.latest_version_installed);
       }
     } catch (e) {
-      _showSnackBar(l10n.update_check_failed, isError: true);
+      _showToast(l10n.update_check_failed, isError: true);
     }
   }
 
@@ -328,11 +326,11 @@ class _SettingsPageState extends State<SettingsPage> {
           builder: (context) => ReleaseNotesDialog(release: release),
         );
       } else {
-        _showSnackBar(l10n.update_failed('Could not fetch release notes'),
+        _showToast(l10n.update_failed('Could not fetch release notes'),
             isError: true);
       }
     } catch (e) {
-      _showSnackBar(l10n.update_check_failed, isError: true);
+      _showToast(l10n.update_check_failed, isError: true);
     }
   }
 
@@ -361,7 +359,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 await logService.clearLogs();
                 if (context.mounted) {
                   navigator.pop(); // Close the confirmation dialog
-                  _showSnackBar(l10n.data_cleared_success);
+                  _showToast(l10n.data_cleared_success);
                   router.go('/');
                 }
               },
