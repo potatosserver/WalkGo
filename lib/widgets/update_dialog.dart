@@ -52,7 +52,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
     return AppDialog(
       title: _getTitle(l10n),
       content: ConstrainedBox(
@@ -61,8 +60,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
         ),
         child: SingleChildScrollView(
           child: SizedBox(
-            width:
-                double.infinity, // FORCE all content to fill the dialog width
+            width: double.infinity,
             child: _buildContent(context, l10n),
           ),
         ),
@@ -211,12 +209,57 @@ class _UpdateDialogState extends State<UpdateDialog> {
       });
       return;
     }
+
+    setState(() {
+      _step = UpdateStep.downloading;
+      _progress = 0.0;
+      _statusText = l10n.updating;
+    });
+
+    final String? downloadedPath = await _updateService.downloadUpdate(
+      widget.release,
+      _architecture!,
+      l10n,
+      onProgress: (p) {
+        if (mounted) {
+          setState(() {
+            _progress = p;
+          });
+        }
+      },
+      onStatus: (s) {
+        if (mounted) {
+          setState(() {
+            _statusText = s;
+          });
+        }
+      },
+      onError: (e) {
+        if (mounted) {
+          setState(() {
+            _step = UpdateStep.error;
+            _errorText = e;
+          });
+        }
+      },
+    );
+
+    if (downloadedPath != null && mounted) {
+      setState(() {
+        _apkPath = downloadedPath;
+        _step = UpdateStep.readyToInstall;
+      });
+    }
   }
 
   Future<void> _installUpdate() async {
     if (_apkPath == null) {
       _startDownload();
+      return;
     }
     await _updateService.installFromPath(_apkPath!);
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 }
