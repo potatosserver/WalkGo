@@ -78,7 +78,6 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.advanced_parameters)),
       body: SafeArea(
-        // 使用 Selector 僅在 isAutoModeRunning 改變時更新最外層鎖定狀態
         child: Selector<AdvancedSettingsViewModel, bool>(
           selector: (_, vm) => vm.isAutoModeRunning,
           builder: (context, isLocked, child) {
@@ -158,98 +157,106 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
     required String hint,
     required bool isLocked,
   }) {
-    return Consumer<AdvancedSettingsViewModel>(
-      builder: (context, viewModel, child) {
-        final bool isEnabled = prefKey == 'offset'
-            ? viewModel.offsetEnabled
-            : viewModel.autoPauseEnabled;
+    final theme = Theme.of(context);
 
-        return Card(
-          margin: const EdgeInsets.only(bottom: 16.0),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Theme.of(context).dividerColor),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Text(
-                              subtitle,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  ),
-                            ),
-                          ),
-                        ],
+    // 這裡不再用 Consumer 包裹 Card，Card 變成靜態的
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16.0),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: theme.dividerColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    Switch(
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          subtitle,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // 僅針對 Switch 使用 Selector，避免重建整個 Card
+                Selector<AdvancedSettingsViewModel, bool>(
+                  selector: (_, viewModel) => prefKey == 'offset'
+                      ? viewModel.offsetEnabled
+                      : viewModel.autoPauseEnabled,
+                  builder: (context, isEnabled, child) {
+                    return Switch(
                       value: isEnabled,
                       onChanged: isLocked
                           ? null
                           : (bool value) {
                               if (prefKey == 'offset') {
-                                viewModel.setOffsetEnabled(value);
+                                Provider.of<AdvancedSettingsViewModel>(context,
+                                        listen: false)
+                                    .setOffsetEnabled(value);
                               } else {
-                                viewModel.setAutoPauseEnabled(value);
+                                Provider.of<AdvancedSettingsViewModel>(context,
+                                        listen: false)
+                                    .setAutoPauseEnabled(value);
                               }
                             },
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              ),
-              // 使用 AnimatedSize 消除高度跳變造成的閃爍感
-              AnimatedSize(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                child: isEnabled
-                    ? Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                        child: _ParameterTextField(
-                          controller: controller,
-                          focusNode: focusNode,
-                          label: label,
-                          hint: hint,
-                          enabled: !isLocked,
-                        ),
-                      )
-                    : const SizedBox(width: double.infinity),
-              ),
-            ],
+              ],
+            ),
           ),
-        );
-      },
+          // 僅針對 Opacity 使用 Selector，且使用 SizedBox 強制固定高度
+          Selector<AdvancedSettingsViewModel, bool>(
+            selector: (_, viewModel) => prefKey == 'offset'
+                ? viewModel.offsetEnabled
+                : viewModel.autoPauseEnabled,
+            builder: (context, isEnabled, child) {
+              return SizedBox(
+                height: 80, // 強制固定高度，絕對不會跳動
+                child: Opacity(
+                  opacity: isEnabled ? 1.0 : 0.0,
+                  child: AbsorbPointer(
+                    absorbing: !isEnabled,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: _ParameterTextField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        label: label,
+                        hint: hint,
+                        enabled: !isLocked,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
 
-// 提取為獨立 Widget，避免在 build 中重複創建
 class _ParameterTextField extends StatelessWidget {
   final TextEditingController controller;
   final FocusNode focusNode;

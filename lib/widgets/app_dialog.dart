@@ -18,7 +18,7 @@ class AppDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    final double dialogWidth = screenWidth < 600
+    final double dialogWidth = screenWidth < 1000
         ? screenWidth * 0.9
         : (screenWidth * 0.5).clamp(300.0, 600.0);
 
@@ -26,7 +26,6 @@ class AppDialog extends StatelessWidget {
       child: SizedBox(
         width: dialogWidth,
         child: Dialog(
-
           insetPadding: EdgeInsets.zero,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(28.0)),
