@@ -48,10 +48,13 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
   }
 
   Future<void> _requestHealthPermission() async {
-    await _health.requestAuthorization(
+    final granted = await _health.requestAuthorization(
       [HealthDataType.STEPS],
       permissions: [HealthDataAccess.READ_WRITE],
     );
+    if (granted) {
+      // Health permission doesn't have a 'skip' option, so nothing to clear
+    }
     _updatePageState();
   }
 
@@ -60,25 +63,33 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
     return status.isGranted;
   }
 
-  Future<void> _requestNotificationPermission() async {
-    final status = await Permission.notification.request();
-    if (status.isGranted) {
-      await PreferenceService().setSkipNotification(false);
-    }
-    if (status.isPermanentlyDenied) {
-      _showPermanentlyDeniedDialog();
-    }
-    _updatePageState();
-  }
+  Future<void> _requestPermissionWithPermanentlyDeniedCheck(
+      Permission permission) async {
+    // First, check the status before requesting
+    PermissionStatus status = await permission.status;
 
-  Future<void> _requestBatteryPermission() async {
-    final status = await Permission.ignoreBatteryOptimizations.request();
-    if (status.isGranted) {
-      await PreferenceService().setSkipBattery(false);
-    }
     if (status.isPermanentlyDenied) {
+      // If permanently denied, directly show the dialog to open settings
+      _showPermanentlyDeniedDialog();
+      return; // Stop further execution
+    }
+
+    // If not permanently denied, then request the permission
+    status = await permission.request();
+
+    if (status.isGranted) {
+      // If granted, clear the corresponding skip flag
+      if (permission == Permission.notification) {
+        await PreferenceService().setSkipNotification(false);
+      } else if (permission == Permission.ignoreBatteryOptimizations) {
+        await PreferenceService().setSkipBattery(false);
+      }
+    } else if (status.isPermanentlyDenied) {
+      // If the user chose 'Don't ask again' during the request, show the dialog
       _showPermanentlyDeniedDialog();
     }
+
+    // Finally, update the UI state
     _updatePageState();
   }
 
@@ -205,7 +216,9 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                     icon: Icons.notifications,
                     title: l10n.permission_notification_title,
                     description: l10n.permission_notification_desc,
-                    requestPermission: _requestNotificationPermission,
+                    requestPermission: () =>
+                        _requestPermissionWithPermanentlyDeniedCheck(
+                            Permission.notification),
                     checkPermission: () =>
                         _checkSimplePermission(Permission.notification),
                     canSkip: true,
@@ -218,7 +231,9 @@ class _PermissionHandlerPageState extends State<PermissionHandlerPage>
                     icon: Icons.battery_charging_full,
                     title: l10n.permission_battery_title,
                     description: l10n.permission_battery_desc,
-                    requestPermission: _requestBatteryPermission,
+                    requestPermission: () =>
+                        _requestPermissionWithPermanentlyDeniedCheck(
+                            Permission.ignoreBatteryOptimizations),
                     checkPermission: () => _checkSimplePermission(
                         Permission.ignoreBatteryOptimizations),
                     canSkip: true,
