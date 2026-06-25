@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:walkgo/viewmodels/advanced_settings_viewmodel.dart';
+import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 
 class AdvancedParametersPage extends StatefulWidget {
@@ -78,7 +79,7 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
       body: SafeArea(
         child: Consumer<AdvancedSettingsViewModel>(
           builder: (context, viewModel, child) {
-            final isLocked = viewModel.isAutoModeRunning;
+            final isLocked = context.watch<HomePageViewModel>().isAutoRunning;
 
             return AbsorbPointer(
               absorbing: isLocked,

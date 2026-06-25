@@ -7,7 +7,6 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
   // Dependency on HomePageViewModel
   final HomePageViewModel _homePageViewModel;
 
-  bool _isBatchUpdating = false;
   bool _offsetEnabled = true;
   String _offsetSteps = "50";
   String _manualSteps = "1000";
@@ -25,21 +24,10 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
 
   AdvancedSettingsViewModel(this._homePageViewModel) {
     _loadSettings();
-    // Listen to changes in the HomePageViewModel
-    _homePageViewModel.addListener(_onHomePageViewModelChanged);
-  }
-
-  // When HomePageViewModel notifies its listeners, this method will be called.
-  void _onHomePageViewModelChanged() {
-    if (_isBatchUpdating) return;
-    // The only thing we care about is the running state, which might affect the UI lock.
-    notifyListeners();
   }
 
   @override
   void dispose() {
-    // Clean up the listener when this ViewModel is disposed.
-    _homePageViewModel.removeListener(_onHomePageViewModelChanged);
     super.dispose();
   }
 
@@ -64,16 +52,11 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
   }
 
   Future<void> setOffsetEnabled(bool value) async {
-    _isBatchUpdating = true;
-    try {
-      _offsetEnabled = value;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(prefOffsetEnabled, value);
-      await _saveAndNotify();
-    } finally {
-      _isBatchUpdating = false;
-      notifyListeners();
-    }
+    _offsetEnabled = value;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(prefOffsetEnabled, value);
+    await _saveAndNotify();
+    notifyListeners();
   }
 
   Future<void> saveOffsetSteps(String value) async {
@@ -95,17 +78,12 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
   }
 
   Future<void> setAutoPauseEnabled(bool value) async {
-    _isBatchUpdating = true;
-    try {
-      _autoPauseEnabled = value;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(prefAutoPauseEnabled, value);
-      await _homePageViewModel.reloadSettings();
-      _homePageViewModel.updateSettingsInService();
-    } finally {
-      _isBatchUpdating = false;
-      notifyListeners();
-    }
+    _autoPauseEnabled = value;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(prefAutoPauseEnabled, value);
+    await _homePageViewModel.reloadSettings();
+    _homePageViewModel.updateSettingsInService();
+    notifyListeners();
   }
 
   Future<void> saveAutoPauseThreshold(String value) async {
