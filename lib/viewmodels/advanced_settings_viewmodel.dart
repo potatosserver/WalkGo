@@ -5,7 +5,7 @@ import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
 
 class AdvancedSettingsViewModel extends ChangeNotifier {
   // Dependency on HomePageViewModel
-  final HomePageViewModel _homePageViewModel;
+  HomePageViewModel _homePageViewModel;
 
   bool _offsetEnabled = true;
   String _offsetSteps = "50";
@@ -32,6 +32,14 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
   void _onHomePageViewModelChanged() {
     // The only thing we care about is the running state, which might affect the UI lock.
     notifyListeners();
+  }
+
+  void updateDependency(HomePageViewModel newViewModel) {
+    if (_homePageViewModel != newViewModel) {
+      _homePageViewModel.removeListener(_onHomePageViewModelChanged);
+      _homePageViewModel = newViewModel;
+      _homePageViewModel.addListener(_onHomePageViewModelChanged);
+    }
   }
 
   @override

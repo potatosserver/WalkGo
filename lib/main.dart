@@ -214,8 +214,13 @@ class _WalkGoAppState extends State<WalkGoApp> {
           create: (context) => AdvancedSettingsViewModel(
             Provider.of<HomePageViewModel>(context, listen: false),
           ),
-          update: (context, homePageViewModel, previous) =>
-              AdvancedSettingsViewModel(homePageViewModel),
+          update: (context, homePageViewModel, previous) {
+            if (previous != null) {
+              previous.updateDependency(homePageViewModel);
+              return previous;
+            }
+            return AdvancedSettingsViewModel(homePageViewModel);
+          },
         ),
       ],
       child: Consumer<ThemeProvider>(
