@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/constants.dart';
 import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
-import 'package:walkgo/services/debug_log_service.dart';
 
 class AdvancedSettingsViewModel extends ChangeNotifier {
   // Dependency on HomePageViewModel
@@ -29,13 +28,8 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     _homePageViewModel.addListener(_onHomePageViewModelChanged);
   }
 
-  void _log(String message, {bool includeStack = false}) {
-		DebugLogService().log(message, includeStack: includeStack);
-	}
-
   // When HomePageViewModel notifies its listeners, this method will be called.
   void _onHomePageViewModelChanged() {
-    _log('_onHomePageViewModelChanged called');
     // The only thing we care about is the running state, which might affect the UI lock.
     notifyListeners();
   }
@@ -48,7 +42,6 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
   }
 
   Future<void> _loadSettings() async {
-    _log('_loadSettings started');
     final prefs = await SharedPreferences.getInstance();
     _offsetEnabled = prefs.getBool(prefOffsetEnabled) ?? true;
     _offsetSteps = (prefs.getInt(prefOffsetSteps) ?? 50).toString();
@@ -56,7 +49,6 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     _autoPauseEnabled = prefs.getBool(prefAutoPauseEnabled) ?? false;
     _autoPauseThreshold =
         (prefs.getInt(prefAutoPauseThreshold) ?? 5000).toString();
-    _log('_loadSettings completed');
     notifyListeners();
   }
 
@@ -70,54 +62,44 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
   }
 
   Future<void> setOffsetEnabled(bool value) async {
-    _log('setOffsetEnabled: $_offsetEnabled -> $value', includeStack: true);
     _offsetEnabled = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(prefOffsetEnabled, value);
-    _log('notifyListeners()');
     notifyListeners();
     await _saveAndNotify();
   }
 
   Future<void> saveOffsetSteps(String value) async {
-    _log('saveOffsetSteps: $_offsetSteps -> $value', includeStack: true);
     _offsetSteps = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefOffsetSteps, int.tryParse(value) ?? 50);
-    _log('notifyListeners()');
     notifyListeners();
     await _homePageViewModel.reloadSettings();
     _homePageViewModel.updateSettingsInService();
   }
 
   Future<void> saveManualSteps(String value) async {
-    _log('saveManualSteps: $_manualSteps -> $value', includeStack: true);
     _manualSteps = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefManualSteps, int.tryParse(value) ?? 1000);
-    _log('notifyListeners()');
     notifyListeners();
     await _homePageViewModel.reloadSettings();
     _homePageViewModel.updateSettingsInService();
   }
 
   Future<void> setAutoPauseEnabled(bool value) async {
-    _log('setAutoPauseEnabled: $_autoPauseEnabled -> $value', includeStack: true);
     _autoPauseEnabled = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(prefAutoPauseEnabled, value);
-    _log('notifyListeners()');
     notifyListeners();
     await _homePageViewModel.reloadSettings();
     _homePageViewModel.updateSettingsInService();
   }
 
   Future<void> saveAutoPauseThreshold(String value) async {
-    _log('saveAutoPauseThreshold: $_autoPauseThreshold -> $value', includeStack: true);
     _autoPauseThreshold = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefAutoPauseThreshold, int.tryParse(value) ?? 5000);
-    _log('notifyListeners()');
     notifyListeners();
     await _homePageViewModel.reloadSettings();
     _homePageViewModel.updateSettingsInService();

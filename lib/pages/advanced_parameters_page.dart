@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:walkgo/viewmodels/advanced_settings_viewmodel.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
-import 'package:walkgo/pages/debug_log_page.dart';
 
 class AdvancedParametersPage extends StatefulWidget {
   const AdvancedParametersPage({super.key});
@@ -57,22 +56,11 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('[UI] AdvancedParametersPage build started');
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.advanced_parameters)),
-      floatingActionButton: FloatingActionButton.small(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const DebugLogPage()),
-          );
-        },
-        child: const Icon(Icons.bug_report),
-        tooltip: 'View Debug Logs',
-      ),
       body: SafeArea(
         child: Consumer<AdvancedSettingsViewModel>(
           builder: (context, viewModel, child) {
