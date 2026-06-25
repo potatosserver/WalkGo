@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walkgo/constants.dart';
 import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
+import 'package:walkgo/services/debug_log_service.dart';
 
 class AdvancedSettingsViewModel extends ChangeNotifier {
   // Dependency on HomePageViewModel
@@ -30,6 +31,7 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
 
   void _log(String message, {bool includeStack = false}) {
 		DebugLogService().log(message, includeStack: includeStack);
+	}
 
   // When HomePageViewModel notifies its listeners, this method will be called.
   void _onHomePageViewModelChanged() {

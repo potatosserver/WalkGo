@@ -7,6 +7,7 @@ import 'package:walkgo/services/health_service.dart';
 import 'package:walkgo/constants.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/services/log_service.dart';
+import 'package:walkgo/services/debug_log_service.dart';
 
 class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
   final FlutterBackgroundService _service = FlutterBackgroundService();
@@ -57,6 +58,7 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
 
   void _log(String message, {bool includeStack = false}) {
 		DebugLogService().log(message, includeStack: includeStack);
+	}
 
   @override
   void dispose() {
