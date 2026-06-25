@@ -55,6 +55,9 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
     _initialize();
   }
 
+  void _log(String message, {bool includeStack = false}) {
+		DebugLogService().log(message, includeStack: includeStack);
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -88,6 +91,7 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
   void _setupServiceListeners() {
     _service.on('update_ui').listen((event) async {
       if (event == null) return;
+      _log('on update_ui event received');
 
       final source = event['source'] as String?;
 
@@ -114,15 +118,18 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
       }
 
       await _updateRemainingSteps();
+      _log('notifyListeners()');
       notifyListeners();
     });
 
     _service.on('settings_updated').listen((event) {
+      _log('on settings_updated event received');
       reloadSettings();
     });
   }
 
   Future<void> _loadNonStateSettings() async {
+    _log('_loadNonStateSettings started');
     final prefs = await SharedPreferences.getInstance();
     await prefs.reload();
 
@@ -143,11 +150,14 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
     }
 
     await _updateRemainingSteps();
+    _log('_loadNonStateSettings completed, notifyListeners()');
     notifyListeners();
   }
 
   Future<void> refreshTodaySteps() async {
+    _log('refreshTodaySteps called');
     _todayTotalSteps = await HealthService().getStepsToday();
+    _log('notifyListeners()');
     notifyListeners();
   }
 
@@ -191,6 +201,7 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<void> reloadSettings() async {
+    _log('reloadSettings called');
     await _loadNonStateSettings();
     await refreshTodaySteps();
   }
