@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:walkgo/viewmodels/advanced_settings_viewmodel.dart';
-import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 
 class AdvancedParametersPage extends StatefulWidget {
@@ -44,24 +43,10 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
         viewModel.saveAutoPauseThreshold(_autoPauseThresholdController.text);
       }
     });
-
-    viewModel.addListener(_syncControllers);
-  }
-
-  void _syncControllers() {
-    final viewModel = Provider.of<AdvancedSettingsViewModel>(context, listen: false);
-    if (_offsetStepsController.text != viewModel.offsetSteps) {
-      _offsetStepsController.text = viewModel.offsetSteps;
-    }
-    if (_autoPauseThresholdController.text != viewModel.autoPauseThreshold) {
-      _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
-    }
   }
 
   @override
   void dispose() {
-    final viewModel = Provider.of<AdvancedSettingsViewModel>(context, listen: false);
-    viewModel.removeListener(_syncControllers);
     _offsetStepsController.dispose();
     _autoPauseThresholdController.dispose();
     _offsetStepsFocusNode.dispose();
@@ -79,7 +64,15 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
       body: SafeArea(
         child: Consumer<AdvancedSettingsViewModel>(
           builder: (context, viewModel, child) {
-            final isLocked = context.watch<HomePageViewModel>().isAutoRunning;
+            final isLocked = viewModel.isAutoModeRunning;
+
+            if (_offsetStepsController.text != viewModel.offsetSteps) {
+              _offsetStepsController.text = viewModel.offsetSteps;
+            }
+            if (_autoPauseThresholdController.text !=
+                viewModel.autoPauseThreshold) {
+              _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
+            }
 
             return AbsorbPointer(
               absorbing: isLocked,
@@ -122,24 +115,21 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                                         viewModel.setOffsetEnabled(value);
                                       },
                               ),
-                              child: Opacity(
-                                opacity: viewModel.offsetEnabled ? 1.0 : 0.0,
-                                child: IgnorePointer(
-                                  ignoring: !viewModel.offsetEnabled,
-                                  child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                      16,
-                                      8,
-                                      16,
-                                      16,
-                                    ),
-                                    child: _buildTextField(
-                                      enabled: !isLocked && viewModel.offsetEnabled,
-                                      controller: _offsetStepsController,
-                                      focusNode: _offsetStepsFocusNode,
-                                      label: l10n.offset_steps,
-                                      hint: l10n.offset_steps_hint,
-                                    ),
+                              child: Visibility(
+                                visible: viewModel.offsetEnabled,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    8,
+                                    16,
+                                    16,
+                                  ),
+                                  child: _buildTextField(
+                                    enabled: !isLocked,
+                                    controller: _offsetStepsController,
+                                    focusNode: _offsetStepsFocusNode,
+                                    label: l10n.offset_steps,
+                                    hint: l10n.offset_steps_hint,
                                   ),
                                 ),
                               ),
@@ -156,24 +146,21 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                                         viewModel.setAutoPauseEnabled(value);
                                       },
                               ),
-                              child: Opacity(
-                                opacity: viewModel.autoPauseEnabled ? 1.0 : 0.0,
-                                child: IgnorePointer(
-                                  ignoring: !viewModel.autoPauseEnabled,
-                                  child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                      16,
-                                      8,
-                                      16,
-                                      16,
-                                    ),
-                                    child: _buildTextField(
-                                      enabled: !isLocked && viewModel.autoPauseEnabled,
-                                      controller: _autoPauseThresholdController,
-                                      focusNode: _autoPauseThresholdFocusNode,
-                                      label: l10n.auto_pause_threshold,
-                                      hint: l10n.auto_pause_threshold_hint,
-                                    ),
+                              child: Visibility(
+                                visible: viewModel.autoPauseEnabled,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    8,
+                                    16,
+                                    16,
+                                  ),
+                                  child: _buildTextField(
+                                    enabled: !isLocked,
+                                    controller: _autoPauseThresholdController,
+                                    focusNode: _autoPauseThresholdFocusNode,
+                                    label: l10n.auto_pause_threshold,
+                                    hint: l10n.auto_pause_threshold_hint,
                                   ),
                                 ),
                               ),

@@ -24,10 +24,20 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
 
   AdvancedSettingsViewModel(this._homePageViewModel) {
     _loadSettings();
+    // Listen to changes in the HomePageViewModel
+    _homePageViewModel.addListener(_onHomePageViewModelChanged);
+  }
+
+  // When HomePageViewModel notifies its listeners, this method will be called.
+  void _onHomePageViewModelChanged() {
+    // The only thing we care about is the running state, which might affect the UI lock.
+    notifyListeners();
   }
 
   @override
   void dispose() {
+    // Clean up the listener when this ViewModel is disposed.
+    _homePageViewModel.removeListener(_onHomePageViewModelChanged);
     super.dispose();
   }
 
@@ -55,8 +65,8 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     _offsetEnabled = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(prefOffsetEnabled, value);
-    await _saveAndNotify();
     notifyListeners();
+    await _saveAndNotify();
   }
 
   Future<void> saveOffsetSteps(String value) async {
@@ -81,9 +91,9 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     _autoPauseEnabled = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(prefAutoPauseEnabled, value);
+    notifyListeners();
     await _homePageViewModel.reloadSettings();
     _homePageViewModel.updateSettingsInService();
-    notifyListeners();
   }
 
   Future<void> saveAutoPauseThreshold(String value) async {
