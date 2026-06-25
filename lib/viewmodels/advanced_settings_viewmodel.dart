@@ -65,7 +65,6 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     _offsetEnabled = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(prefOffsetEnabled, value);
-    notifyListeners();
     await _saveAndNotify();
   }
 
@@ -91,7 +90,6 @@ class AdvancedSettingsViewModel extends ChangeNotifier {
     _autoPauseEnabled = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(prefAutoPauseEnabled, value);
-    notifyListeners();
     await _homePageViewModel.reloadSettings();
     _homePageViewModel.updateSettingsInService();
   }

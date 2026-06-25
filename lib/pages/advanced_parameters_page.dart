@@ -43,10 +43,24 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
         viewModel.saveAutoPauseThreshold(_autoPauseThresholdController.text);
       }
     });
+
+    viewModel.addListener(_syncControllers);
+  }
+
+  void _syncControllers() {
+    final viewModel = Provider.of<AdvancedSettingsViewModel>(context, listen: false);
+    if (_offsetStepsController.text != viewModel.offsetSteps) {
+      _offsetStepsController.text = viewModel.offsetSteps;
+    }
+    if (_autoPauseThresholdController.text != viewModel.autoPauseThreshold) {
+      _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
+    }
   }
 
   @override
   void dispose() {
+    final viewModel = Provider.of<AdvancedSettingsViewModel>(context, listen: false);
+    viewModel.removeListener(_syncControllers);
     _offsetStepsController.dispose();
     _autoPauseThresholdController.dispose();
     _offsetStepsFocusNode.dispose();
@@ -65,14 +79,6 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
         child: Consumer<AdvancedSettingsViewModel>(
           builder: (context, viewModel, child) {
             final isLocked = viewModel.isAutoModeRunning;
-
-            if (_offsetStepsController.text != viewModel.offsetSteps) {
-              _offsetStepsController.text = viewModel.offsetSteps;
-            }
-            if (_autoPauseThresholdController.text !=
-                viewModel.autoPauseThreshold) {
-              _autoPauseThresholdController.text = viewModel.autoPauseThreshold;
-            }
 
             return AbsorbPointer(
               absorbing: isLocked,
