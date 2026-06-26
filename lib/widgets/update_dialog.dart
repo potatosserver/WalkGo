@@ -80,7 +80,17 @@ class _UpdateDialogState extends State<UpdateDialog> {
     }
   }
 
-  // Removed _ensureMarkdownLinks because flutter_html and markdown lib handle it natively
+  String _ensureMarkdownLinks(String text) {
+    final urlRegex = RegExp(
+      r'(?<!\()https?://[^\s\n]+',
+      caseSensitive: false,
+    );
+    return text.replaceAllMapped(urlRegex, (match) {
+      final url = match.group(0)!;
+      return '[$url]($url)';
+    });
+  }
+
   Widget _buildContent(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
 
@@ -132,7 +142,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
             Text(l10n.update_available_desc(widget.release.tagName)),
             const SizedBox(height: 16),
             Html(
-              data: md.markdownToHtml(widget.release.body),
+              data: md.markdownToHtml(_ensureMarkdownLinks(widget.release.body)),
               onLinkTap: (url, _, __) {
                 if (url == null) return;
                 final uri = Uri.parse(url);

@@ -11,7 +11,17 @@ class ReleaseNotesDialog extends StatelessWidget {
 
   const ReleaseNotesDialog({super.key, required this.release});
 
-  // Removed _ensureMarkdownLinks because flutter_html and markdown lib handle it natively
+  String _ensureMarkdownLinks(String text) {
+    final urlRegex = RegExp(
+      r'(?<!\()https?://[^\s\n]+',
+      caseSensitive: false,
+    );
+    return text.replaceAllMapped(urlRegex, (match) {
+      final url = match.group(0)!;
+      return '[$url]($url)';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -27,7 +37,7 @@ class ReleaseNotesDialog extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: Html(
-                data: md.markdownToHtml(release.body),
+                data: md.markdownToHtml(_ensureMarkdownLinks(release.body)),
                 onLinkTap: (url, _, __) {
                   if (url == null) return;
                   final uri = Uri.parse(url);
