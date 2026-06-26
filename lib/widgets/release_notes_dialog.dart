@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:walkgo/l10n/app_localizations.dart';
 import 'package:walkgo/services/update_service.dart';
 import 'package:walkgo/widgets/app_dialog.dart';
@@ -29,6 +30,14 @@ class ReleaseNotesDialog extends StatelessWidget {
                 selectable: true,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
+                onTapLink: (link, context, key) {
+                  final Uri url = Uri.parse(link);
+                  canLaunchUrl(url).then((canLaunch) {
+                    if (canLaunch) {
+                      launchUrl(url, mode: LaunchMode.externalApplication);
+                    }
+                  });
+                },
               ),
             ),
           ),

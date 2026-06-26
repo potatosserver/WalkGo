@@ -133,6 +133,14 @@ class _UpdateDialogState extends State<UpdateDialog> {
               data: widget.release.body,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
+              onTapLink: (link, context, key) {
+                final Uri url = Uri.parse(link);
+                canLaunchUrl(url).then((canLaunch) {
+                  if (canLaunch) {
+                    launchUrl(url, mode: LaunchMode.externalApplication);
+                  }
+                });
+              },
             ),
           ],
         );
