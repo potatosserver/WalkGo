@@ -15,7 +15,7 @@
 - 修復電池優化權限授權時在部分裝置需要多點擊一次
 - 加入清除日誌的確認彈窗
 - 優化所有吐司提示
-- Google Play封閉測試進行中，歡迎加入https://reurl.cc/O6llXR
+- Google Play封閉測試進行中，[歡迎點擊加入](https://reurl.cc/O6llXR)
 
 ---
 
