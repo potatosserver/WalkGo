@@ -80,16 +80,13 @@ class _UpdateDialogState extends State<UpdateDialog> {
   }
 
   String _ensureMarkdownLinks(String text) {
+    // 使用負向後瞻，確保網址前面不是 '('，避免重複包裹 Markdown 連結
     final urlRegex = RegExp(
-      r'(https?://[^\s\n]+)',
+      r'(?<!\()https?://[^\s\n]+',
       caseSensitive: false,
     );
     return text.replaceAllMapped(urlRegex, (match) {
       final url = match.group(0)!;
-      // 如果網址前面是 '('，表示它已經在 Markdown 連結中，不要重複包裹
-      if (match.start > 0 && text[match.start - 1] == '(') {
-        return url;
-      }
       return '[$url]($url)';
     });
   }
