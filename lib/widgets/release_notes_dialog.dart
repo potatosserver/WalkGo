@@ -25,8 +25,7 @@ class ReleaseNotesDialog extends StatelessWidget {
         child: Scrollbar(
           child: SingleChildScrollView(
             child: SizedBox(
-              width: double
-                  .infinity, // FORCE the markdown to fill the dialog width
+              width: double.infinity,
               child: Html(
                 data: md.markdownToHtml(release.body),
                 onLinkTap: (url, _, __) {
@@ -46,6 +45,7 @@ class ReleaseNotesDialog extends StatelessWidget {
                   ),
                 },
               ),
+            ),
           ),
         ),
       ),
