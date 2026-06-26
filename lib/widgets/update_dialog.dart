@@ -86,6 +86,10 @@ class _UpdateDialogState extends State<UpdateDialog> {
     );
     return text.replaceAllMapped(urlRegex, (match) {
       final url = match.group(0)!;
+      // 如果網址前面是 '('，表示它已經在 Markdown 連結中，不要重複包裹
+      if (match.start > 0 && text[match.start - 1] == '(') {
+        return url;
+      }
       return '[$url]($url)';
     });
   }
