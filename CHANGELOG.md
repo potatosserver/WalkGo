@@ -24,8 +24,7 @@
 - 在通知加入啟動、暫停快速按鈕
 - 在未來的版本中將會為Google Play做相容性優化，使用Github版本的使用者可以轉向Google Play作為更新來源
 - 從這個版本起，將不再隨附提供 .sha1 格式的 APK 校驗檔。請改用SHA-256 來驗證您下載的 APK。
-- Google Play封閉測試進行中，歡迎加入https://github.com/potatosserver/WalkGo/blob/main/WalkGo_CBT_Guide.md
-
+- Google Play封閉測試進行中，[歡迎點擊加入](https://reurl.cc/O6llXR)
 
 ---
 
