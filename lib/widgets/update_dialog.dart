@@ -79,6 +79,17 @@ class _UpdateDialogState extends State<UpdateDialog> {
     }
   }
 
+  String _ensureMarkdownLinks(String text) {
+    final urlRegex = RegExp(
+      r'(https?://[^\s\n]+)',
+      caseSensitive: false,
+    );
+    return text.replaceAllMapped(urlRegex, (match) {
+      final url = match.group(0)!;
+      return '[$url]($url)';
+    });
+  }
+
   Widget _buildContent(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
 
@@ -130,7 +141,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
             Text(l10n.update_available_desc(widget.release.tagName)),
             const SizedBox(height: 16),
             Markdown(
-              data: widget.release.body,
+              data: _ensureMarkdownLinks(widget.release.body),
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               onTapLink: (link, context, key) {

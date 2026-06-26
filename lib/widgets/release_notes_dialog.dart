@@ -10,6 +10,17 @@ class ReleaseNotesDialog extends StatelessWidget {
 
   const ReleaseNotesDialog({super.key, required this.release});
 
+  String _ensureMarkdownLinks(String text) {
+    final urlRegex = RegExp(
+      r'(https?://[^\s\n]+)',
+      caseSensitive: false,
+    );
+    return text.replaceAllMapped(urlRegex, (match) {
+      final url = match.group(0)!;
+      return '[$url]($url)';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -26,7 +37,7 @@ class ReleaseNotesDialog extends StatelessWidget {
               width: double
                   .infinity, // FORCE the markdown to fill the dialog width
               child: Markdown(
-                data: release.body,
+                data: _ensureMarkdownLinks(release.body),
                 selectable: true,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
