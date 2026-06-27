@@ -376,7 +376,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 if (context.mounted) {
                   navigator.pop(); // Close the confirmation dialog
                   _showToast(l10n.data_cleared_success);
-                  router.go('/');
+                  router.go('/splash');
                 }
               },
               child: Text(
