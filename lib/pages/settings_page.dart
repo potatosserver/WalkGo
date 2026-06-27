@@ -214,7 +214,6 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _showAboutDialog(BuildContext context, AppLocalizations l10n) {
-    final isGooglePlay = updateChannel == 'google_play';
     showDialog(
       context: context,
       builder: (context) => AppDialog(
@@ -261,15 +260,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     icon: const Icon(Icons.info_outline, size: 24),
                     text: l10n.version_label(_version),
                   ),
-                  if (!isGooglePlay) ...[
-                    const Divider(height: 32),
-                    _buildAboutRow(
-                      context,
-                      icon: const Icon(Icons.article_outlined, size: 24),
-                      text: l10n.view_release_notes,
-                      onTap: () => _showReleaseNotes(context, l10n),
-                    ),
-                  ],
+                  const Divider(height: 32),
+                  _buildAboutRow(
+                    context,
+                    icon: const Icon(Icons.article_outlined, size: 24),
+                    text: l10n.view_release_notes,
+                    onTap: () => _showReleaseNotes(context, l10n),
+                  ),
                 ],
               ),
             ),
