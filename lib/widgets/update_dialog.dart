@@ -142,7 +142,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
             Text(l10n.update_available_desc(widget.release.tagName)),
             const SizedBox(height: 16),
             Html(
-              data: md.markdownToHtml(_ensureMarkdownLinks(widget.release.body)),
+              data:
+                  md.markdownToHtml(_ensureMarkdownLinks(widget.release.body)),
               onLinkTap: (url, _, __) {
                 if (url == null) return;
                 final uri = Uri.parse(url);
