@@ -107,22 +107,12 @@ jobs:
 
       - name: Build App Bundle and APK
         run: |
-          CHANNEL="${{ github.event.inputs.update_channel }}"
-          FLAVOR="direct"
-          DART_DEFINE_ARGS=""
+          # AAB: 固定為 Google Play 版本 (帶參數)
+          flutter build appbundle --flavor googlePlay --obfuscate --split-debug-info=./build/app/outputs/debug-info --dart-define=UPDATE_CHANNEL=google_play
           
-          if [[ "$CHANNEL" == "google_play" ]]; then
-            FLAVOR="googlePlay"
-            DART_DEFINE_ARGS="--dart-define=UPDATE_CHANNEL=google_play"
-          elif [[ -n "$CHANNEL" ]]; then
-            FLAVOR="direct"
-            DART_DEFINE_ARGS="--dart-define=UPDATE_CHANNEL=$CHANNEL"
-          fi
-          
-          flutter build appbundle --flavor $FLAVOR --obfuscate --split-debug-info=./build/app/outputs/debug-info $DART_DEFINE_ARGS
-          flutter build apk --flavor $FLAVOR --split-per-abi --obfuscate --split-debug-info=./build/app/outputs/debug-info $DART_DEFINE_ARGS
+          # APK: 固定為普通版本 (不帶參數)
+          flutter build apk --flavor direct --split-per-abi --obfuscate --split-debug-info=./build/app/outputs/debug-info
 
-      - name: Upload AAB as Artifact
         uses: actions/upload-artifact@v7
         with:
           name: WalkGo-Release-AAB
