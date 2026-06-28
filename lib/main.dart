@@ -103,13 +103,17 @@ Future<void> initializeService(
 
 Future<void> reportAppActive() async {
   try {
-    final String deviceId = await DeviceIdHelper.getSecureDeviceId();
+    final deviceData = await DeviceIdHelper.getDeviceInfo();
+    final String deviceId = deviceData['id']!;
+    final String deviceModel = deviceData['model']!;
+
     await FirebaseFirestore.instance
         .collection('device_stats')
         .doc(deviceId)
         .set({
           'last_active': FieldValue.serverTimestamp(),
           'platform': 'Android (Flutter)',
+          'device_model': deviceModel,
         }, SetOptions(merge: true));
   } catch (e) {
     debugPrint('Error reporting app activity to Firestore: $e');
