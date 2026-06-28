@@ -15,6 +15,7 @@ import 'constants.dart';
 import 'l10n/app_localizations.dart';
 import 'services/background_service.dart';
 import 'services/device_id_service.dart';
+import 'services/notification_service.dart';
 import 'services/language_service.dart';
 import 'services/log_service.dart';
 import 'services/update_service.dart';
@@ -106,6 +107,7 @@ Future<void> reportAppActive() async {
     final deviceData = await DeviceIdHelper.getDeviceInfo();
     final String deviceId = deviceData['id']!;
     final String deviceModel = deviceData['model']!;
+    final String? fcmToken = await NotificationService.getFcmToken();
 
     await FirebaseFirestore.instance
         .collection('device_stats')
@@ -114,6 +116,7 @@ Future<void> reportAppActive() async {
           'last_active': FieldValue.serverTimestamp(),
           'platform': 'Android (Flutter)',
           'device_model': deviceModel,
+          'fcm_token': fcmToken ?? '',
         }, SetOptions(merge: true));
   } catch (e) {
     debugPrint('Error reporting app activity to Firestore: $e');
