@@ -46,6 +46,9 @@ jobs:
           echo "keyAlias=${KEY_ALIAS}" >> android/key.properties
           echo "keyPassword=${KEY_PASSWORD}" >> android/key.properties
           echo "storePassword=${STORE_PASSWORD}" >> android/key.properties
+          
+          echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_BASE64 }}" | base64 --decode > android/app/google-services.json
+
 
       - name: Build APK
         run: |
