@@ -44,6 +44,16 @@ android {
         multiDexEnabled = true
     }
 
+    flavorDimensions.add("channel")
+    productFlavors {
+        create("googlePlay") {
+            dimension = "channel"
+        }
+        create("direct") {
+            dimension = "channel"
+        }
+    }
+
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
