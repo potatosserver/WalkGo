@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'app_router.dart';
 import 'constants.dart';
@@ -109,6 +110,9 @@ Future<void> reportAppActive() async {
     final String deviceModel = deviceData['model']!;
     final String? fcmToken = await NotificationService.getFcmToken();
 
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final String appVersion = "${packageInfo.version}+${packageInfo.buildNumber}";
+
     const String rawChannel = String.fromEnvironment('UPDATE_CHANNEL', defaultValue: 'github');
     final String displayChannel = rawChannel == 'google_play' ? 'Google Play' : 'GitHub';
 
@@ -120,6 +124,7 @@ Future<void> reportAppActive() async {
           'platform': 'Android ($displayChannel)',
           'device_model': deviceModel,
           'fcm_token': fcmToken ?? '',
+          'app_version': appVersion,
         }, SetOptions(merge: true));
   } catch (e) {
     debugPrint('Error reporting app activity to Firestore: $e');
