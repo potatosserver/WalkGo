@@ -39,6 +39,8 @@ dependencies:
   in_app_update: ^4.2.5
   flutter_html: ^3.0.0
   markdown: ^7.3.1
+  firebase_core: ^4.11.0
+  cloud_firestore: ^6.6.0
 
 dev_dependencies:
   flutter_test:

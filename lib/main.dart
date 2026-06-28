@@ -7,11 +7,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'app_router.dart';
 import 'constants.dart';
 import 'l10n/app_localizations.dart';
 import 'services/background_service.dart';
+import 'services/device_id_service.dart';
 import 'services/language_service.dart';
 import 'services/log_service.dart';
 import 'services/update_service.dart';
@@ -98,8 +101,31 @@ Future<void> initializeService(
   );
 }
 
+Future<void> reportAppActive() async {
+  try {
+    final String deviceId = await DeviceIdHelper.getSecureDeviceId();
+    await FirebaseFirestore.instance
+        .collection('device_stats')
+        .doc(deviceId)
+        .set({
+          'last_active': FieldValue.serverTimestamp(),
+          'platform': 'Android (Flutter)',
+        }, SetOptions(merge: true));
+  } catch (e) {
+    debugPrint('Error reporting app activity to Firestore: $e');
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await Firebase.initializeApp();
+    await reportAppActive();
+  } catch (e) {
+    debugPrint('Firebase initialization or app activity reporting failed: $e');
+  }
+
   DartPluginRegistrant.ensureInitialized();
 
   const AndroidInitializationSettings initializationSettingsAndroid =
