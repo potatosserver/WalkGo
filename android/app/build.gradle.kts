@@ -49,7 +49,7 @@ android {
         create("googlePlay") {
             dimension = "channel"
         }
-        create("direct") {
+        create("github") {
             dimension = "channel"
         }
     }

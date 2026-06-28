@@ -49,7 +49,7 @@ jobs:
 
       - name: Build APK
         run: |
-          FLAVOR="direct"
+          FLAVOR="github"
           DART_DEFINE_ARGS=""
           CHANNEL="${{ github.event.inputs.update_channel }}"
           
@@ -58,7 +58,7 @@ jobs:
             DART_DEFINE_ARGS="--dart-define=UPDATE_CHANNEL=google_play"
           elif [[ -n "$CHANNEL" ]]; then
             # Default to 'direct' flavor for other channels, but still pass the dart-define
-            FLAVOR="direct"
+            FLAVOR="github"
             DART_DEFINE_ARGS="--dart-define=UPDATE_CHANNEL=$CHANNEL"
           fi
           

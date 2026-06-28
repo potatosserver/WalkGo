@@ -7,11 +7,6 @@ on:
         description: 'The version to release (e.g., v1.2.0)'
         required: true
         type: string
-      update_channel:
-        description: 'Release channel: google_play or direct. Defaults to google_play.'
-        required: false
-        default: 'google_play'
-        type: string
 
 jobs:
   build-and-release:
@@ -111,7 +106,7 @@ jobs:
           flutter build appbundle --flavor googlePlay --obfuscate --split-debug-info=./build/app/outputs/debug-info --dart-define=UPDATE_CHANNEL=google_play
           
           # APK: 固定為普通版本 (不帶參數)
-          flutter build apk --flavor direct --split-per-abi --obfuscate --split-debug-info=./build/app/outputs/debug-info
+          flutter build apk --flavor github --split-per-abi --obfuscate --split-debug-info=./build/app/outputs/debug-info
 
         uses: actions/upload-artifact@v7
         with:
