@@ -109,12 +109,15 @@ Future<void> reportAppActive() async {
     final String deviceModel = deviceData['model']!;
     final String? fcmToken = await NotificationService.getFcmToken();
 
+    const String rawChannel = String.fromEnvironment('UPDATE_CHANNEL', defaultValue: 'github');
+    final String displayChannel = rawChannel == 'google_play' ? 'Google Play' : 'GitHub';
+
     await FirebaseFirestore.instance
         .collection('device_stats')
         .doc(deviceId)
         .set({
           'last_active': FieldValue.serverTimestamp(),
-          'platform': 'Android (Flutter)',
+          'platform': 'Android ($displayChannel)',
           'device_model': deviceModel,
           'fcm_token': fcmToken ?? '',
         }, SetOptions(merge: true));
