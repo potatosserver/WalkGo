@@ -119,7 +119,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: WalkGo-Release-AAB
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: build/app/outputs/bundle/googlePlayRelease/app-googlePlay-release.aab
           retention-days: 7
 
       - name: Extract Release Notes from CHANGELOG
