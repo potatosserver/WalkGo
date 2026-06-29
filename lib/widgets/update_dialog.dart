@@ -73,7 +73,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
   String _getTitle(AppLocalizations l10n) {
     switch (_step) {
       case UpdateStep.manualDownload:
-        return l10n.manual_download_title;
+        return l10n.manual_download;
       case UpdateStep.details:
       default:
         return l10n.update_available;

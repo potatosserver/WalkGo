@@ -12,12 +12,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get walkgo => 'WalkGo';
 
   @override
-  String get settings_tooltip => '設定';
-
-  @override
-  String get status_card_title => '狀態';
-
-  @override
   String get status_running => '服務運行中...';
 
   @override
@@ -27,36 +21,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get status_stopped => '服務已停止。';
 
   @override
-  String next_run_at(String time) {
-    return '下次運行於 $time';
-  }
-
-  @override
   String get next_run_title => '下次執行於';
 
   @override
-  String get next_run_pending => '等待下次運行...';
-
-  @override
   String get this_run => '本次步數';
-
-  @override
-  String get session_steps => '本次步數';
-
-  @override
-  String get remaining_steps_today => '今日剩餘步數';
-
-  @override
-  String get parameter_settings => '參數設定';
 
   @override
   String get base_steps => '基礎步數';
 
   @override
   String get offset_steps => '偏移步數';
-
-  @override
-  String get interval_minutes => '間隔（分鐘）';
 
   @override
   String get actions => '操作';
@@ -71,9 +45,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings => '設定';
 
   @override
-  String get app_settings => '應用程式設定';
-
-  @override
   String get theme => '主題';
 
   @override
@@ -86,9 +57,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get system => '系統';
 
   @override
-  String get language => '語言';
-
-  @override
   String get english => '英文';
 
   @override
@@ -99,9 +67,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get auto_pause_title => '自動暫停服務';
-
-  @override
-  String get auto_pause_description => '當寫入的步數達到設定的閾值時，自動暫停服務。';
 
   @override
   String get auto_pause_steps_label => '自動暫停步數閾值';
@@ -125,21 +90,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get no_logs => '尚無日誌。';
 
   @override
-  String get log_type_manual => '手動';
-
-  @override
-  String get log_type_automatic => '自動';
-
-  @override
   String get offset_settings_title => '隨機化步數';
 
   @override
   String get offset_settings_subtitle => '啟用步數隨機偏移';
-
-  @override
-  String log_write_success(String totalSteps) {
-    return '寫入後的總步數：$totalSteps';
-  }
 
   @override
   String log_write_success_auto(String steps) {
@@ -155,18 +109,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get write_fail_check_log => '寫入步數失敗，請檢查您的健康應用程式或系統設定。';
 
   @override
-  String write_error(String error) {
-    return '寫入步數時發生錯誤：$error';
-  }
-
-  @override
   String get background_service_start => '背景服務已啟動。';
-
-  @override
-  String get background_service_stop => '背景服務已停止。';
-
-  @override
-  String get notification_update_title => '步數更新';
 
   @override
   String automatic_write_success(String steps) {
@@ -185,9 +128,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get data_cleared_success => '應用程式資料已成功清除。';
-
-  @override
-  String get app_will_restart => '應用程式即將重新啟動。';
 
   @override
   String get auto_pause_subtitle => '當寫入一定步數後自動停止服務。';
@@ -229,12 +169,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get auto_pause_remaining => '剩餘步數';
 
   @override
-  String get start_service_fail => '啟動服務失敗。';
-
-  @override
-  String get stop_service_fail => '停止服務失敗。';
-
-  @override
   String get param_settings => '參數設定';
 
   @override
@@ -259,9 +193,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get system_language => '系統語言';
 
   @override
-  String get traditional_chinese => '繁體中文';
-
-  @override
   String get about_walkgo => '關於 WalkGo';
 
   @override
@@ -284,12 +215,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get permission_health_desc => '需要此權限才能將步數寫入您的健康資料。';
-
-  @override
-  String get permission_activity_title => '活動識別權限';
-
-  @override
-  String get permission_activity_desc => '需要此權限才能識別您的身體活動並準確記錄步數。';
 
   @override
   String get permission_notification_title => '通知權限';
@@ -325,17 +250,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get complete => '完成';
 
   @override
-  String session_total_steps_template(Object steps) {
-    return '本次工作階段總步數：$steps';
-  }
-
-  @override
-  String get manual_steps_label => '手動步數';
-
-  @override
-  String get manual_steps_hint => '手動增加特定數量的步數。';
-
-  @override
   String get notification_service_running => '服務運行中';
 
   @override
@@ -349,16 +263,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get notification_channel_id => 'WalkGo 服務';
-
-  @override
-  String get notification_channel_desc => '用於 WalkGo 背景服務的通知';
-
-  @override
   String get notification_steps_written_title => '成功寫入步數';
-
-  @override
-  String get manual_write_initiated => '手動寫入已啟動。';
 
   @override
   String get manual_write_button_text => '手動寫入一次';
@@ -430,9 +335,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get latest_version_installed => '目前已是最新版本。';
 
   @override
-  String get no_updates_available => '沒有可用的更新。';
-
-  @override
   String get invalid_architecture => '找不到適合您裝置架構的更新檔。';
 
   @override
@@ -448,29 +350,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get manual_download => '手動下載';
 
   @override
-  String get manual_download_title => '手動下載';
-
-  @override
   String get manual_download_prompt => '請下載名為：';
 
   @override
-  String manual_download_description(String architecture) {
-    return '您的裝置架構為：$architecture。請下載名為：';
-  }
-
-  @override
-  String manual_download_filename(String filename) {
-    return '檔案名稱：$filename';
-  }
-
-  @override
-  String get copy_link => '複製連結';
-
-  @override
   String get go_to_download => '前往下載頁面';
-
-  @override
-  String get link_copied => '連結已複製到剪貼簿';
 
   @override
   String get view_release_notes => '查看版本資訊';
@@ -540,7 +423,4 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get skip_battery_desc =>
       '如果您略過電池優化，Android 系統將在手機進入休眠模式時暫停同步任務，導致無法即時將步數寫入健康數據。';
-
-  @override
-  String get skip_permission_cancel => '取消';
 }

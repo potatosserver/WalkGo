@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             onPressed: () {
               context.push('/settings');
             },
-            tooltip: l10n.settings_tooltip,
+            tooltip: l10n.settings,
           ),
         ],
         elevation: 0,

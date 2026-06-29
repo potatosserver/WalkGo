@@ -104,18 +104,6 @@ abstract class AppLocalizations {
   /// **'WalkGo'**
   String get walkgo;
 
-  /// No description provided for @settings_tooltip.
-  ///
-  /// In en, this message translates to:
-  /// **'Settings'**
-  String get settings_tooltip;
-
-  /// No description provided for @status_card_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Status'**
-  String get status_card_title;
-
   /// No description provided for @status_running.
   ///
   /// In en, this message translates to:
@@ -134,47 +122,17 @@ abstract class AppLocalizations {
   /// **'Stopped'**
   String get status_stopped;
 
-  /// No description provided for @next_run_at.
-  ///
-  /// In en, this message translates to:
-  /// **'Next run at {time}'**
-  String next_run_at(String time);
-
   /// No description provided for @next_run_title.
   ///
   /// In en, this message translates to:
   /// **'Next run at'**
   String get next_run_title;
 
-  /// No description provided for @next_run_pending.
-  ///
-  /// In en, this message translates to:
-  /// **'Next run pending...'**
-  String get next_run_pending;
-
   /// No description provided for @this_run.
   ///
   /// In en, this message translates to:
   /// **'This Run'**
   String get this_run;
-
-  /// No description provided for @session_steps.
-  ///
-  /// In en, this message translates to:
-  /// **'Session Steps'**
-  String get session_steps;
-
-  /// No description provided for @remaining_steps_today.
-  ///
-  /// In en, this message translates to:
-  /// **'Remaining Steps Today'**
-  String get remaining_steps_today;
-
-  /// No description provided for @parameter_settings.
-  ///
-  /// In en, this message translates to:
-  /// **'Parameter Settings'**
-  String get parameter_settings;
 
   /// No description provided for @base_steps.
   ///
@@ -187,12 +145,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Offset Steps'**
   String get offset_steps;
-
-  /// No description provided for @interval_minutes.
-  ///
-  /// In en, this message translates to:
-  /// **'Interval (minutes)'**
-  String get interval_minutes;
 
   /// No description provided for @actions.
   ///
@@ -218,12 +170,6 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settings;
 
-  /// No description provided for @app_settings.
-  ///
-  /// In en, this message translates to:
-  /// **'App Settings'**
-  String get app_settings;
-
   /// No description provided for @theme.
   ///
   /// In en, this message translates to:
@@ -248,12 +194,6 @@ abstract class AppLocalizations {
   /// **'System'**
   String get system;
 
-  /// No description provided for @language.
-  ///
-  /// In en, this message translates to:
-  /// **'Language'**
-  String get language;
-
   /// No description provided for @english.
   ///
   /// In en, this message translates to:
@@ -277,12 +217,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Auto Pause'**
   String get auto_pause_title;
-
-  /// No description provided for @auto_pause_description.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatically pause when step count exceeds a threshold.'**
-  String get auto_pause_description;
 
   /// No description provided for @auto_pause_steps_label.
   ///
@@ -326,18 +260,6 @@ abstract class AppLocalizations {
   /// **'No logs yet.'**
   String get no_logs;
 
-  /// No description provided for @log_type_manual.
-  ///
-  /// In en, this message translates to:
-  /// **'Manual'**
-  String get log_type_manual;
-
-  /// No description provided for @log_type_automatic.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatic'**
-  String get log_type_automatic;
-
   /// No description provided for @offset_settings_title.
   ///
   /// In en, this message translates to:
@@ -349,12 +271,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enable random step offset'**
   String get offset_settings_subtitle;
-
-  /// No description provided for @log_write_success.
-  ///
-  /// In en, this message translates to:
-  /// **'Total steps after write: {totalSteps}'**
-  String log_write_success(String totalSteps);
 
   /// No description provided for @log_write_success_auto.
   ///
@@ -374,29 +290,11 @@ abstract class AppLocalizations {
   /// **'Failed to write steps, please check your health app or system settings.'**
   String get write_fail_check_log;
 
-  /// No description provided for @write_error.
-  ///
-  /// In en, this message translates to:
-  /// **'Error writing steps: {error}'**
-  String write_error(String error);
-
   /// No description provided for @background_service_start.
   ///
   /// In en, this message translates to:
   /// **'Background service has been started.'**
   String get background_service_start;
-
-  /// No description provided for @background_service_stop.
-  ///
-  /// In en, this message translates to:
-  /// **'Background service has been stopped.'**
-  String get background_service_stop;
-
-  /// No description provided for @notification_update_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Steps Update'**
-  String get notification_update_title;
 
   /// No description provided for @automatic_write_success.
   ///
@@ -427,12 +325,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'App data has been successfully cleared.'**
   String get data_cleared_success;
-
-  /// No description provided for @app_will_restart.
-  ///
-  /// In en, this message translates to:
-  /// **'The app will now restart.'**
-  String get app_will_restart;
 
   /// No description provided for @auto_pause_subtitle.
   ///
@@ -506,18 +398,6 @@ abstract class AppLocalizations {
   /// **'Auto-pause Remaining'**
   String get auto_pause_remaining;
 
-  /// No description provided for @start_service_fail.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to start service.'**
-  String get start_service_fail;
-
-  /// No description provided for @stop_service_fail.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to stop service.'**
-  String get stop_service_fail;
-
   /// No description provided for @param_settings.
   ///
   /// In en, this message translates to:
@@ -566,12 +446,6 @@ abstract class AppLocalizations {
   /// **'System Language'**
   String get system_language;
 
-  /// No description provided for @traditional_chinese.
-  ///
-  /// In en, this message translates to:
-  /// **'Traditional Chinese'**
-  String get traditional_chinese;
-
   /// No description provided for @about_walkgo.
   ///
   /// In en, this message translates to:
@@ -619,18 +493,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This permission is required to write steps to your health data.'**
   String get permission_health_desc;
-
-  /// No description provided for @permission_activity_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Activity Recognition Permission'**
-  String get permission_activity_title;
-
-  /// No description provided for @permission_activity_desc.
-  ///
-  /// In en, this message translates to:
-  /// **'This permission is required to recognize your physical activity and accurately record steps.'**
-  String get permission_activity_desc;
 
   /// No description provided for @permission_notification_title.
   ///
@@ -698,24 +560,6 @@ abstract class AppLocalizations {
   /// **'Complete'**
   String get complete;
 
-  /// No description provided for @session_total_steps_template.
-  ///
-  /// In en, this message translates to:
-  /// **'Total steps this session: {steps}'**
-  String session_total_steps_template(Object steps);
-
-  /// No description provided for @manual_steps_label.
-  ///
-  /// In en, this message translates to:
-  /// **'Manual Steps'**
-  String get manual_steps_label;
-
-  /// No description provided for @manual_steps_hint.
-  ///
-  /// In en, this message translates to:
-  /// **'Manually add a specific number of steps.'**
-  String get manual_steps_hint;
-
   /// No description provided for @notification_service_running.
   ///
   /// In en, this message translates to:
@@ -734,29 +578,11 @@ abstract class AppLocalizations {
   /// **'{steps} steps written'**
   String notification_steps_written(String steps);
 
-  /// No description provided for @notification_channel_id.
-  ///
-  /// In en, this message translates to:
-  /// **'WalkGo Service'**
-  String get notification_channel_id;
-
-  /// No description provided for @notification_channel_desc.
-  ///
-  /// In en, this message translates to:
-  /// **'Notifications for WalkGo background service'**
-  String get notification_channel_desc;
-
   /// No description provided for @notification_steps_written_title.
   ///
   /// In en, this message translates to:
   /// **'Steps Written Successfully'**
   String get notification_steps_written_title;
-
-  /// No description provided for @manual_write_initiated.
-  ///
-  /// In en, this message translates to:
-  /// **'Manual write initiated.'**
-  String get manual_write_initiated;
 
   /// No description provided for @manual_write_button_text.
   ///
@@ -872,12 +698,6 @@ abstract class AppLocalizations {
   /// **'You are already using the latest version.'**
   String get latest_version_installed;
 
-  /// No description provided for @no_updates_available.
-  ///
-  /// In en, this message translates to:
-  /// **'No updates available.'**
-  String get no_updates_available;
-
   /// No description provided for @invalid_architecture.
   ///
   /// In en, this message translates to:
@@ -908,47 +728,17 @@ abstract class AppLocalizations {
   /// **'Manual Download'**
   String get manual_download;
 
-  /// No description provided for @manual_download_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Manual Download'**
-  String get manual_download_title;
-
   /// No description provided for @manual_download_prompt.
   ///
   /// In en, this message translates to:
   /// **'Please download the file named:'**
   String get manual_download_prompt;
 
-  /// No description provided for @manual_download_description.
-  ///
-  /// In en, this message translates to:
-  /// **'Your device architecture is: {architecture}. Please download the file named:'**
-  String manual_download_description(String architecture);
-
-  /// No description provided for @manual_download_filename.
-  ///
-  /// In en, this message translates to:
-  /// **'Filename: {filename}'**
-  String manual_download_filename(String filename);
-
-  /// No description provided for @copy_link.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy Link'**
-  String get copy_link;
-
   /// No description provided for @go_to_download.
   ///
   /// In en, this message translates to:
   /// **'Go to Download Page'**
   String get go_to_download;
-
-  /// No description provided for @link_copied.
-  ///
-  /// In en, this message translates to:
-  /// **'Link copied to clipboard'**
-  String get link_copied;
 
   /// No description provided for @view_release_notes.
   ///
@@ -1081,12 +871,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'If you skip battery optimization, Android system will pause synchronization tasks when the phone enters sleep mode, preventing steps from being written to health data in real time.'**
   String get skip_battery_desc;
-
-  /// No description provided for @skip_permission_cancel.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel'**
-  String get skip_permission_cancel;
 }
 
 class _AppLocalizationsDelegate

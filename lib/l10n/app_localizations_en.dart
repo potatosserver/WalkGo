@@ -12,12 +12,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get walkgo => 'WalkGo';
 
   @override
-  String get settings_tooltip => 'Settings';
-
-  @override
-  String get status_card_title => 'Status';
-
-  @override
   String get status_running => 'Running...';
 
   @override
@@ -27,36 +21,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get status_stopped => 'Stopped';
 
   @override
-  String next_run_at(String time) {
-    return 'Next run at $time';
-  }
-
-  @override
   String get next_run_title => 'Next run at';
 
   @override
-  String get next_run_pending => 'Next run pending...';
-
-  @override
   String get this_run => 'This Run';
-
-  @override
-  String get session_steps => 'Session Steps';
-
-  @override
-  String get remaining_steps_today => 'Remaining Steps Today';
-
-  @override
-  String get parameter_settings => 'Parameter Settings';
 
   @override
   String get base_steps => 'Base Steps';
 
   @override
   String get offset_steps => 'Offset Steps';
-
-  @override
-  String get interval_minutes => 'Interval (minutes)';
 
   @override
   String get actions => 'Actions';
@@ -71,9 +45,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
-  String get app_settings => 'App Settings';
-
-  @override
   String get theme => 'Theme';
 
   @override
@@ -86,9 +57,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get system => 'System';
 
   @override
-  String get language => 'Language';
-
-  @override
   String get english => 'English';
 
   @override
@@ -99,10 +67,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get auto_pause_title => 'Auto Pause';
-
-  @override
-  String get auto_pause_description =>
-      'Automatically pause when step count exceeds a threshold.';
 
   @override
   String get auto_pause_steps_label => 'Auto Pause when steps exceed';
@@ -127,21 +91,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get no_logs => 'No logs yet.';
 
   @override
-  String get log_type_manual => 'Manual';
-
-  @override
-  String get log_type_automatic => 'Automatic';
-
-  @override
   String get offset_settings_title => 'Offset Settings';
 
   @override
   String get offset_settings_subtitle => 'Enable random step offset';
-
-  @override
-  String log_write_success(String totalSteps) {
-    return 'Total steps after write: $totalSteps';
-  }
 
   @override
   String log_write_success_auto(String steps) {
@@ -158,18 +111,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Failed to write steps, please check your health app or system settings.';
 
   @override
-  String write_error(String error) {
-    return 'Error writing steps: $error';
-  }
-
-  @override
   String get background_service_start => 'Background service has been started.';
-
-  @override
-  String get background_service_stop => 'Background service has been stopped.';
-
-  @override
-  String get notification_update_title => 'Steps Update';
 
   @override
   String automatic_write_success(String steps) {
@@ -188,9 +130,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get data_cleared_success => 'App data has been successfully cleared.';
-
-  @override
-  String get app_will_restart => 'The app will now restart.';
 
   @override
   String get auto_pause_subtitle =>
@@ -236,12 +175,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get auto_pause_remaining => 'Auto-pause Remaining';
 
   @override
-  String get start_service_fail => 'Failed to start service.';
-
-  @override
-  String get stop_service_fail => 'Failed to stop service.';
-
-  @override
   String get param_settings => 'Parameter Settings';
 
   @override
@@ -264,9 +197,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get system_language => 'System Language';
-
-  @override
-  String get traditional_chinese => 'Traditional Chinese';
 
   @override
   String get about_walkgo => 'About WalkGo';
@@ -294,13 +224,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get permission_health_desc =>
       'This permission is required to write steps to your health data.';
-
-  @override
-  String get permission_activity_title => 'Activity Recognition Permission';
-
-  @override
-  String get permission_activity_desc =>
-      'This permission is required to recognize your physical activity and accurately record steps.';
 
   @override
   String get permission_notification_title => 'Notification Permission';
@@ -338,17 +261,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get complete => 'Complete';
 
   @override
-  String session_total_steps_template(Object steps) {
-    return 'Total steps this session: $steps';
-  }
-
-  @override
-  String get manual_steps_label => 'Manual Steps';
-
-  @override
-  String get manual_steps_hint => 'Manually add a specific number of steps.';
-
-  @override
   String get notification_service_running => 'Service is running';
 
   @override
@@ -362,17 +274,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get notification_channel_id => 'WalkGo Service';
-
-  @override
-  String get notification_channel_desc =>
-      'Notifications for WalkGo background service';
-
-  @override
   String get notification_steps_written_title => 'Steps Written Successfully';
-
-  @override
-  String get manual_write_initiated => 'Manual write initiated.';
 
   @override
   String get manual_write_button_text => 'Write Once';
@@ -448,9 +350,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'You are already using the latest version.';
 
   @override
-  String get no_updates_available => 'No updates available.';
-
-  @override
   String get invalid_architecture =>
       'Could not find a suitable update for your device\'s architecture.';
 
@@ -469,29 +368,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get manual_download => 'Manual Download';
 
   @override
-  String get manual_download_title => 'Manual Download';
-
-  @override
   String get manual_download_prompt => 'Please download the file named:';
 
   @override
-  String manual_download_description(String architecture) {
-    return 'Your device architecture is: $architecture. Please download the file named:';
-  }
-
-  @override
-  String manual_download_filename(String filename) {
-    return 'Filename: $filename';
-  }
-
-  @override
-  String get copy_link => 'Copy Link';
-
-  @override
   String get go_to_download => 'Go to Download Page';
-
-  @override
-  String get link_copied => 'Link copied to clipboard';
 
   @override
   String get view_release_notes => 'View Version Information';
@@ -561,7 +441,4 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get skip_battery_desc =>
       'If you skip battery optimization, Android system will pause synchronization tasks when the phone enters sleep mode, preventing steps from being written to health data in real time.';
-
-  @override
-  String get skip_permission_cancel => 'Cancel';
 }

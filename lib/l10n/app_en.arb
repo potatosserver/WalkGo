@@ -2,37 +2,18 @@
     "@@locale": "en",
     "walkgo": "WalkGo",
     "@walkgo": {},
-    "settings_tooltip": "Settings",
-    "@settings_tooltip": {},
-    "status_card_title": "Status",
-    "@status_card_title": {},
     "status_running": "Running...",
     "@status_running": {},
     "status_ready_to_start": "Ready to start",
     "@status_ready_to_start": {},
     "status_stopped": "Stopped",
     "@status_stopped": {},
-    "next_run_at": "Next run at {time}",
-    "@next_run_at": {
-        "placeholders": {
-            "time": {
-                "type": "String"
-            }
-        }
-    },
     "next_run_title": "Next run at",
-    "next_run_pending": "Next run pending...",
     "this_run": "This Run",
-    "session_steps": "Session Steps",
-    "remaining_steps_today": "Remaining Steps Today",
-    "parameter_settings": "Parameter Settings",
-    "@parameter_settings": {},
     "base_steps": "Base Steps",
     "@base_steps": {},
     "offset_steps": "Offset Steps",
     "@offset_steps": {},
-    "interval_minutes": "Interval (minutes)",
-    "@interval_minutes": {},
     "actions": "Actions",
     "@actions": {},
     "start_auto_mode": "Start Auto Mode",
@@ -41,8 +22,6 @@
     "@stop_auto_mode": {},
     "settings": "Settings",
     "@settings": {},
-    "app_settings": "App Settings",
-    "@app_settings": {},
     "theme": "Theme",
     "@theme": {},
     "light": "Light",
@@ -51,8 +30,6 @@
     "@dark": {},
     "system": "System",
     "@system": {},
-    "language": "Language",
-    "@language": {},
     "english": "English",
     "@english": {},
     "chinese": "Chinese",
@@ -61,8 +38,6 @@
     "@advanced_parameters": {},
     "auto_pause_title": "Auto Pause",
     "@auto_pause_title": {},
-    "auto_pause_description": "Automatically pause when step count exceeds a threshold.",
-    "@auto_pause_description": {},
     "auto_pause_steps_label": "Auto Pause when steps exceed",
     "@auto_pause_steps_label": {},
     "write_logs": "Write Logs",
@@ -77,22 +52,10 @@
     "@clear_logs_confirm_content": {},
     "no_logs": "No logs yet.",
     "@no_logs": {},
-    "log_type_manual": "Manual",
-    "@log_type_manual": {},
-    "log_type_automatic": "Automatic",
-    "@log_type_automatic": {},
     "offset_settings_title": "Offset Settings",
     "@offset_settings_title": {},
     "offset_settings_subtitle": "Enable random step offset",
     "@offset_settings_subtitle": {},
-    "log_write_success": "Total steps after write: {totalSteps}",
-    "@log_write_success": {
-        "placeholders": {
-            "totalSteps": {
-                "type": "String"
-            }
-        }
-    },
     "log_write_success_auto": "Automatically wrote {steps} steps.",
     "@log_write_success_auto": {
         "placeholders": {
@@ -111,20 +74,8 @@
     },
     "write_fail_check_log": "Failed to write steps, please check your health app or system settings.",
     "@write_fail_check_log": {},
-    "write_error": "Error writing steps: {error}",
-    "@write_error": {
-        "placeholders": {
-            "error": {
-                "type": "String"
-            }
-        }
-    },
     "background_service_start": "Background service has been started.",
     "@background_service_start": {},
-    "background_service_stop": "Background service has been stopped.",
-    "@background_service_stop": {},
-    "notification_update_title": "Steps Update",
-    "@notification_update_title": {},
     "automatic_write_success": "Successfully automatically wrote {steps} steps.",
     "@automatic_write_success": {
         "placeholders": {
@@ -141,8 +92,6 @@
     "@clear_data_confirm_content": {},
     "data_cleared_success": "App data has been successfully cleared.",
     "@data_cleared_success": {},
-    "app_will_restart": "The app will now restart.",
-    "@app_will_restart": {},
     "auto_pause_subtitle": "Automatically stop the service after writing a certain number of steps.",
     "@auto_pause_subtitle": {},
     "auto_pause_steps_hint": "The service will be stopped after writing this many steps in one session.",
@@ -171,8 +120,6 @@
     },
     "steps_written_this_session": "Steps Written This Session",
     "auto_pause_remaining": "Auto-pause Remaining",
-    "start_service_fail": "Failed to start service.",
-    "stop_service_fail": "Failed to stop service.",
     "param_settings": "Parameter Settings",
     "interval": "Interval (minutes)",
     "language_settings": "Language Settings",
@@ -181,7 +128,6 @@
     "light_theme": "Light Theme",
     "dark_theme": "Dark Theme",
     "system_language": "System Language",
-    "traditional_chinese": "Traditional Chinese",
     "about_walkgo": "About WalkGo",
     "about_walkgo_content": "This app helps you log steps to your health data.",
     "welcome_to_walkgo": "Welcome to WalkGo",
@@ -192,10 +138,6 @@
     "@permission_health_title": {},
     "permission_health_desc": "This permission is required to write steps to your health data.",
     "@permission_health_desc": {},
-    "permission_activity_title": "Activity Recognition Permission",
-    "@permission_activity_title": {},
-    "permission_activity_desc": "This permission is required to recognize your physical activity and accurately record steps.",
-    "@permission_activity_desc": {},
     "permission_notification_title": "Notification Permission",
     "@permission_notification_title": {},
     "permission_notification_desc": "This permission is required to send you notifications about your progress and app status.",
@@ -218,11 +160,6 @@
     "@confirm": {},
     "complete": "Complete",
     "@complete": {},
-    "session_total_steps_template": "Total steps this session: {steps}",
-    "manual_steps_label": "Manual Steps",
-    "@manual_steps_label": {},
-    "manual_steps_hint": "Manually add a specific number of steps.",
-    "@manual_steps_hint": {},
     "notification_service_running": "Service is running",
     "@notification_service_running": {},
     "notification_next_run": "Next write at: {time}",
@@ -241,14 +178,8 @@
             }
         }
     },
-    "notification_channel_id": "WalkGo Service",
-    "@notification_channel_id": {},
-    "notification_channel_desc": "Notifications for WalkGo background service",
-    "@notification_channel_desc": {},
     "notification_steps_written_title": "Steps Written Successfully",
     "@notification_steps_written_title": {},
-    "manual_write_initiated": "Manual write initiated.",
-    "@manual_write_initiated": {},
     "manual_write_button_text": "Write Once",
     "@manual_write_button_text": {},
     "manual_write_success_feedback": "Manually wrote {steps} steps",
@@ -321,7 +252,6 @@
         }
     },
     "latest_version_installed": "You are already using the latest version.",
-    "no_updates_available": "No updates available.",
     "@latest_version_installed": {},
     "invalid_architecture": "Could not find a suitable update for your device's architecture.",
     "@invalid_architecture": {},
@@ -332,30 +262,9 @@
     "update_check_failed": "Failed to check for updates. Please check your network connection.",
     "@update_check_failed": {},
     "manual_download": "Manual Download",
-    "manual_download_title": "Manual Download",
     "manual_download_prompt": "Please download the file named:",
-    "manual_download_description": "Your device architecture is: {architecture}. Please download the file named:",
-    "@manual_download_description": {
-        "placeholders": {
-            "architecture": {
-                "type": "String"
-            }
-        }
-    },
-    "manual_download_filename": "Filename: {filename}",
-    "@manual_download_filename": {
-        "placeholders": {
-            "filename": {
-                "type": "String"
-            }
-        }
-    },
-    "copy_link": "Copy Link",
-    "@copy_link": {},
     "go_to_download": "Go to Download Page",
     "@go_to_download": {},
-    "link_copied": "Link copied to clipboard",
-    "@link_copied": {},
     "view_release_notes": "View Version Information",
     "@view_release_notes": {},
     "view_changelog": "View Changelog",
@@ -399,7 +308,5 @@
     "skip_battery_warning": "Battery Optimization Warning",
     "@skip_battery_warning": {},
     "skip_battery_desc": "If you skip battery optimization, Android system will pause synchronization tasks when the phone enters sleep mode, preventing steps from being written to health data in real time.",
-    "@skip_battery_desc": {},
-    "skip_permission_cancel": "Cancel",
-    "@skip_permission_cancel": {}
+    "@skip_battery_desc": {}
 }
