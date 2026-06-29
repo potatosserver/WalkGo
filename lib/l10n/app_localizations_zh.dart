@@ -152,10 +152,10 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get start_auto_steps => '啟動自動服務';
+  String get start_auto_mode => '啟動自動服務';
 
   @override
-  String get stop_auto_steps => '停止自動服務';
+  String get stop_auto_mode => '停止自動服務';
 
   @override
   String get write_fail_check_log => '寫入步數失敗，請檢查您的健康應用程式或系統設定。';
@@ -336,7 +336,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get manual_steps_title => '手動寫入一次';
+  String get manual_write_button_text => '手動寫入一次';
 
   @override
   String get manual_steps_label => '手動步數';
@@ -345,10 +345,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get manual_steps_hint => '手動增加特定數量的步數。';
 
   @override
-  String get auto_pause_threshold => '自動暫停閾值';
+  String get auto_pause_steps_label => '自動暫停閾值';
 
   @override
-  String get auto_pause_threshold_hint => '在一次工作階段中寫入這麼多步數後，服務將會停止。';
+  String get auto_pause_steps_label_hint => '在一次工作階段中寫入這麼多步數後，服務將會停止。';
 
   @override
   String get notification_service_running => '服務運行中';
@@ -370,10 +370,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get notification_channel_desc => '用於 WalkGo 背景服務的通知';
 
   @override
-  String get notification_service_stopped_title => '服務已停止';
+  String get status_stopped => '服務已停止';
 
   @override
-  String get notification_service_stopped_content => '準備就緒，等待您開啟自動模式。';
+  String get status_ready_to_start => '準備就緒，等待您開啟自動模式。';
 
   @override
   String get notification_steps_written_title => '成功寫入步數';

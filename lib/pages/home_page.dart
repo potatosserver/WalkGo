@@ -118,7 +118,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.add),
-                    label: Text(l10n.manual_steps_title),
+                    label: Text(l10n.manual_write_button_text),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -143,8 +143,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     ),
                     label: Text(
                       viewModel.isAutoRunning
-                          ? l10n.stop_auto_steps
-                          : l10n.start_auto_steps,
+                          ? l10n.stop_auto_mode
+                          : l10n.start_auto_mode,
                     ),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),

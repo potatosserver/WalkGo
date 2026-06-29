@@ -260,9 +260,9 @@ void onStart(ServiceInstance service) {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(prefLastStepsWritten, 0);
 
-    final title = localizedStrings['notification_service_stopped_title'] ??
+    final title = localizedStrings['status_stopped'] ??
         'Service Stopped';
-    final body = localizedStrings['notification_service_stopped_content'] ??
+    final body = localizedStrings['status_ready_to_start'] ??
         'Ready to start.';
     showCustomNotification(title, body, isRunning: isRunning);
     broadcastUIUpdate(statusLog: body);
@@ -342,9 +342,9 @@ void onStart(ServiceInstance service) {
           isRunning: isRunning,
         );
       } else {
-        final title = localizedStrings['notification_service_stopped_title'] ??
+        final title = localizedStrings['status_stopped'] ??
             'Service Stopped';
-        final body = localizedStrings['notification_service_stopped_content'] ??
+        final body = localizedStrings['status_ready_to_start'] ??
             'Ready to start.';
         showCustomNotification(title, body, isRunning: isRunning);
       }

@@ -368,17 +368,17 @@ abstract class AppLocalizations {
   /// **'Manually wrote {steps} steps.'**
   String log_write_success_manual(String steps);
 
-  /// No description provided for @start_auto_steps.
+  /// No description provided for @start_auto_mode.
   ///
   /// In en, this message translates to:
   /// **'Start Auto Steps'**
-  String get start_auto_steps;
+  String get start_auto_mode;
 
-  /// No description provided for @stop_auto_steps.
+  /// No description provided for @stop_auto_mode.
   ///
   /// In en, this message translates to:
   /// **'Stop Auto Steps'**
-  String get stop_auto_steps;
+  String get stop_auto_mode;
 
   /// No description provided for @write_fail_check_log.
   ///
@@ -716,11 +716,11 @@ abstract class AppLocalizations {
   /// **'Total steps this session: {steps}'**
   String session_total_steps_template(Object steps);
 
-  /// No description provided for @manual_steps_title.
+  /// No description provided for @manual_write_button_text.
   ///
   /// In en, this message translates to:
   /// **'Manual Write Once'**
-  String get manual_steps_title;
+  String get manual_write_button_text;
 
   /// No description provided for @manual_steps_label.
   ///
@@ -734,17 +734,17 @@ abstract class AppLocalizations {
   /// **'Manually add a specific number of steps.'**
   String get manual_steps_hint;
 
-  /// No description provided for @auto_pause_threshold.
+  /// No description provided for @auto_pause_steps_label.
   ///
   /// In en, this message translates to:
   /// **'Auto-pause Threshold'**
-  String get auto_pause_threshold;
+  String get auto_pause_steps_label;
 
-  /// No description provided for @auto_pause_threshold_hint.
+  /// No description provided for @auto_pause_steps_label_hint.
   ///
   /// In en, this message translates to:
   /// **'The service will be stopped after writing this many steps in one session.'**
-  String get auto_pause_threshold_hint;
+  String get auto_pause_steps_label_hint;
 
   /// No description provided for @notification_service_running.
   ///
@@ -776,17 +776,17 @@ abstract class AppLocalizations {
   /// **'Notifications for WalkGo background service'**
   String get notification_channel_desc;
 
-  /// No description provided for @notification_service_stopped_title.
+  /// No description provided for @status_stopped.
   ///
   /// In en, this message translates to:
   /// **'Service Stopped'**
-  String get notification_service_stopped_title;
+  String get status_stopped;
 
-  /// No description provided for @notification_service_stopped_content.
+  /// No description provided for @status_ready_to_start.
   ///
   /// In en, this message translates to:
   /// **'Ready. Waiting for you to enable auto mode.'**
-  String get notification_service_stopped_content;
+  String get status_ready_to_start;
 
   /// No description provided for @notification_steps_written_title.
   ///

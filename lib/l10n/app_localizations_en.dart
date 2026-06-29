@@ -154,10 +154,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get start_auto_steps => 'Start Auto Steps';
+  String get start_auto_mode => 'Start Auto Steps';
 
   @override
-  String get stop_auto_steps => 'Stop Auto Steps';
+  String get stop_auto_mode => 'Stop Auto Steps';
 
   @override
   String get write_fail_check_log =>
@@ -349,7 +349,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get manual_steps_title => 'Manual Write Once';
+  String get manual_write_button_text => 'Manual Write Once';
 
   @override
   String get manual_steps_label => 'Manual Steps';
@@ -358,10 +358,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get manual_steps_hint => 'Manually add a specific number of steps.';
 
   @override
-  String get auto_pause_threshold => 'Auto-pause Threshold';
+  String get auto_pause_steps_label => 'Auto-pause Threshold';
 
   @override
-  String get auto_pause_threshold_hint =>
+  String get auto_pause_steps_label_hint =>
       'The service will be stopped after writing this many steps in one session.';
 
   @override
@@ -385,10 +385,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Notifications for WalkGo background service';
 
   @override
-  String get notification_service_stopped_title => 'Service Stopped';
+  String get status_stopped => 'Service Stopped';
 
   @override
-  String get notification_service_stopped_content =>
+  String get status_ready_to_start =>
       'Ready. Waiting for you to enable auto mode.';
 
   @override
