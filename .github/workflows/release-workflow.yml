@@ -88,18 +88,22 @@ jobs:
       - name: Generate L10n
         run: flutter gen-l10n
 
-      - name: Decode Keystore
+      - name: Decode Keystore and Google Services
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          FIREBASE_GOOGLE_SERVICES_BASE64: ${{ secrets.FIREBASE_GOOGLE_SERVICES_BASE64 }}
         run: |
           echo "${KEYSTORE_BASE64}" | base64 --decode > android/upload-keystore.jks
           echo "storeFile=upload-keystore.jks" > android/key.properties
           echo "keyAlias=${KEY_ALIAS}" >> android/key.properties
           echo "keyPassword=${KEY_PASSWORD}" >> android/key.properties
           echo "storePassword=${STORE_PASSWORD}" >> android/key.properties
+          
+          # 解決 google-services.json 缺失之問題
+          echo "${FIREBASE_GOOGLE_SERVICES_BASE64}" | base64 --decode > android/app/google-services.json
 
       - name: Build App Bundle and APK
         run: |
