@@ -9,7 +9,6 @@ import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
 import 'package:walkgo/widgets/status_card.dart';
 import 'package:walkgo/widgets/parameter_settings_card.dart';
 import 'package:walkgo/widgets/update_flow_dialog.dart';
-import 'package:walkgo/services/device_id_service.dart';
 import 'package:walkgo/main.dart';
 
 class HomePage extends StatefulWidget {
