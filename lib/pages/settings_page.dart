@@ -7,8 +7,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../constants.dart';
+import '../services/device_id_service.dart';
 import '../l10n/app_localizations.dart';
 import '../services/log_service.dart';
 import '../services/update_service.dart';
@@ -367,14 +368,26 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             TextButton(
               onPressed: () async {
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.clear();
-                await logService.clearLogs();
-                if (context.mounted) {
-                  navigator.pop(); // Close the confirmation dialog
-                  _showToast(l10n.data_cleared_success);
-                  router.go('/splash');
-                }
+              final prefs = await SharedPreferences.getInstance();
+              final deviceData = await DeviceIdHelper.getDeviceInfo();
+              final String deviceId = deviceData['id']!;
+                
+              try {
+                await FirebaseFirestore.instance
+                    .collection('device_stats')
+                    .doc(deviceId)
+                    .delete();
+              } catch (e) {
+                debugPrint('Failed to delete device stats from Firestore: $e');
+              }
+
+              await prefs.clear();
+              await logService.clearLogs();
+              if (context.mounted) {
+                navigator.pop(); // Close the confirmation dialog
+                _showToast(l10n.data_cleared_success);
+                router.go('/splash');
+              }
               },
               child: Text(
                 l10n.confirm,

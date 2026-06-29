@@ -136,9 +136,8 @@ void main() async {
 
   try {
     await Firebase.initializeApp();
-    await reportAppActive();
   } catch (e) {
-    debugPrint('Firebase initialization or app activity reporting failed: $e');
+    debugPrint('Firebase initialization failed: $e');
   }
 
   DartPluginRegistrant.ensureInitialized();

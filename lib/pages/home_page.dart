@@ -9,6 +9,8 @@ import 'package:walkgo/viewmodels/home_page_viewmodel.dart';
 import 'package:walkgo/widgets/status_card.dart';
 import 'package:walkgo/widgets/parameter_settings_card.dart';
 import 'package:walkgo/widgets/update_flow_dialog.dart';
+import 'package:walkgo/services/device_id_service.dart';
+import 'package:walkgo/main.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,6 +24,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    
+    // Trigger app activity reporting when entering home page
+    reportAppActive();
+    
     final service = FlutterBackgroundService();
     service.on('manual_write_complete').listen((event) {
       if (!mounted) return;
