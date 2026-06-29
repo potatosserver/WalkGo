@@ -27,7 +27,15 @@ class ChangelogDialog extends StatelessWidget {
     try {
       final response = await http.get(Uri.parse(_changelogUrl));
       if (response.statusCode == 200) {
-        return response.body;
+        String content = response.body;
+        
+        // Remove the main title (H1) and any intro text to avoid repetition with dialog title
+        // We look for the first occurrence of '##' (the first version entry)
+        final firstVersionIndex = content.indexOf('## ');
+        if (firstVersionIndex != -1) {
+          return content.substring(firstVersionIndex);
+        }
+        return content;
       } else {
         return 'Error loading changelog (Status: ${response.statusCode})';
       }
@@ -76,6 +84,14 @@ class ChangelogDialog extends StatelessWidget {
                         margin: Margins.zero,
                         padding: HtmlPaddings.zero,
                         fontSize: FontSize(14.0),
+                      ),
+                      "hr": Style(
+                        margin: Margins.zero,
+                      ),
+                      "h2": Style(
+                        margin: Margins.zero,
+                        fontSize: FontSize(18.0),
+                        fontWeight: FontWeight.bold,
                       ),
                     },
                   ),
