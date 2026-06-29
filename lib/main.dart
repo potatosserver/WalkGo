@@ -62,10 +62,8 @@ void onDidReceiveNotificationResponse(
       'notification_next_run': l10n.notification_next_run('{time}'),
       'notification_service_running': l10n.notification_service_running,
       'background_service_start': l10n.background_service_start,
-      'status_stopped':
-          l10n.status_stopped,
-      'status_ready_to_start':
-          l10n.status_ready_to_start,
+      'status_stopped': l10n.status_stopped,
+      'status_ready_to_start': l10n.status_ready_to_start,
     };
     service.invoke('notification_toggled', localizedStrings);
   }
@@ -111,21 +109,24 @@ Future<void> reportAppActive() async {
     final String? fcmToken = await NotificationService.getFcmToken();
 
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    final String appVersion = "${packageInfo.version}+${packageInfo.buildNumber}";
+    final String appVersion =
+        "${packageInfo.version}+${packageInfo.buildNumber}";
 
-    const String rawChannel = String.fromEnvironment('UPDATE_CHANNEL', defaultValue: 'github');
-    final String displayChannel = rawChannel == 'google_play' ? 'Google Play' : 'GitHub';
+    const String rawChannel =
+        String.fromEnvironment('UPDATE_CHANNEL', defaultValue: 'github');
+    final String displayChannel =
+        rawChannel == 'google_play' ? 'Google Play' : 'GitHub';
 
     await FirebaseFirestore.instance
         .collection('device_stats')
         .doc(deviceId)
         .set({
-          'last_active': FieldValue.serverTimestamp(),
-          'platform': 'Android ($displayChannel)',
-          'device_model': deviceModel,
-          'fcm_token': fcmToken ?? '',
-          'app_version': appVersion,
-        }, SetOptions(merge: true));
+      'last_active': FieldValue.serverTimestamp(),
+      'platform': 'Android ($displayChannel)',
+      'device_model': deviceModel,
+      'fcm_token': fcmToken ?? '',
+      'app_version': appVersion,
+    }, SetOptions(merge: true));
   } catch (e) {
     debugPrint('Error reporting app activity to Firestore: $e');
   }

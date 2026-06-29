@@ -233,10 +233,8 @@ class HomePageViewModel extends ChangeNotifier with WidgetsBindingObserver {
       'notification_next_run': _l10n!.notification_next_run('{time}'),
       'automatic_write_success': _l10n!.automatic_write_success('{steps}'),
       'write_fail_check_log': _l10n!.write_fail_check_log,
-      'status_stopped':
-          _l10n!.status_stopped,
-      'status_ready_to_start':
-          _l10n!.status_ready_to_start,
+      'status_stopped': _l10n!.status_stopped,
+      'status_ready_to_start': _l10n!.status_ready_to_start,
       'background_service_start': _l10n!.background_service_start,
       'auto_pause_notification_title': _l10n!.auto_pause_notification_title,
       'auto_pause_notification_content_with_steps':

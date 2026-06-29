@@ -263,7 +263,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     text: l10n.version_label(_version),
                   ),
                   const Divider(height: 32),
-                      _buildAboutRow(
+                  _buildAboutRow(
                     context,
                     icon: const Icon(Icons.article_outlined, size: 24),
                     text: l10n.view_release_notes,
@@ -383,26 +383,27 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             TextButton(
               onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              final deviceData = await DeviceIdHelper.getDeviceInfo();
-              final String deviceId = deviceData['id']!;
-                
-              try {
-                await FirebaseFirestore.instance
-                    .collection('device_stats')
-                    .doc(deviceId)
-                    .delete();
-              } catch (e) {
-                debugPrint('Failed to delete device stats from Firestore: $e');
-              }
+                final prefs = await SharedPreferences.getInstance();
+                final deviceData = await DeviceIdHelper.getDeviceInfo();
+                final String deviceId = deviceData['id']!;
 
-              await prefs.clear();
-              await logService.clearLogs();
-              if (context.mounted) {
-                navigator.pop(); // Close the confirmation dialog
-                _showToast(l10n.data_cleared_success);
-                router.go('/splash');
-              }
+                try {
+                  await FirebaseFirestore.instance
+                      .collection('device_stats')
+                      .doc(deviceId)
+                      .delete();
+                } catch (e) {
+                  debugPrint(
+                      'Failed to delete device stats from Firestore: $e');
+                }
+
+                await prefs.clear();
+                await logService.clearLogs();
+                if (context.mounted) {
+                  navigator.pop(); // Close the confirmation dialog
+                  _showToast(l10n.data_cleared_success);
+                  router.go('/splash');
+                }
               },
               child: Text(
                 l10n.confirm,

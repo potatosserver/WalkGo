@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -10,7 +9,8 @@ import 'package:walkgo/widgets/app_dialog.dart';
 class ChangelogDialog extends StatelessWidget {
   const ChangelogDialog({super.key});
 
-  static const String _changelogUrl = 'https://raw.githubusercontent.com/potatosserver/WalkGo/main/CHANGELOG.md';
+  static const String _changelogUrl =
+      'https://raw.githubusercontent.com/potatosserver/WalkGo/main/CHANGELOG.md';
 
   String _ensureMarkdownLinks(String text) {
     final urlRegex = RegExp(
@@ -28,7 +28,7 @@ class ChangelogDialog extends StatelessWidget {
       final response = await http.get(Uri.parse(_changelogUrl));
       if (response.statusCode == 200) {
         String content = response.body;
-        
+
         // Remove the main title (H1) and any intro text to avoid repetition with dialog title
         // We look for the first occurrence of '##' (the first version entry)
         final firstVersionIndex = content.indexOf('## ');

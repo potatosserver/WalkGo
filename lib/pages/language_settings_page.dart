@@ -21,10 +21,8 @@ class LanguageSettingsPage extends StatelessWidget {
       'notification_next_run': l10n.notification_next_run('{time}'),
       'notification_service_running': l10n.notification_service_running,
       'background_service_start': l10n.background_service_start,
-      'status_stopped':
-          l10n.status_stopped,
-      'status_ready_to_start':
-          l10n.status_ready_to_start,
+      'status_stopped': l10n.status_stopped,
+      'status_ready_to_start': l10n.status_ready_to_start,
     };
   }
 

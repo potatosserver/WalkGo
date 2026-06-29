@@ -14,13 +14,13 @@ class DeviceIdHelper {
       if (Platform.isAndroid) {
         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        
+
         // 1. 處理安全 ID
         String rawId = androidInfo.id;
         if (rawId.isNotEmpty) {
           secureId = _convertToSha256(rawId);
         }
-        
+
         // 2. 處理裝置型號 (品牌 + 型號)
         model = "${androidInfo.brand} ${androidInfo.model}";
       }
@@ -41,8 +41,8 @@ class DeviceIdHelper {
   }
 
   static String _convertToSha256(String input) {
-    var bytes = utf8.encode(input); 
-    var digest = sha256.convert(bytes); 
-    return digest.toString(); 
+    var bytes = utf8.encode(input);
+    var digest = sha256.convert(bytes);
+    return digest.toString();
   }
 }

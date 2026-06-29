@@ -23,10 +23,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    
+
     // Trigger app activity reporting when entering home page
     reportAppActive();
-    
+
     final service = FlutterBackgroundService();
     service.on('manual_write_complete').listen((event) {
       if (!mounted) return;
