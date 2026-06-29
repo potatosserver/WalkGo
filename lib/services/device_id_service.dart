@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:developer' as developer;
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
@@ -24,7 +25,7 @@ class DeviceIdHelper {
         model = "${androidInfo.brand} ${androidInfo.model}";
       }
     } catch (e) {
-      print("獲取裝置資訊失敗: $e");
+      developer.log("獲取裝置資訊失敗: $e", name: 'deviceIdService');
     }
 
     return {

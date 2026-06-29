@@ -368,18 +368,6 @@ abstract class AppLocalizations {
   /// **'Manually wrote {steps} steps.'**
   String log_write_success_manual(String steps);
 
-  /// No description provided for @start_auto_mode.
-  ///
-  /// In en, this message translates to:
-  /// **'Start Auto Steps'**
-  String get start_auto_mode;
-
-  /// No description provided for @stop_auto_mode.
-  ///
-  /// In en, this message translates to:
-  /// **'Stop Auto Steps'**
-  String get stop_auto_mode;
-
   /// No description provided for @write_fail_check_log.
   ///
   /// In en, this message translates to:
@@ -716,12 +704,6 @@ abstract class AppLocalizations {
   /// **'Total steps this session: {steps}'**
   String session_total_steps_template(Object steps);
 
-  /// No description provided for @manual_write_button_text.
-  ///
-  /// In en, this message translates to:
-  /// **'Manual Write Once'**
-  String get manual_write_button_text;
-
   /// No description provided for @manual_steps_label.
   ///
   /// In en, this message translates to:
@@ -733,18 +715,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manually add a specific number of steps.'**
   String get manual_steps_hint;
-
-  /// No description provided for @auto_pause_steps_label.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto-pause Threshold'**
-  String get auto_pause_steps_label;
-
-  /// No description provided for @auto_pause_steps_label_hint.
-  ///
-  /// In en, this message translates to:
-  /// **'The service will be stopped after writing this many steps in one session.'**
-  String get auto_pause_steps_label_hint;
 
   /// No description provided for @notification_service_running.
   ///
@@ -775,18 +745,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Notifications for WalkGo background service'**
   String get notification_channel_desc;
-
-  /// No description provided for @status_stopped.
-  ///
-  /// In en, this message translates to:
-  /// **'Service Stopped'**
-  String get status_stopped;
-
-  /// No description provided for @status_ready_to_start.
-  ///
-  /// In en, this message translates to:
-  /// **'Ready. Waiting for you to enable auto mode.'**
-  String get status_ready_to_start;
 
   /// No description provided for @notification_steps_written_title.
   ///
@@ -949,12 +907,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manual Download'**
   String get manual_download;
-
-  /// No description provided for @auto_update.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto Update'**
-  String get auto_update;
 
   /// No description provided for @manual_download_title.
   ///

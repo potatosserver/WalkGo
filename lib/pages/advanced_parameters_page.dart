@@ -160,7 +160,7 @@ class _AdvancedParametersPageState extends State<AdvancedParametersPage> {
                                     controller: _autoPauseThresholdController,
                                     focusNode: _autoPauseThresholdFocusNode,
                                     label: l10n.auto_pause_steps_label,
-                                    hint: l10n.auto_pause_steps_label_hint,
+                                    hint: l10n.auto_pause_steps_hint,
                                   ),
                                 ),
                               ),

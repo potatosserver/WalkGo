@@ -46,7 +46,6 @@
     "auto_pause_title": "自動暫停服務",
     "auto_pause_subtitle": "當寫入一定步數後自動停止服務。",
     "auto_pause_steps_label": "自動暫停步數閾值",
-    "auto_pause_steps_hint": "在一次工作階段中寫入這麼多步數後，服務將會停止。",
     "offset_settings_title": "隨機化步數",
     "offset_settings_subtitle": "啟用步數隨機偏移",
     "app_reset": "重設應用程式",
@@ -138,11 +137,8 @@
             }
         }
     },
-    "manual_steps_title": "手動寫入一次",
     "manual_steps_label": "手動步數",
     "manual_steps_hint": "手動增加特定數量的步數。",
-    "auto_pause_threshold": "自動暫停閾值",
-    "auto_pause_threshold_hint": "在一次工作階段中寫入這麼多步數後，服務將會停止。",
     "status_card_title": "狀態",
     "session_steps": "本次步數",
     "remaining_steps_today": "今日剩餘步數",
@@ -177,8 +173,6 @@
     },
     "notification_channel_id": "WalkGo 服務",
     "notification_channel_desc": "用於 WalkGo 背景服務的通知",
-    "notification_service_stopped_title": "服務已停止",
-    "notification_service_stopped_content": "準備就緒，等待您開啟自動模式。",
     "notification_steps_written_title": "成功寫入步數",
     "manual_write_initiated": "手動寫入已啟動。",
     "manual_write_button_text": "手動寫入一次",
@@ -268,11 +262,11 @@
     "manual_download_prompt": "請下載名為：",
     "manual_download_description": "您的裝置架構為：{architecture}。請下載名為：",
     "@manual_download_description": {
-      "placeholders": {
-        "architecture": {
-          "type": "String"
+        "placeholders": {
+            "architecture": {
+                "type": "String"
+            }
         }
-      }
     },
     "manual_download_filename": "檔案名稱：{filename}",
     "@manual_download_filename": {
@@ -329,5 +323,6 @@
     "skip_battery_desc": "如果您略過電池優化，Android 系統將在手機進入休眠模式時暫停同步任務，導致無法即時將步數寫入健康數據。",
     "@skip_battery_desc": {},
     "skip_permission_cancel": "取消",
-    "@skip_permission_cancel": {}
+    "@skip_permission_cancel": {},
+    "auto_pause_steps_hint": "在一次工作階段中寫入這麼多步數後，服務將會停止。"
 }

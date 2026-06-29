@@ -1,427 +1,401 @@
 {
-  "@@locale": "en",
-  "walkgo": "WalkGo",
-  "@walkgo": {},
-  "settings_tooltip": "Settings",
-  "@settings_tooltip": {},
-  "status_card_title": "Status",
-  "@status_card_title": {},
-  "status_running": "Running...",
-  "@status_running": {},
-  "status_ready_to_start": "Ready to start",
-  "@status_ready_to_start": {},
-  "status_stopped": "Stopped",
-  "@status_stopped": {},
-  "next_run_at": "Next run at {time}",
-  "@next_run_at": {
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "next_run_title": "Next run at",
-  "next_run_pending": "Next run pending...",
-  "this_run": "This Run",
-  "session_steps": "Session Steps",
-  "remaining_steps_today": "Remaining Steps Today",
-  "parameter_settings": "Parameter Settings",
-  "@parameter_settings": {},
-  "base_steps": "Base Steps",
-  "@base_steps": {},
-  "offset_steps": "Offset Steps",
-  "@offset_steps": {},
-  "interval_minutes": "Interval (minutes)",
-  "@interval_minutes": {},
-  "actions": "Actions",
-  "@actions": {},
-  "start_auto_mode": "Start Auto Mode",
-  "@start_auto_mode": {},
-  "stop_auto_mode": "Stop Auto Mode",
-  "@stop_auto_mode": {},
-  "settings": "Settings",
-  "@settings": {},
-  "app_settings": "App Settings",
-  "@app_settings": {},
-  "theme": "Theme",
-  "@theme": {},
-  "light": "Light",
-  "@light": {},
-  "dark": "Dark",
-  "@dark": {},
-  "system": "System",
-  "@system": {},
-  "language": "Language",
-  "@language": {},
-  "english": "English",
-  "@english": {},
-  "chinese": "Chinese",
-  "@chinese": {},
-  "advanced_parameters": "Advanced Parameters",
-  "@advanced_parameters": {},
-  "auto_pause_title": "Auto Pause",
-  "@auto_pause_title": {},
-  "auto_pause_description": "Automatically pause when step count exceeds a threshold.",
-  "@auto_pause_description": {},
-  "auto_pause_steps_label": "Auto Pause when steps exceed",
-  "@auto_pause_steps_label": {},
-  "write_logs": "Write Logs",
-  "@write_logs": {},
-  "logs_cleared": "Logs cleared.",
-  "@logs_cleared": {},
-  "clear_all_logs": "Clear all logs",
-  "@clear_all_logs": {},
-  "clear_logs_confirm_title": "Clear Logs",
-  "@clear_logs_confirm_title": {},
-  "clear_logs_confirm_content": "Are you sure you want to clear all step logs? This action cannot be undone.",
-  "@clear_// la l10n consolidation complete.
-  "log_write_success": "Total steps after write: {totalSteps}",
-  "@log_write_success": {
-    "placeholders": {
-      "totalSteps": {
-        "type": "String"
-      }
-    }
-  },
-  "log_write_success_auto": "Automatically wrote {steps} steps.",
-  "@log_write_success_auto": {
-    "placeholders": {
-      "steps": {
-        "type": "String"
-      }
-    }
-  },
-  "log_write_success_manual": "Manually wrote {steps} steps.",
-  "@log_write_success_manual": {
-    "placeholders": {
-      "steps": {
-        "type": "String"
-      }
-    }
-  },
-  "write_fail_check_log": "Failed to write steps, please check your health app or system settings.",
-  "@write_fail_check_log": {},
-  "write_error": "Error writing steps: {error}",
-  "@write_error": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "background_service_start": "Background service has been started.",
-  "@background_service_start": {},
-  "background_service_stop": "Background service has been stopped.",
-  "@background_service_stop": {},
-  "notification_update_title": "Steps Update",
-  "@notification_update_title": {},
-  "automatic_write_success": "Successfully automatically wrote {steps} steps.",
-  "@automatic_write_success": {
-    "placeholders": {
-      "steps": {
-        "type": "String"
-      }
-    }
-  },
-  "clear_data_button": "Clear All App Data",
-  "@clear_data_button": {},
-  "clear_data_confirm_title": "Confirm Deletion",
-  "@clear_data_confirm_title": {},
-  "clear_data_confirm_content": "This will permanently delete all app data, including your settings and logs. This action cannot be undone.",
-  "@clear_data_confirm_content": {},
-  "data_cleared_success": "App data has been successfully cleared.",
-  "@data_cleared_success": {},
-  "app_will_restart": "The app will now restart.",
-  "@app_will_restart": {},
-  "auto_pause_subtitle": "Automatically stop the service after writing a certain number of steps.",
-  "@auto_pause_subtitle": {},
-  "auto_pause_steps_hint": "The service will be stopped after writing this many steps in one session.",
-  "@auto_pause_steps_hint": {},
-  "app_reset": "Reset App",
-  "@app_reset": {},
-  "app_reset_desc": "This will clear all app data and settings, restoring the app to its initial state.",
-  "@app_reset_desc": {},
-  "offset_steps_hint": "The number of steps will be randomized within a positive and negative range of this value.",
-  "@offset_steps_hint": {},
-  "permission_denied_title": "Permission Permanently Denied",
-  "@permission_denied_title": {},
-  "permission_denied_content": "You have permanently denied a necessary permission. Please go to the settings for this app on your device and grant the permission manually for it to function properly.",
-  "@permission_denied_content": {},
-  "open_settings": "Open Settings",
-  "@open_settings": {},
-  "auto_pause_notification_title": "Service Paused Automatically",
-  "@auto_pause_notification_title": {},
-  "auto_pause_notification_content_with_steps": "The service has been automatically paused because the session goal of {steps} steps has been reached.",
-  "@auto_pause_notification_content_with_steps": {
-    "placeholders": {
-      "steps": {
-        "type": "String"
-      }
-    }
-  },
-  "steps_written_this_session": "Steps Written This Session",
-  "auto_pause_remaining": "Auto-pause Remaining",
-  "start_service_fail": "Failed to start service.",
-  "stop_service_fail": "Failed to stop service.",
-  "param_settings": "Parameter Settings",
-  "base_steps": "Base Steps",
-  "offset_steps": "Offset Steps",
-  "interval": "Interval (minutes)",
-  "language_settings": "Language Settings",
-  "about": "About",
-  "system_theme": "System Theme",
-  "light_theme": "Light Theme",
-  "dark_theme": "Dark Theme",
-  "system_language": "System Language",
-  "traditional_chinese": "Traditional Chinese",
-  "about_walkgo": "About WalkGo",
-  "about_walkgo_content": "This app helps you log steps to your health data.",
-  "welcome_to_walkgo": "Welcome to WalkGo",
-  "welcome_message": "Before you begin, please grant the necessary permissions.",
-  "get_started": "Get Started",
-  "cancel": "Cancel",
-  "permission_health_title": "Health Permission",
-  "@permission_health_title": {},
-  "permission_health_desc": "This permission is required to write steps to your health data.",
-  "@permission_health_desc": {},
-  "permission_activity_title": "Activity Recognition Permission",
-  "@permission_activity_title": {},
-  "permission_activity_desc": "This permission is required to recognize your physical activity and accurately record steps.",
-  "@permission_activity_desc": {},
-  "permission_notification_title": "Notification Permission",
-  "@permission_notification_title": {},
-  "permission_notification_desc": "This permission is required to send you notifications about your progress and app status.",
-  "@permission_notification_desc": {},
-  "permission_battery_title": "Battery Optimization Permission",
-  "@permission_battery_title": {},
-  "permission_battery_desc": "This permission is required to allow the app to run in the background.",
-  "@permission_battery_desc": {},
-  "grant_permission": "Grant Permission",
-  "@grant_permission": {},
-  "setup_complete": "Setup Complete",
-  "@setup_complete": {},
-  "next_step": "Next Step",
-  "@next_step": {},
-  "rerun_setup": "View Welcome Page",
-  "@rerun_setup": {},
-  "close": "Close",
-  "@close": {},
-  "confirm": "Confirm",
-  "@confirm": {},
-  "complete": "Complete",
-  "@complete": {},
-  "session_total_steps_template": "Total steps this session: {steps}",
-  "manual_steps_title": "Manual Write Once",
-  "@manual_steps_title": {},
-  "manual_steps_label": "Manual Steps",
-  "@manual_steps_label": {},
-  "manual_steps_hint": "Manually add a specific number of steps.",
-  "@manual_steps_hint": {},
-  "auto_pause_threshold": "Auto-pause Threshold",
-  "@auto_pause_threshold": {},
-  "auto_pause_threshold_hint": "The service will be stopped after writing this many steps in one session.",
-  "@auto_pause_threshold_hint": {},
-  "status_card_title": "Status",
-  "session_steps": "Session Steps",
-  "remaining_steps_today": "Remaining Steps Today",
-  "parameter_settings": "Parameter Settings",
-  "interval_minutes": "Interval (minutes)",
-  "actions": "Actions",
-  "start_auto_mode": "Start Auto Mode",
-  "@start_auto_mode": {},
-  "stop_auto_mode": "Stop Auto Mode",
-  "@stop_auto_mode": {},
-  "app_settings": "App Settings",
-  "@app_settings": {},
-  "light": "Light",
-  "@light": {},
-  "dark": "Dark",
-  "@dark": {},
-  "system": "System",
-  "@system": {},
-  "language": "Language",
-  "@language": {},
-  "chinese": "Chinese",
-  "@chinese": {},
-  "auto_pause_description": "Automatically pause when step count exceeds a threshold.",
-  "@auto_pause_description": {},
-  "notification_service_running": "Service is running",
-  "@notification_service_running": {},
-  "notification_next_run": "Next write at: {time}",
-  "@notification_next_run": {
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "notification_steps_written": "{steps} steps written",
-  "@notification_steps_written": {
-    "placeholders": {
-      "steps": {
-        "type": "String"
-      }
-    }
-  },
-  "notification_channel_id": "WalkGo Service",
-  "@notification_channel_id": {},
-  "notification_channel_desc": "Notifications for WalkGo background service",
-  "@notification_channel_desc": {},
-  "notification_service_stopped_title": "Service Stopped",
-  "@notification_service_stopped_title": {},
-  "notification_service_stopped_content": "Ready. Waiting for you to enable auto mode.",
-  "@notification_service_stopped_content": {},
-  "notification_steps_written_title": "Steps Written Successfully",
-  "@notification_steps_written_title": {},
-  "manual_write_initiated": "Manual write initiated.",
-  "@manual_write_initiated": {},
-  "manual_write_button_text": "Write Once",
-  "@manual_write_button_text": {},
-  "manual_write_success_feedback": "Manually wrote {steps} steps",
-  "@manual_write_success_feedback": {
-    "placeholders": {
-      "steps": {
-        "type": "String"
-      }
-    }
-  },
-  "auto_service_started": "Auto service started",
-  "@auto_service_started": {},
-  "auto_service_stopped": "Auto service stopped",
-  "@auto_service_stopped": {},
-  "auto_mode_running_lock_warning": "Auto mode is running. Parameters cannot be modified.",
-  "@auto_mode_running_lock_warning": {},
-  "error_base_less_than_offset": "Base steps must be greater than random offset steps.",
-  "@error_base_less_than_offset": {},
-  "error_threshold_too_low": "Auto-pause threshold must be greater than maximum single write (base + offset).",
-  "@error_threshold_too_low": {},
-  "today_steps_total": "Today Total: {steps} steps",
-  "@today_steps_total": {
-    "placeholders": {
-      "steps": {
-        "type": "String"
-      }
-    }
-  },
-  "developer_label": "Author: Andrew Cho (卓稟鈞)",
-  "@developer_label": {},
-  "github_source_code": "GitHub Source Code",
-  "@github_source_code": {},
-  "version_label": "Version: {version}",
-  "@version_label": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
-  },
-  "check_for_updates": "Check for updates",
-  "@check_for_updates": {},
-  "update_available": "Update Available",
-  "update_available_desc": "A new version {version} is available. Would you like to update now?",
-  "@update_available_desc": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
-  },
-  "updating": "Updating...",
-  "@updating": {},
-  "downloading_apk": "Downloading: {apkName}",
-  "@downloading_apk": {
-    "placeholders": {
-      "apkName": {
-        "type": "String"
-      }
-    }
-  },
-  "verifying_integrity": "Verifying integrity...",
-  "@verifying_integrity": {},
-  "update_failed": "Update failed: {error}",
-  "@update_failed": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "latest_version_installed": "You are already using the latest version.",
-  "no_updates_available": "No updates available.",
-  "@latest_version_installed": {},
-  "invalid_architecture": "Could not find a suitable update for your device's architecture.",
-  "@invalid_architecture": {},
-  "hash_mismatch": "Hash verification failed. The download might be corrupted.",
-  "@hash_mismatch": {},
-  "checking_for_updates": "Checking for updates...",
-  "@checking_for_updates": {},
-  "update_check_failed": "Failed to check for updates. Please check your network connection.",
-  "@update_check_failed": {},
-  "manual_download": "Manual Download",
-  "manual_download_title": "Manual Download",
-  "manual_download_prompt": "Please download the file named:",
-  "manual_download_description": "Your device architecture is: {architecture}. Please download the file named:",
-  "@manual_download_description": {
-    "placeholders": {
-      "architecture": {
-        "type": "String"
-      }
-    }
-  },
-  "manual_download_filename": "Filename: {filename}",
-  "@manual_download_filename": {
-    "placeholders": {
-      "filename": {
-        "type": "String"
-      }
-    }
-  },
-  "copy_link": "Copy Link",
-  "@copy_link": {},
-  "go_to_download": "Go to Download Page",
-  "@go_to_download": {},
-  "link_copied": "Link copied to clipboard",
-  "@link_copied": {},
-  "view_release_notes": "View Version Information",
-  "@view_release_notes": {},
-  "release_notes": "Version Information",
-  "@release_notes": {},
-  "download_latest_version": "Reinstall App",
-  "@download_latest_version": {},
-  "unknown_error": "An unknown error occurred.",
-  "@unknown_error": {},
-  "update_ready_to_install": "Update is ready to install.",
-  "@update_ready_to_install": {},
-  "retry": "Retry",
-  "@retry": {},
-  "install": "Install",
-  "@install": {},
-  "download": "Download",
-  "@download": {},
-  "starting_installation": "Starting installation...",
-  "@starting_installation": {},
-  "notification_start_button": "Start",
-  "@notification_start_button": {},
-  "notification_stop_button": "Stop",
-  "@notification_stop_button": {},
-  "view_on_google_play": "View on Google Play",
-  "@view_on_google_play": {},
-  "skip_permission_title": "Permission Skip Warning",
-  "@skip_permission_title": {},
-  "skip_permission_description": "Skipping this permission may affect the app's stability and background synchronization. The system may force stop the app, causing step synchronization to be interrupted.",
-  "@skip_permission_description": {},
-  "skip_permission_confirm": "Confirm Skip",
-  "@skip_permission_confirm": {},
-  "skip_permission_label": "Skip for now",
-  "@skip_permission_label": {},
-  "skip_notification_warning": "Notification Permission Warning",
-  "@skip_notification_warning": {},
-  "skip_notification_desc": "If you skip notification permission, the foreground service priority will be lowered, and the system may force stop the app at any time in the background, interrupting step synchronization.",
-  "@skip_notification_desc": {},
-  "skip_battery_warning": "Battery Optimization Warning",
-  "@skip_battery_warning": {},
-  "skip_battery_desc": "If you skip battery optimization, Android system will pause synchronization tasks when the phone enters sleep mode, preventing steps from being written to health data in real time.",
-  "@skip_battery_desc": {},
-  "skip_permission_cancel": "Cancel",
-  "@skip_permission_cancel": {}
+    "@@locale": "en",
+    "walkgo": "WalkGo",
+    "@walkgo": {},
+    "settings_tooltip": "Settings",
+    "@settings_tooltip": {},
+    "status_card_title": "Status",
+    "@status_card_title": {},
+    "status_running": "Running...",
+    "@status_running": {},
+    "status_ready_to_start": "Ready to start",
+    "@status_ready_to_start": {},
+    "status_stopped": "Stopped",
+    "@status_stopped": {},
+    "next_run_at": "Next run at {time}",
+    "@next_run_at": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "next_run_title": "Next run at",
+    "next_run_pending": "Next run pending...",
+    "this_run": "This Run",
+    "session_steps": "Session Steps",
+    "remaining_steps_today": "Remaining Steps Today",
+    "parameter_settings": "Parameter Settings",
+    "@parameter_settings": {},
+    "base_steps": "Base Steps",
+    "@base_steps": {},
+    "offset_steps": "Offset Steps",
+    "@offset_steps": {},
+    "interval_minutes": "Interval (minutes)",
+    "@interval_minutes": {},
+    "actions": "Actions",
+    "@actions": {},
+    "start_auto_mode": "Start Auto Mode",
+    "@start_auto_mode": {},
+    "stop_auto_mode": "Stop Auto Mode",
+    "@stop_auto_mode": {},
+    "settings": "Settings",
+    "@settings": {},
+    "app_settings": "App Settings",
+    "@app_settings": {},
+    "theme": "Theme",
+    "@theme": {},
+    "light": "Light",
+    "@light": {},
+    "dark": "Dark",
+    "@dark": {},
+    "system": "System",
+    "@system": {},
+    "language": "Language",
+    "@language": {},
+    "english": "English",
+    "@english": {},
+    "chinese": "Chinese",
+    "@chinese": {},
+    "advanced_parameters": "Advanced Parameters",
+    "@advanced_parameters": {},
+    "auto_pause_title": "Auto Pause",
+    "@auto_pause_title": {},
+    "auto_pause_description": "Automatically pause when step count exceeds a threshold.",
+    "@auto_pause_description": {},
+    "auto_pause_steps_label": "Auto Pause when steps exceed",
+    "@auto_pause_steps_label": {},
+    "write_logs": "Write Logs",
+    "@write_logs": {},
+    "logs_cleared": "Logs cleared.",
+    "@logs_cleared": {},
+    "clear_all_logs": "Clear all logs",
+    "@clear_all_logs": {},
+    "clear_logs_confirm_title": "Clear Logs",
+    "@clear_logs_confirm_title": {},
+    "clear_logs_confirm_content": "Are you sure you want to clear all step logs? This action cannot be undone.",
+    "@clear_logs_confirm_content": {},
+    "no_logs": "No logs yet.",
+    "@no_logs": {},
+    "log_type_manual": "Manual",
+    "@log_type_manual": {},
+    "log_type_automatic": "Automatic",
+    "@log_type_automatic": {},
+    "offset_settings_title": "Offset Settings",
+    "@offset_settings_title": {},
+    "offset_settings_subtitle": "Enable random step offset",
+    "@offset_settings_subtitle": {},
+    "log_write_success": "Total steps after write: {totalSteps}",
+    "@log_write_success": {
+        "placeholders": {
+            "totalSteps": {
+                "type": "String"
+            }
+        }
+    },
+    "log_write_success_auto": "Automatically wrote {steps} steps.",
+    "@log_write_success_auto": {
+        "placeholders": {
+            "steps": {
+                "type": "String"
+            }
+        }
+    },
+    "log_write_success_manual": "Manually wrote {steps} steps.",
+    "@log_write_success_manual": {
+        "placeholders": {
+            "steps": {
+                "type": "String"
+            }
+        }
+    },
+    "write_fail_check_log": "Failed to write steps, please check your health app or system settings.",
+    "@write_fail_check_log": {},
+    "write_error": "Error writing steps: {error}",
+    "@write_error": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "background_service_start": "Background service has been started.",
+    "@background_service_start": {},
+    "background_service_stop": "Background service has been stopped.",
+    "@background_service_stop": {},
+    "notification_update_title": "Steps Update",
+    "@notification_update_title": {},
+    "automatic_write_success": "Successfully automatically wrote {steps} steps.",
+    "@automatic_write_success": {
+        "placeholders": {
+            "steps": {
+                "type": "String"
+            }
+        }
+    },
+    "clear_data_button": "Clear All App Data",
+    "@clear_data_button": {},
+    "clear_data_confirm_title": "Confirm Deletion",
+    "@clear_data_confirm_title": {},
+    "clear_data_confirm_content": "This will permanently delete all app data, including your settings and logs. This action cannot be undone.",
+    "@clear_data_confirm_content": {},
+    "data_cleared_success": "App data has been successfully cleared.",
+    "@data_cleared_success": {},
+    "app_will_restart": "The app will now restart.",
+    "@app_will_restart": {},
+    "auto_pause_subtitle": "Automatically stop the service after writing a certain number of steps.",
+    "@auto_pause_subtitle": {},
+    "auto_pause_steps_hint": "The service will be stopped after writing this many steps in one session.",
+    "@auto_pause_steps_hint": {},
+    "app_reset": "Reset App",
+    "@app_reset": {},
+    "app_reset_desc": "This will clear all app data and settings, restoring the app to its initial state.",
+    "@app_reset_desc": {},
+    "offset_steps_hint": "The number of steps will be randomized within a positive and negative range of this value.",
+    "@offset_steps_hint": {},
+    "permission_denied_title": "Permission Permanently Denied",
+    "@permission_denied_title": {},
+    "permission_denied_content": "You have permanently denied a necessary permission. Please go to the settings for this app on your device and grant the permission manually for it to function properly.",
+    "@permission_denied_content": {},
+    "open_settings": "Open Settings",
+    "@open_settings": {},
+    "auto_pause_notification_title": "Service Paused Automatically",
+    "@auto_pause_notification_title": {},
+    "auto_pause_notification_content_with_steps": "The service has been automatically paused because the session goal of {steps} steps has been reached.",
+    "@auto_pause_notification_content_with_steps": {
+        "placeholders": {
+            "steps": {
+                "type": "String"
+            }
+        }
+    },
+    "steps_written_this_session": "Steps Written This Session",
+    "auto_pause_remaining": "Auto-pause Remaining",
+    "start_service_fail": "Failed to start service.",
+    "stop_service_fail": "Failed to stop service.",
+    "param_settings": "Parameter Settings",
+    "interval": "Interval (minutes)",
+    "language_settings": "Language Settings",
+    "about": "About",
+    "system_theme": "System Theme",
+    "light_theme": "Light Theme",
+    "dark_theme": "Dark Theme",
+    "system_language": "System Language",
+    "traditional_chinese": "Traditional Chinese",
+    "about_walkgo": "About WalkGo",
+    "about_walkgo_content": "This app helps you log steps to your health data.",
+    "welcome_to_walkgo": "Welcome to WalkGo",
+    "welcome_message": "Before you begin, please grant the necessary permissions.",
+    "get_started": "Get Started",
+    "cancel": "Cancel",
+    "permission_health_title": "Health Permission",
+    "@permission_health_title": {},
+    "permission_health_desc": "This permission is required to write steps to your health data.",
+    "@permission_health_desc": {},
+    "permission_activity_title": "Activity Recognition Permission",
+    "@permission_activity_title": {},
+    "permission_activity_desc": "This permission is required to recognize your physical activity and accurately record steps.",
+    "@permission_activity_desc": {},
+    "permission_notification_title": "Notification Permission",
+    "@permission_notification_title": {},
+    "permission_notification_desc": "This permission is required to send you notifications about your progress and app status.",
+    "@permission_notification_desc": {},
+    "permission_battery_title": "Battery Optimization Permission",
+    "@permission_battery_title": {},
+    "permission_battery_desc": "This permission is required to allow the app to run in the background.",
+    "@permission_battery_desc": {},
+    "grant_permission": "Grant Permission",
+    "@grant_permission": {},
+    "setup_complete": "Setup Complete",
+    "@setup_complete": {},
+    "next_step": "Next Step",
+    "@next_step": {},
+    "rerun_setup": "View Welcome Page",
+    "@rerun_setup": {},
+    "close": "Close",
+    "@close": {},
+    "confirm": "Confirm",
+    "@confirm": {},
+    "complete": "Complete",
+    "@complete": {},
+    "session_total_steps_template": "Total steps this session: {steps}",
+    "manual_steps_label": "Manual Steps",
+    "@manual_steps_label": {},
+    "manual_steps_hint": "Manually add a specific number of steps.",
+    "@manual_steps_hint": {},
+    "notification_service_running": "Service is running",
+    "@notification_service_running": {},
+    "notification_next_run": "Next write at: {time}",
+    "@notification_next_run": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "notification_steps_written": "{steps} steps written",
+    "@notification_steps_written": {
+        "placeholders": {
+            "steps": {
+                "type": "String"
+            }
+        }
+    },
+    "notification_channel_id": "WalkGo Service",
+    "@notification_channel_id": {},
+    "notification_channel_desc": "Notifications for WalkGo background service",
+    "@notification_channel_desc": {},
+    "notification_steps_written_title": "Steps Written Successfully",
+    "@notification_steps_written_title": {},
+    "manual_write_initiated": "Manual write initiated.",
+    "@manual_write_initiated": {},
+    "manual_write_button_text": "Write Once",
+    "@manual_write_button_text": {},
+    "manual_write_success_feedback": "Manually wrote {steps} steps",
+    "@manual_write_success_feedback": {
+        "placeholders": {
+            "steps": {
+                "type": "String"
+            }
+        }
+    },
+    "auto_service_started": "Auto service started",
+    "@auto_service_started": {},
+    "auto_service_stopped": "Auto service stopped",
+    "@auto_service_stopped": {},
+    "auto_mode_running_lock_warning": "Auto mode is running. Parameters cannot be modified.",
+    "@auto_mode_running_lock_warning": {},
+    "error_base_less_than_offset": "Base steps must be greater than random offset steps.",
+    "@error_base_less_than_offset": {},
+    "error_threshold_too_low": "Auto-pause threshold must be greater than maximum single write (base + offset).",
+    "@error_threshold_too_low": {},
+    "today_steps_total": "Today Total: {steps} steps",
+    "@today_steps_total": {
+        "placeholders": {
+            "steps": {
+                "type": "String"
+            }
+        }
+    },
+    "developer_label": "Author: Andrew Cho (卓稟鈞)",
+    "@developer_label": {},
+    "github_source_code": "GitHub Source Code",
+    "@github_source_code": {},
+    "version_label": "Version: {version}",
+    "@version_label": {
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "check_for_updates": "Check for updates",
+    "@check_for_updates": {},
+    "update_available": "Update Available",
+    "update_available_desc": "A new version {version} is available. Would you like to update now?",
+    "@update_available_desc": {
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "updating": "Updating...",
+    "@updating": {},
+    "downloading_apk": "Downloading: {apkName}",
+    "@downloading_apk": {
+        "placeholders": {
+            "apkName": {
+                "type": "String"
+            }
+        }
+    },
+    "verifying_integrity": "Verifying integrity...",
+    "@verifying_integrity": {},
+    "update_failed": "Update failed: {error}",
+    "@update_failed": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "latest_version_installed": "You are already using the latest version.",
+    "no_updates_available": "No updates available.",
+    "@latest_version_installed": {},
+    "invalid_architecture": "Could not find a suitable update for your device's architecture.",
+    "@invalid_architecture": {},
+    "hash_mismatch": "Hash verification failed. The download might be corrupted.",
+    "@hash_mismatch": {},
+    "checking_for_updates": "Checking for updates...",
+    "@checking_for_updates": {},
+    "update_check_failed": "Failed to check for updates. Please check your network connection.",
+    "@update_check_failed": {},
+    "manual_download": "Manual Download",
+    "manual_download_title": "Manual Download",
+    "manual_download_prompt": "Please download the file named:",
+    "manual_download_description": "Your device architecture is: {architecture}. Please download the file named:",
+    "@manual_download_description": {
+        "placeholders": {
+            "architecture": {
+                "type": "String"
+            }
+        }
+    },
+    "manual_download_filename": "Filename: {filename}",
+    "@manual_download_filename": {
+        "placeholders": {
+            "filename": {
+                "type": "String"
+            }
+        }
+    },
+    "copy_link": "Copy Link",
+    "@copy_link": {},
+    "go_to_download": "Go to Download Page",
+    "@go_to_download": {},
+    "link_copied": "Link copied to clipboard",
+    "@link_copied": {},
+    "view_release_notes": "View Version Information",
+    "@view_release_notes": {},
+    "release_notes": "Version Information",
+    "@release_notes": {},
+    "download_latest_version": "Reinstall App",
+    "@download_latest_version": {},
+    "unknown_error": "An unknown error occurred.",
+    "@unknown_error": {},
+    "update_ready_to_install": "Update is ready to install.",
+    "@update_ready_to_install": {},
+    "retry": "Retry",
+    "@retry": {},
+    "install": "Install",
+    "@install": {},
+    "download": "Download",
+    "@download": {},
+    "starting_installation": "Starting installation...",
+    "@starting_installation": {},
+    "notification_start_button": "Start",
+    "@notification_start_button": {},
+    "notification_stop_button": "Stop",
+    "@notification_stop_button": {},
+    "view_on_google_play": "View on Google Play",
+    "@view_on_google_play": {},
+    "skip_permission_title": "Permission Skip Warning",
+    "@skip_permission_title": {},
+    "skip_permission_description": "Skipping this permission may affect the app's stability and background synchronization. The system may force stop the app, causing step synchronization to be interrupted.",
+    "@skip_permission_description": {},
+    "skip_permission_confirm": "Confirm Skip",
+    "@skip_permission_confirm": {},
+    "skip_permission_label": "Skip for now",
+    "@skip_permission_label": {},
+    "skip_notification_warning": "Notification Permission Warning",
+    "@skip_notification_warning": {},
+    "skip_notification_desc": "If you skip notification permission, the foreground service priority will be lowered, and the system may force stop the app at any time in the background, interrupting step synchronization.",
+    "@skip_notification_desc": {},
+    "skip_battery_warning": "Battery Optimization Warning",
+    "@skip_battery_warning": {},
+    "skip_battery_desc": "If you skip battery optimization, Android system will pause synchronization tasks when the phone enters sleep mode, preventing steps from being written to health data in real time.",
+    "@skip_battery_desc": {},
+    "skip_permission_cancel": "Cancel",
+    "@skip_permission_cancel": {}
 }
