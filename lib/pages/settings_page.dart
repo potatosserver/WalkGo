@@ -16,6 +16,7 @@ import '../services/update_service.dart';
 import '../widgets/release_notes_dialog.dart';
 import '../widgets/update_flow_dialog.dart';
 import '../widgets/app_dialog.dart';
+import '../widgets/changelog_dialog.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -262,12 +263,19 @@ class _SettingsPageState extends State<SettingsPage> {
                     text: l10n.version_label(_version),
                   ),
                   const Divider(height: 32),
-                  _buildAboutRow(
+                      _buildAboutRow(
                     context,
                     icon: const Icon(Icons.article_outlined, size: 24),
                     text: l10n.view_release_notes,
                     onTap: () => _showReleaseNotes(context, l10n),
                   ),
+                  _buildAboutRow(
+                    context,
+                    icon: const Icon(Icons.history_edu, size: 24),
+                    text: l10n.view_changelog,
+                    onTap: () => _showChangelogDialog(context),
+                  ),
+                  const SizedBox(height: 12),
                 ],
               ),
             ),
@@ -346,6 +354,13 @@ class _SettingsPageState extends State<SettingsPage> {
     } catch (e) {
       _showToast(l10n.update_check_failed, isError: true);
     }
+  }
+
+  void _showChangelogDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const ChangelogDialog(),
+    );
   }
 
   void _showClearDataDialog(BuildContext context, AppLocalizations l10n) {

@@ -956,6 +956,18 @@ abstract class AppLocalizations {
   /// **'View Version Information'**
   String get view_release_notes;
 
+  /// No description provided for @view_changelog.
+  ///
+  /// In en, this message translates to:
+  /// **'View Changelog'**
+  String get view_changelog;
+
+  /// No description provided for @changelog.
+  ///
+  /// In en, this message translates to:
+  /// **'Changelog'**
+  String get changelog;
+
   /// No description provided for @release_notes.
   ///
   /// In en, this message translates to:

@@ -497,6 +497,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get view_release_notes => 'View Version Information';
 
   @override
+  String get view_changelog => 'View Changelog';
+
+  @override
+  String get changelog => 'Changelog';
+
+  @override
   String get release_notes => 'Version Information';
 
   @override

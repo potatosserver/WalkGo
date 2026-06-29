@@ -476,6 +476,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get view_release_notes => '查看版本資訊';
 
   @override
+  String get view_changelog => '查看版本日誌';
+
+  @override
+  String get changelog => '版本日誌';
+
+  @override
   String get release_notes => '版本資訊';
 
   @override
