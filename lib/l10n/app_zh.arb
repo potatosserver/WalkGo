@@ -18,8 +18,6 @@
     "next_run_title": "下次執行於",
     "next_run_pending": "等待下次運行...",
     "this_run": "本次步數",
-    "start_auto_steps": "啟動自動服務",
-    "stop_auto_steps": "停止自動服務",
     "write_fail_check_log": "寫入步數失敗，請檢查您的健康應用程式或系統設定。",
     "write_error": "寫入步數時發生錯誤：{error}",
     "@write_error": {
@@ -266,13 +264,8 @@
     "update_check_failed": "檢查更新失敗，請檢查您的網路連線。",
     "@update_check_failed": {},
     "manual_download": "手動下載",
-    "@manual_download": {},
-    "auto_update": "自動更新",
-    "@auto_update": {},
     "manual_download_title": "手動下載",
-    "@manual_download_title": {},
     "manual_download_prompt": "請下載名為：",
-    "@manual_download_prompt": {},
     "manual_download_description": "您的裝置架構為：{architecture}。請下載名為：",
     "@manual_download_description": {
       "placeholders": {
