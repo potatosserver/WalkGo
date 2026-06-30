@@ -38,7 +38,7 @@ android {
 
     defaultConfig {
         applicationId = "com.potatosserver.walkgo"
-        minSdk = 28
+        minSdk = 34
         targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName

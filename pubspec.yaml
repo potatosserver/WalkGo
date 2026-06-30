@@ -1,8 +1,8 @@
 
 name: walkgo
-description: "A new Flutter project."
+description: "WalkGo"
 publish_to: 'none'
-version: 1.4.0+6
+version: 1.4.0+5
 
 environment:
   sdk: '>=3.5.0-188.0.dev <4.0.0'
@@ -27,7 +27,7 @@ dependencies:
   url_launcher: ^6.3.2
   font_awesome_flutter: ^11.0.0
   package_info_plus: ^9.0.1
-  dio: ^5.9.2
+  dio: ^5.10.0
   path_provider: ^2.1.5
   open_filex: ^4.7.0
   crypto: ^3.0.7
